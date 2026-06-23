@@ -1,1 +1,7 @@
+# Credenciais — nunca subir
 .env
+
+# Dados gerados pelo pipeline (recriados pelo botão Atualizar)
+data/artigos_nomes_empresas/
+data/nomes_empresas/
+
