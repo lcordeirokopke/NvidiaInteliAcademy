@@ -6,3 +6,7 @@ data/artigos_nomes_empresas/
 data/nomes_empresas/
 
 .venv
+
+# Bytecode gerado pelo Python
+__pycache__/
+*.pyc
