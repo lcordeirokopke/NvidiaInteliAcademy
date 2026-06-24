@@ -73,6 +73,16 @@ _VERBOS = [
     'reduzem', 'corta', 'cortam', 'faz', 'fazem', 'traz', 'trazem',
     'passa', 'passam', 'une', 'unem', 'muda', 'mudam', 'vira', 'viram',
     'torna', 'tornam', 'leva', 'levam',
+    'cria', 'criam', 'desenvolve', 'desenvolvem', 'oferece', 'oferecem',
+    'obtém', 'obtêm', 'consegue', 'conseguem', 'alcança', 'alcançam',
+    'ultrapassa', 'ultrapassam', 'completa', 'completam', 'transforma', 'transformam',
+    'impulsiona', 'impulsionam', 'monetiza', 'monetizam', 'adota', 'adotam',
+    'implementa', 'implementam', 'revela', 'revelam', 'divulga', 'divulgam',
+    'confirma', 'confirmam', 'encerra', 'encerram', 'retoma', 'retomam',
+    'lidera', 'lideram', 'assume', 'assumem', 'foca', 'focam',
+    'escala', 'escalam', 'pivota', 'pivotam', 'cobra', 'cobram',
+    'melhora', 'melhoram', 'usa', 'usam', 'alia', 'aliam',
+    'testa', 'testam', 'compete', 'competem', 'aprimora', 'aprimoram',
 ]
 
 _VERBOS_REGEX = re.compile(r'\b(' + '|'.join(_VERBOS) + r')\b', re.IGNORECASE)
@@ -110,11 +120,21 @@ def _is_valido(nome: str) -> bool:
     return True
 
 
+def _salvar(resultado: list[dict], caminho_saida: str) -> None:
+    destino = Path(caminho_saida)
+    destino.parent.mkdir(parents=True, exist_ok=True)
+    with open(destino, 'w', encoding='utf-8') as f:
+        json.dump(resultado, f, ensure_ascii=False, indent=2)
+
+
 def _extrair_nome(titulo: str, nlp: object) -> str | None:
     """Extrai nome de startup: tenta Gemini primeiro, cai em NER+regex se falhar."""
-    nome = extrair_nome_gemini(titulo)
-    if nome:
-        return nome
+    try:
+        nome = extrair_nome_gemini(titulo)
+        if nome:
+            return nome
+    except Exception as exc:
+        print(f"\n[aviso] Gemini falhou ({exc}); usando fallback NER+regex", flush=True)
 
     # Fallback: spaCy NER
     doc = nlp(titulo)
@@ -137,8 +157,8 @@ def filtrar(
     Gemini API (com fallback spaCy NER + regex), aplica denylist e heurísticas,
     e retorna lista deduplicada.
 
-    Caminho padrão de entrada : src/data/artigos_nomes_empresas/artigos_brutos.json
-    Caminho padrão de saída   : src/data/nomes_empresas/nomes_empresas.json
+    Caminho padrão de entrada : data/artigos_nomes_empresas/artigos_brutos.json
+    Caminho padrão de saída   : data/nomes_empresas/nomes_empresas.json
     delay_entre_chamadas      : pausa em segundos entre chamadas à Gemini API
                                 (reduz risco de 429 no tier gratuito)
     """
@@ -174,15 +194,13 @@ def filtrar(
         vistos.add(nome)
         resultado.append({'startup': nome, 'titulo': titulo, 'url': url, 'tags': tags})
         print(f"→ {nome}")
+        if caminho_saida:
+            _salvar(resultado, caminho_saida)
 
         if i < total:
             time.sleep(delay_entre_chamadas)
 
     if caminho_saida:
-        destino = Path(caminho_saida)
-        destino.parent.mkdir(parents=True, exist_ok=True)
-        with open(destino, 'w', encoding='utf-8') as f:
-            json.dump(resultado, f, ensure_ascii=False, indent=2)
         print(f"\n[info] {len(resultado)} startups salvas em {caminho_saida}")
 
     print(f"\nStartups encontradas ({len(resultado)}):")
