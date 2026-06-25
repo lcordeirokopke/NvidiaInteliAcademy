@@ -1,0 +1,42 @@
+[
+  {
+    "empresa_id": 3,
+    "nome_empresa": "DNA Capital",
+    "titulo_vaga": null,
+    "departamento": null,
+    "fonte_url": "https://dna.gupy.io",
+    "termo_encontrado": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-25T01:32:42.298556+00:00"
+  },
+  {
+    "empresa_id": 5,
+    "nome_empresa": "Domo.VC",
+    "titulo_vaga": "Cientista de Dados Pleno (Vaga Mista)",
+    "departamento": "Domo Inovação",
+    "fonte_url": "https://domo.gupy.io/job/11438042",
+    "termo_encontrado": "dados",
+    "encontrado": true,
+    "coletado_em": "2026-06-25T01:32:44.173730+00:00"
+  },
+  {
+    "empresa_id": 5,
+    "nome_empresa": "Domo.VC",
+    "titulo_vaga": "Engenheiro de Dados Pleno (Vaga Mista)",
+    "departamento": "Domo Inovação",
+    "fonte_url": "https://domo.gupy.io/job/10997175",
+    "termo_encontrado": "dados",
+    "encontrado": true,
+    "coletado_em": "2026-06-25T01:32:44.173730+00:00"
+  },
+  {
+    "empresa_id": 12,
+    "nome_empresa": "Shopper",
+    "titulo_vaga": null,
+    "departamento": null,
+    "fonte_url": "https://shopper.gupy.io",
+    "termo_encontrado": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-25T01:32:46.674322+00:00"
+  }
+]

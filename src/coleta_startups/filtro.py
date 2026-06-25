@@ -32,7 +32,7 @@ DENYLIST: set[str] = {
     'BNDES', 'Finep', 'CVM', 'Banco Central', 'BC',
     'Petrobras', 'XP', 'B3',
     'Kaszek', 'Monashees', 'Sequoia', 'General Atlantic', 'Advent',
-    'WhatsApp', 'TikTok', 'Spotify',
+    'WhatsApp', 'TikTok', 'Spotify', 'Whatsapp', 'Instagram', 'LinkedIn', 'YouTube', 'Netflix',
     'Brasil', 'México', 'China', 'EUA', 'Europa', 'América Latina',
     'Endeavor', 'WPP', 'Adobe', 'DreamWorks', 'Odontoprev',
     'CVCs', 'IPOs', 'Seleção', 'Startup', 'Startups',

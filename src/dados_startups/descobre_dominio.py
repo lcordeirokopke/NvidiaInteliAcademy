@@ -106,9 +106,10 @@ def _normalizar_dominio(url_final: str) -> str:
 
 
 _SAIDA = _RAIZ / "data" / "dominio_empresas"
+_APENAS_JSON = False
 
 
-def descobrir(dry_run: bool = False, debug: bool = False) -> None:
+def descobrir(debug: bool = False) -> None:
     rows = (
         supabase.table("empresas")
         .select("id, nome, dominio")
@@ -139,7 +140,7 @@ def descobrir(dry_run: bool = False, debug: bool = False) -> None:
                     "descoberto_em": datetime.now(timezone.utc).isoformat(),
                 }
                 encontrados.append(registro)
-                if not dry_run:
+                if not _APENAS_JSON:
                     supabase.table("empresas").update(
                         {"dominio": dominio}
                     ).eq("id", empresa["id"]).execute()
@@ -150,7 +151,7 @@ def descobrir(dry_run: bool = False, debug: bool = False) -> None:
             print(f"    [✗] nenhum candidato confirmado")
             nao_encontrados.append(nome)
 
-    if encontrados and not dry_run:
+    if encontrados:
         _SAIDA.mkdir(parents=True, exist_ok=True)
         caminho = _SAIDA / "dominios_encontrados.json"
         existentes: list[dict] = []
@@ -162,7 +163,9 @@ def descobrir(dry_run: bool = False, debug: bool = False) -> None:
             json.dumps(existentes + novos, ensure_ascii=False, indent=2),
             encoding="utf-8",
         )
-        print(f"\n[json] {len(novos)} registro(s) novo(s) salvo(s) em {caminho}")
+        print(f"\n[json] {len(novos)} registro(s) salvo(s) em {caminho}")
+        if _APENAS_JSON:
+            print("[aviso] _APENAS_JSON=True — Supabase não foi atualizado")
 
     print(f"\n[resumo] encontrados: {len(encontrados)} / {len(pendentes)}")
     if nao_encontrados:
@@ -173,8 +176,5 @@ def descobrir(dry_run: bool = False, debug: bool = False) -> None:
 
 if __name__ == "__main__":
     import sys
-    dry_run = "--dry-run" in sys.argv
     debug = "--debug" in sys.argv
-    if dry_run:
-        print("[modo dry-run: nenhuma alteração será salva no Supabase]")
-    descobrir(dry_run=dry_run, debug=debug)
+    descobrir(debug=debug)

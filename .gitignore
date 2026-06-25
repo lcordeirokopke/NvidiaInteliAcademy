@@ -6,6 +6,7 @@ data/artigos_nomes_empresas/
 data/nomes_empresas/
 data/gupy_empresas/
 data/dominio_empresas/
+data/gupy_vagas/
 
 .venv
 

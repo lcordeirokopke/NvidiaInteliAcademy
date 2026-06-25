@@ -77,7 +77,7 @@ def _provar_subdominio(slug: str, timeout: int = 5, debug: bool = False) -> bool
 _SAIDA = _RAIZ / "data" / "gupy_empresas"
 
 
-def descobrir(dry_run: bool = False, debug: bool = False) -> None:
+def descobrir(debug: bool = False) -> None:
     rows = (
         supabase.table("empresas")
         .select("id, nome, gupy_subdominio")
@@ -109,8 +109,7 @@ def descobrir(dry_run: bool = False, debug: bool = False) -> None:
                     "descoberto_em": datetime.now(timezone.utc).isoformat(),
                 }
                 encontrados.append(registro)
-                if not dry_run:
-                    supabase.table("empresas").update(
+                supabase.table("empresas").update(
                         {"gupy_subdominio": slug}
                     ).eq("id", empresa["id"]).execute()
                 achou = True
@@ -120,7 +119,7 @@ def descobrir(dry_run: bool = False, debug: bool = False) -> None:
             print(f"    [✗] nenhum candidato confirmado")
             nao_encontrados.append(nome)
 
-    if encontrados and not dry_run:
+    if encontrados:
         _SAIDA.mkdir(parents=True, exist_ok=True)
         caminho = _SAIDA / "gupy_encontrados.json"
         existentes: list[dict] = []
@@ -143,8 +142,5 @@ def descobrir(dry_run: bool = False, debug: bool = False) -> None:
 
 if __name__ == "__main__":
     import sys
-    dry_run = "--dry-run" in sys.argv
     debug = "--debug" in sys.argv
-    if dry_run:
-        print("[modo dry-run: nenhuma alteração será salva no Supabase]")
-    descobrir(dry_run=dry_run, debug=debug)
+    descobrir(debug=debug)

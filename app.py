@@ -1,0 +1,63 @@
+from __future__ import annotations
+
+import sys
+import time
+from pathlib import Path
+
+_RAIZ = Path(__file__).resolve().parent
+sys.path.insert(0, str(_RAIZ / "src"))
+
+
+def _titulo(texto: str) -> None:
+    separador = "=" * 60
+    print(f"\n{separador}")
+    print(f"  {texto}")
+    print(separador)
+
+
+def main() -> None:
+    inicio = time.time()
+
+    # 1. Coleta artigos brutos do Neofeed
+    _titulo("1/7 · coleta.py — raspagem Neofeed")
+    from coleta_startups.coleta import coletar
+    coletar()
+
+    # 2. Filtra e extrai nomes de startups
+    _titulo("2/7 · filtro.py — extração de nomes")
+    from coleta_startups.filtro import filtrar
+    filtrar()
+
+    # 3. Envia nomes brutos para Supabase (tabela nomes_empresas)
+    _titulo("3/7 · upload_nomes_empresas.py — upload para Supabase")
+    from interacoes_banco.upload_nomes_empresas import upload as upload_nomes
+    upload_nomes()
+
+    # 4. Descobre domínio de cada empresa
+    _titulo("4/7 · descobre_dominio.py — descoberta de domínios")
+    from dados_startups.descobre_dominio import descobrir as descobrir_dominio
+    descobrir_dominio()
+
+    # 5. Descobre subdomínio Gupy de cada empresa
+    _titulo("5/7 · descobre_gupy.py — descoberta de subdominios Gupy")
+    from dados_startups.descobre_gupy import descobrir as descobrir_gupy
+    descobrir_gupy()
+
+    # 6. Envia empresas para Supabase (tabela empresas)
+    _titulo("6/7 · upload_empresas.py — upload para Supabase")
+    from interacoes_banco.upload_empresas import upload as upload_empresas
+    upload_empresas()
+
+    # 7. Pesquisa vagas de IA no Gupy
+    _titulo("7/7 · descobre_gupy_vagas.py — vagas de IA no Gupy")
+    from dados_ia_startups.descobre_gupy_vagas import pesquisar
+    pesquisar()
+
+    elapsed = time.time() - inicio
+    print(f"\n{'=' * 60}")
+    print(f"  Fluxo completo em {elapsed:.1f}s")
+    print("=" * 60)
+
+
+if __name__ == "__main__":
+    main()
