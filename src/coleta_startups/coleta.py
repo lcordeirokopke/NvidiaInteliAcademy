@@ -38,7 +38,7 @@ def carregar_mais_artigos(page, cliques_max: int = 10) -> int:
     return anterior
 
 
-def coletar(cliques_max: int = 10, caminho_saida: str = _SAIDA_PADRAO) -> list[dict]:
+def coletar(cliques_max: int = 3, caminho_saida: str = _SAIDA_PADRAO) -> list[dict]:
     """Só raspa e salva os dados brutos (título, url, tags) — não faz
     nenhuma extração de nome nem filtro de qualidade. Essa etapa é cara
     (abre navegador, depende do site no ar), por isso fica isolada: você

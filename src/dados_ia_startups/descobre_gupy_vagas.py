@@ -97,9 +97,18 @@ def _buscar_vagas(subdominio: str, debug: bool = False) -> list[dict]:
 
 
 def pesquisar(debug: bool = False) -> None:
-    caminho_gupy = _RAIZ / "data" / "gupy_empresas" / "gupy_encontrados.json"
-    empresas = json.loads(caminho_gupy.read_text(encoding="utf-8"))
-    print(f"[info] {len(empresas)} empresa(s) carregada(s) de {caminho_gupy}\n")
+    rows = (
+        supabase.table("empresas")
+        .select("id, nome, gupy_subdominio")
+        .not_.is_("gupy_subdominio", "null")
+        .execute()
+        .data
+    )
+    empresas = [
+        {"empresa_id": r["id"], "nome": r["nome"], "gupy_subdominio": r["gupy_subdominio"]}
+        for r in rows
+    ]
+    print(f"[info] {len(empresas)} empresa(s) com gupy_subdominio no Supabase\n")
 
     todos_registros: list[dict] = []
 

@@ -1,42 +1,112 @@
 [
   {
-    "empresa_id": 3,
+    "empresa_id": 35,
+    "nome_empresa": "Asaas",
+    "titulo_vaga": "Analista de Dados Pleno (Legal)",
+    "departamento": "Tecnologia",
+    "fonte_url": "https://asaas.gupy.io/job/11382407",
+    "termo_encontrado": "dados",
+    "encontrado": true,
+    "coletado_em": "2026-06-25T11:26:24.244585+00:00"
+  },
+  {
+    "empresa_id": 35,
+    "nome_empresa": "Asaas",
+    "titulo_vaga": "Analista de Governança de Dados e IA Sênior",
+    "departamento": "Tecnologia",
+    "fonte_url": "https://asaas.gupy.io/job/11496762",
+    "termo_encontrado": "dados",
+    "encontrado": true,
+    "coletado_em": "2026-06-25T11:26:24.244585+00:00"
+  },
+  {
+    "empresa_id": 41,
     "nome_empresa": "DNA Capital",
     "titulo_vaga": null,
     "departamento": null,
     "fonte_url": "https://dna.gupy.io",
     "termo_encontrado": null,
     "encontrado": false,
-    "coletado_em": "2026-06-25T01:32:42.298556+00:00"
+    "coletado_em": "2026-06-25T11:26:26.707478+00:00"
   },
   {
-    "empresa_id": 5,
+    "empresa_id": 44,
+    "nome_empresa": "Digibee",
+    "titulo_vaga": "Sales Engineer — Integração, Arquitetura e AI",
+    "departamento": "Revenue",
+    "fonte_url": "https://digibee.gupy.io/job/11266302",
+    "termo_encontrado": " ai ",
+    "encontrado": true,
+    "coletado_em": "2026-06-25T11:26:28.762077+00:00"
+  },
+  {
+    "empresa_id": 45,
     "nome_empresa": "Domo.VC",
     "titulo_vaga": "Cientista de Dados Pleno (Vaga Mista)",
     "departamento": "Domo Inovação",
     "fonte_url": "https://domo.gupy.io/job/11438042",
     "termo_encontrado": "dados",
     "encontrado": true,
-    "coletado_em": "2026-06-25T01:32:44.173730+00:00"
+    "coletado_em": "2026-06-25T11:26:30.947726+00:00"
   },
   {
-    "empresa_id": 5,
+    "empresa_id": 45,
     "nome_empresa": "Domo.VC",
     "titulo_vaga": "Engenheiro de Dados Pleno (Vaga Mista)",
     "departamento": "Domo Inovação",
     "fonte_url": "https://domo.gupy.io/job/10997175",
     "termo_encontrado": "dados",
     "encontrado": true,
-    "coletado_em": "2026-06-25T01:32:44.173730+00:00"
+    "coletado_em": "2026-06-25T11:26:30.947726+00:00"
   },
   {
-    "empresa_id": 12,
+    "empresa_id": 59,
     "nome_empresa": "Shopper",
     "titulo_vaga": null,
     "departamento": null,
     "fonte_url": "https://shopper.gupy.io",
     "termo_encontrado": null,
     "encontrado": false,
-    "coletado_em": "2026-06-25T01:32:46.674322+00:00"
+    "coletado_em": "2026-06-25T11:26:33.454385+00:00"
+  },
+  {
+    "empresa_id": 69,
+    "nome_empresa": "Vivo",
+    "titulo_vaga": "Analista Analytics Pl I Vaga Exclusiva para Profissionais com Deficiência ",
+    "departamento": "VP Digital e Inovacao",
+    "fonte_url": "https://vivo.gupy.io/job/11429103",
+    "termo_encontrado": "analytics",
+    "encontrado": true,
+    "coletado_em": "2026-06-25T11:26:35.250821+00:00"
+  },
+  {
+    "empresa_id": 69,
+    "nome_empresa": "Vivo",
+    "titulo_vaga": "Analista Big Data Jr",
+    "departamento": "VP Digital e Inovacao",
+    "fonte_url": "https://vivo.gupy.io/job/11429298",
+    "termo_encontrado": "big data",
+    "encontrado": true,
+    "coletado_em": "2026-06-25T11:26:35.250821+00:00"
+  },
+  {
+    "empresa_id": 69,
+    "nome_empresa": "Vivo",
+    "titulo_vaga": "BANCO DE TALENTOS | Planejamento Comercial; Marketing; Cientista de Dados |  Exclusivo para Pessoas com Deficiências e para pessoas pretas e pardas",
+    "departamento": "VP B2C",
+    "fonte_url": "https://vivo.gupy.io/job/11079424",
+    "termo_encontrado": "dados",
+    "encontrado": true,
+    "coletado_em": "2026-06-25T11:26:35.250821+00:00"
+  },
+  {
+    "empresa_id": 69,
+    "nome_empresa": "Vivo",
+    "titulo_vaga": "Líder Técnico Funcional – Dados Martech (Consultor)",
+    "departamento": "CHIEF INFORMATION OFFICER",
+    "fonte_url": "https://vivo.gupy.io/job/11428563",
+    "termo_encontrado": "dados",
+    "encontrado": true,
+    "coletado_em": "2026-06-25T11:26:35.250821+00:00"
   }
 ]

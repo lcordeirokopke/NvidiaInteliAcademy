@@ -33,20 +33,20 @@ def main() -> None:
     from interacoes_banco.upload_nomes_empresas import upload as upload_nomes
     upload_nomes()
 
-    # 4. Descobre domínio de cada empresa
-    _titulo("4/7 · descobre_dominio.py — descoberta de domínios")
+    # 4. Envia empresas para Supabase (tabela empresas) — deve vir antes das descobertas
+    _titulo("4/7 · upload_empresas.py — upload para Supabase")
+    from interacoes_banco.upload_empresas import upload as upload_empresas
+    upload_empresas()
+
+    # 5. Descobre domínio de cada empresa
+    _titulo("5/7 · descobre_dominio.py — descoberta de domínios")
     from dados_startups.descobre_dominio import descobrir as descobrir_dominio
     descobrir_dominio()
 
-    # 5. Descobre subdomínio Gupy de cada empresa
-    _titulo("5/7 · descobre_gupy.py — descoberta de subdominios Gupy")
+    # 6. Descobre subdomínio Gupy de cada empresa
+    _titulo("6/7 · descobre_gupy.py — descoberta de subdominios Gupy")
     from dados_startups.descobre_gupy import descobrir as descobrir_gupy
     descobrir_gupy()
-
-    # 6. Envia empresas para Supabase (tabela empresas)
-    _titulo("6/7 · upload_empresas.py — upload para Supabase")
-    from interacoes_banco.upload_empresas import upload as upload_empresas
-    upload_empresas()
 
     # 7. Pesquisa vagas de IA no Gupy
     _titulo("7/7 · descobre_gupy_vagas.py — vagas de IA no Gupy")

@@ -7,6 +7,10 @@ data/nomes_empresas/
 data/gupy_empresas/
 data/dominio_empresas/
 data/gupy_vagas/
+data/institucional/
+
+# Arquivos de teste avulsos
+teste.py
 
 .venv
 

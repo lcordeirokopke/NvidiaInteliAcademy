@@ -29,6 +29,11 @@ _PARKING = {
     "parkingcrew.net", "dan.com", "hugedomains.com",
 }
 
+# Domínios que existem mas pertencem a outra empresa — nunca devem ser aceitos
+_DOMINIOS_ERRADOS = {
+    "segura.com.br",  # imobiliária em Canoas, não a startup Segura
+}
+
 
 def _slugify(texto: str) -> str:
     texto = unicodedata.normalize("NFKD", texto)
@@ -38,7 +43,27 @@ def _slugify(texto: str) -> str:
     return texto.strip()
 
 
+def _extrair_tld_embutido(nome: str) -> str | None:
+    """Detecta se o nome já termina com um TLD conhecido (ex: 'Segura.ai' → 'segura.ai')."""
+    nome_lower = nome.lower().strip()
+    for tld in _TLDS:
+        sufixo = tld  # ex: ".ai"
+        if nome_lower.endswith(sufixo):
+            base = nome_lower[: -len(sufixo)]
+            base = "".join(c for c in base if c.isalnum() or c == "-")
+            if base:
+                return base + sufixo
+    return None
+
+
 def _candidatos(nome: str) -> list[str]:
+    candidatos: list[str] = []
+
+    # Se o nome já carrega um TLD (ex: "Segura.ai"), esse domínio vai na frente
+    embutido = _extrair_tld_embutido(nome)
+    if embutido:
+        candidatos.append(embutido)
+
     base = _slugify(nome)
     palavras = base.split()
 
@@ -60,10 +85,11 @@ def _candidatos(nome: str) -> list[str]:
 
     slugs = list(dict.fromkeys(slugs))
 
-    candidatos: list[str] = []
     for slug in slugs:
         for tld in _TLDS:
-            candidatos.append(slug + tld)
+            candidato = slug + tld
+            if candidato not in candidatos:
+                candidatos.append(candidato)
 
     return candidatos
 
@@ -73,7 +99,16 @@ def _is_parking(url_final: str) -> bool:
     return any(host == p or host.endswith("." + p) for p in _PARKING)
 
 
+def _is_dominio_errado(dominio: str) -> bool:
+    return dominio.lstrip("www.") in _DOMINIOS_ERRADOS
+
+
 def _provar_dominio(dominio: str, timeout: int = 6, debug: bool = False) -> bool:
+    if _is_dominio_errado(dominio):
+        if debug:
+            print(f"      [debug] {dominio} → bloqueado (domínio errado conhecido)")
+        return False
+
     url = f"https://{dominio}"
     try:
         r = _SESSION.get(url, timeout=timeout, allow_redirects=True)
