@@ -4,6 +4,8 @@
 # Dados gerados pelo pipeline (recriados pelo botão Atualizar)
 data/artigos_nomes_empresas/
 data/nomes_empresas/
+data/gupy_empresas/
+data/dominio_empresas/
 
 .venv
 
