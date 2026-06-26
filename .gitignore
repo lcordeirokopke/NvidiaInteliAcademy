@@ -8,6 +8,7 @@ data/gupy_empresas/
 data/dominio_empresas/
 data/gupy_vagas/
 data/institucional/
+data/imprensa/
 
 # Arquivos de teste avulsos
 teste.py
