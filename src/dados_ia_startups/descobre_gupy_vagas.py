@@ -189,7 +189,7 @@ def pesquisar(debug: bool = False) -> None:
         )
         print(f"\n[json] {len(novos)} registro(s) salvo(s) em {caminho}")
 
-    positivos = sum(1 for r in todos_registros if r["encontrado"])
+    positivos = len({r["empresa_id"] for r in todos_registros if r["encontrado"]})
     print(f"\n[resumo] {positivos}/{len(empresas)} empresa(s) com vaga de IA no Gupy")
 
 

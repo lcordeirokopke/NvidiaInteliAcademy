@@ -233,19 +233,28 @@ def _pontuar_pagina(texto: str, debug: bool = False) -> tuple[int, str, str, str
     return pontuacao, melhor_termo, melhor_trecho, melhor_tipo
 
 
-def _analisar(dominio: str, debug: bool = False) -> dict | None:
+def _analisar(dominio: str, debug: bool = False, max_falhas_consecutivas: int = 10) -> dict | None:
     """
     Acumula pontuação em todas as páginas. Retorna resultado se threshold atingido.
+    Abandona o domínio após max_falhas_consecutivas paths sem resposta seguidos.
     """
     pontuacao_total = 0
     melhor: tuple[str, str, str, str] = ("", "", "", "")  # url, termo, trecho, tipo
+    falhas_consecutivas = 0
 
     for path in _PATHS:
         url = f"https://{dominio}{path}"
         html = _buscar_pagina(url, debug=debug)
         if not html:
+            falhas_consecutivas += 1
+            if falhas_consecutivas >= max_falhas_consecutivas:
+                if debug:
+                    print(f"      [debug] {falhas_consecutivas} falhas consecutivas → abandona {dominio}")
+                break
             time.sleep(0.5)
             continue
+
+        falhas_consecutivas = 0
 
         texto = _extrair_texto(html)
         pontos, termo, trecho, tipo = _pontuar_pagina(texto, debug=debug)

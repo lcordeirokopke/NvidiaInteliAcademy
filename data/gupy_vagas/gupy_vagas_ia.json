@@ -108,5 +108,35 @@
     "termo_encontrado": "dados",
     "encontrado": true,
     "coletado_em": "2026-06-25T11:26:35.250821+00:00"
+  },
+  {
+    "empresa_id": 23,
+    "nome_empresa": "Vivo",
+    "titulo_vaga": "Analista Marketing Sr (Planejamento e Analytics) - Exclusiva para Pretos e Pardos",
+    "departamento": "VP B2B",
+    "fonte_url": "https://vivo.gupy.io/job/11553540",
+    "termo_encontrado": "analytics",
+    "encontrado": true,
+    "coletado_em": "2026-06-28T11:45:52.426660+00:00"
+  },
+  {
+    "empresa_id": 23,
+    "nome_empresa": "Vivo",
+    "titulo_vaga": "Especialista Inteligência Artificial",
+    "departamento": "VP Engenharia e Servicos ao Cliente",
+    "fonte_url": "https://vivo.gupy.io/job/11535429",
+    "termo_encontrado": "inteligência artificial",
+    "encontrado": true,
+    "coletado_em": "2026-06-28T11:45:52.426660+00:00"
+  },
+  {
+    "empresa_id": 23,
+    "nome_empresa": "Vivo",
+    "titulo_vaga": "Especialista Inteligência Artificial",
+    "departamento": "VP Pessoas",
+    "fonte_url": "https://vivo.gupy.io/job/11493927",
+    "termo_encontrado": "inteligência artificial",
+    "encontrado": true,
+    "coletado_em": "2026-06-28T11:45:52.426660+00:00"
   }
 ]

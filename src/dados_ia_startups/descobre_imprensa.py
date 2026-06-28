@@ -11,6 +11,8 @@ import requests
 from dotenv import load_dotenv
 from supabase import create_client
 
+from dados_ia_startups.fallback import newsdata_io as _fallback
+
 _RAIZ = Path(__file__).resolve().parent.parent.parent
 load_dotenv(_RAIZ / ".env")
 
@@ -47,6 +49,12 @@ _DOMINIOS_BR = (
     "epocanegocios.globo.com,braziljournal.com,siliconvalleybrasil.com.br"
 )
 
+_DOMINIOS_EN = (
+    "techcrunch.com,crunchbase.com,bloomberg.com,reuters.com,"
+    "ft.com,wsj.com,businessinsider.com,wired.com,"
+    "latamlist.com,contxto.com,district0x.io"
+)
+
 _DOMINIOS_BLOQUEADOS = {
     "nature.com", "arxiv.org", "pubmed.ncbi.nlm.nih.gov", "sciencedirect.com",
     "springer.com", "wiley.com", "researchgate.net", "semanticscholar.org",
@@ -66,24 +74,31 @@ def _buscar(nome: str, termos: str, lang: str = "pt", debug: bool = False) -> li
     }
     if lang == "pt":
         params["domains"] = _DOMINIOS_BR
+    else:
+        params["domains"] = _DOMINIOS_EN
 
     if debug:
         q = params["q"]
         print(f"      [debug] query [{lang}]: {q}")
 
+    usar_fallback = False
     try:
         r = requests.get(_NEWS_API_URL, params=params, timeout=10)
         r.raise_for_status()
+        data = r.json()
+        if data.get("status") != "ok":
+            print(f"      [erro] News API: {data.get('message')} — tentando fallback")
+            usar_fallback = True
+        else:
+            return data.get("articles", [])
     except requests.RequestException as e:
-        print(f"      [erro] News API: {e}")
-        return []
+        print(f"      [erro] News API: {e} — tentando fallback")
+        usar_fallback = True
 
-    data = r.json()
-    if data.get("status") != "ok":
-        print(f"      [erro] News API status: {data.get('message')}")
-        return []
+    if usar_fallback:
+        return _fallback.buscar(nome, termos, lang=lang, debug=debug)
 
-    return data.get("articles", [])
+    return []
 
 
 def _dominio_bloqueado(url: str) -> bool:

@@ -21,6 +21,11 @@
 - **python-dotenv** `1.2.2` — leitura do arquivo `.env`
 - **requests** `2.34.2` — requisições HTTP para descoberta de domínios e Gupy
 
+## Imprensa — fallback (`src/dados_ia_startups/fallback/newsdata_io.py`)
+- **requests** — já listado acima; reutilizado aqui para chamar `newsdata.io`
+  - requer `NEWS_DATA_KEY` no `.env` (chave do [newsdata.io](https://newsdata.io))
+  - acionado automaticamente quando `newsapi.org` retorna erro ou limite esgotado
+
 ## Instalação
 
 ```bash

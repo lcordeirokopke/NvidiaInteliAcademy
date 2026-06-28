@@ -32,6 +32,13 @@ _PARKING = {
 # Domínios que existem mas pertencem a outra empresa — nunca devem ser aceitos
 _DOMINIOS_ERRADOS = {
     "segura.com.br",  # imobiliária em Canoas, não a startup Segura
+    "btg.com", # banco BTG Pactual, não a startup BTG
+    "daki.com",  # empresa de logística, não a startup Daki
+    "neuralmed.com",  # empresa de saúde, não a startup NeuralMed
+    "digibee.com.br",  # empresa de integração, não a startup Digibee
+    "loggi.com.br",  # empresa de logística, não a startup Loggi
+    "btg.io",  # empresa de tecnologia, não a startup BTG
+    "segura.com", # empresa de seguros, não a startup Segura
 }
 
 
