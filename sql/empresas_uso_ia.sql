@@ -1,0 +1,60 @@
+-- Dados públicos enriquecidos das empresas aprovadas pelo filtro_ia
+-- Populada apenas para empresas com veredito = TRUE em avaliacoes_ia
+CREATE TABLE empresas_uso_ia (
+    empresa_id           INTEGER PRIMARY KEY REFERENCES avaliacoes_ia(empresa_id),
+
+    -- Identidade
+    cnpj                 CHAR(14),    -- somente dígitos, sem formatação
+    dominio              TEXT,        -- domínio oficial, herdado de empresas.dominio
+    gupy_subdominio      TEXT,        -- subdomínio Gupy, herdado de empresas.gupy_subdominio
+    produto              TEXT,        -- descrição do produto/serviço principal
+    setor                TEXT,        -- ex: healthtech, fintech, edtech, logtech
+    
+    -- Mercado
+    modelo_negocio       TEXT,        -- B2B, B2C, B2B2C
+    clientes             TEXT[],      -- ex: {'hospitais', 'corretoras', 'PMEs'}
+    mercado_alvo         TEXT,        -- Brasil, LATAM, global
+
+    -- Financeiro
+    estagio_funding      TEXT,        -- pre-seed, seed, series-a, series-b...
+    total_captado_usd    NUMERIC,     -- valor total captado em USD
+    ultima_rodada_usd    NUMERIC,
+    ultima_rodada_data   DATE,
+    investidores         TEXT[],      -- ex: {'Kaszek', 'Andreessen Horowitz'}
+
+    -- Pessoas
+    founders             JSONB,       -- [{"nome": "...", "linkedin": "..."}]
+
+    -- Tecnologia
+    tecnologias          TEXT[],      -- ex: {'LLM', 'computer vision', 'Python'}
+    uso_ia_descricao     TEXT,        -- como a empresa usa IA (1-2 frases)
+
+    -- Maturidade AI-native: posicionamento
+    ia_e_core_product    BOOLEAN,     -- TRUE: produto principal É a IA; FALSE: IA é feature
+    ia_tipo              TEXT[],      -- {'generativa','preditiva','computer vision','NLP','automacao'}
+
+    -- Maturidade AI-native: profundidade técnica
+    modelos_proprios     BOOLEAN,     -- treina/fine-tuna modelos vs. apenas consome APIs
+    dados_proprietarios  BOOLEAN,     -- possui dados exclusivos de treinamento (moat)
+    infra_ia             TEXT[],      -- {'fine-tuning','RAG','GPU cluster','prompt engineering','API wrapper'}
+
+    -- Maturidade AI-native: tempo e execução
+    ano_fundacao         SMALLINT,    -- fundada após 2020 = provável AI-native por design
+    produto_ia_lancado   BOOLEAN,     -- produto de IA já em produção (vs. "estamos construindo")
+
+    -- Maturidade AI-native: validação externa
+    acelerada_ia         BOOLEAN,     -- passou por NVIDIA Inception, YC, Microsoft for Startups, etc.
+    programa_aceleracao  TEXT[],      -- ex: {'NVIDIA Inception', 'Y Combinator', 'Google for Startups'}
+
+    -- Classificação final (calculada pelo programa a partir dos campos acima)
+    score_maturidade_ia  SMALLINT,    -- 0 a 6
+    nivel_maturidade_ia  TEXT,        -- 'ai-native' | 'ai-first' | 'ai-enabled' | 'ai-adjacent'
+
+    -- Controle
+    fonte_dados          TEXT,        -- 'crunchbase', 'site', 'neofeed', 'linkedin'
+    enriquecido_em       TIMESTAMPTZ DEFAULT now()
+);
+
+-- Índice útil para filtrar por maturidade na próxima fase
+CREATE INDEX idx_empresas_uso_ia_nivel ON empresas_uso_ia (nivel_maturidade_ia);
+CREATE INDEX idx_empresas_uso_ia_core  ON empresas_uso_ia (ia_e_core_product);

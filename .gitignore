@@ -9,6 +9,11 @@ data/dominio_empresas/
 data/gupy_vagas/
 data/institucional/
 data/imprensa/
+data/neofeed/
+data/vereditos_ia/
+
+# Análises por camadas (arquivos locais de documentação)
+por camadas/
 
 # Arquivos de teste avulsos
 teste.py
