@@ -3,13 +3,24 @@
 CREATE TABLE empresas_uso_ia (
     empresa_id           INTEGER PRIMARY KEY REFERENCES avaliacoes_ia(empresa_id),
 
-    -- Identidade
+    -- BrasilAPI
     cnpj                 CHAR(14),    -- somente dígitos, sem formatação
+    cnpj_pendente        BOOLEAN DEFAULT FALSE,  -- TRUE: busca automática falhou, preencher manualmente
     dominio              TEXT,        -- domínio oficial, herdado de empresas.dominio
     gupy_subdominio      TEXT,        -- subdomínio Gupy, herdado de empresas.gupy_subdominio
-    produto              TEXT,        -- descrição do produto/serviço principal
-    setor                TEXT,        -- ex: healthtech, fintech, edtech, logtech
-    
+    razao_social         TEXT,
+    nome_fantasia        TEXT,
+    situacao_rf          TEXT,        -- ATIVA, BAIXADA, INAPTA...
+    municipio            TEXT,
+    uf                   CHAR(2),
+    cnae_principal       TEXT,        -- código + descrição da atividade principal
+    porte                TEXT,        -- MEI, ME, EPP, DEMAIS
+    capital_social       NUMERIC,     -- capital social registrado em BRL
+    natureza_juridica    TEXT,        -- ex: 'Sociedade Empresária Limitada'
+
+    -- Produto
+    produto              TEXT,        -- descrição do produto/serviço principal (fonte: site/crunchbase)
+
     -- Mercado
     modelo_negocio       TEXT,        -- B2B, B2C, B2B2C
     clientes             TEXT[],      -- ex: {'hospitais', 'corretoras', 'PMEs'}

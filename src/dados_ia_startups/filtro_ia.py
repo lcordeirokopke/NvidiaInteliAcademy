@@ -65,6 +65,15 @@ _TENDENCIA = re.compile(
     re.IGNORECASE,
 )
 
+# Padrões que indicam a empresa é investidora, não a empresa de IA em si.
+# Apenas verbos que são inequivocamente papel financeiro — nunca descrevem uso de IA.
+# ex: "IA para dentistas atrai Triaxis" → Triaxis é investidora
+# EVITADO: investe, aporta, entra, apoia, lidera — também descrevem empresas que USAM IA
+_PAPEL_INVESTIDOR = re.compile(
+    r'\b(atrai|atraem|ancora|ancoram|financia|financiam|co-lidera|co-investem)\b',
+    re.IGNORECASE,
+)
+
 
 def _score_sinal(camada: str, encontrado: bool, evidencia: str, nome_empresa: str) -> tuple[int, str]:
     """Retorna (pontuação, razão) para um único sinal."""
@@ -84,6 +93,9 @@ def _score_sinal(camada: str, encontrado: bool, evidencia: str, nome_empresa: st
             return 0, "artigo sem menção a IA"
         if _TENDENCIA.search(ev):
             return 1, "artigo sobre tendência de mercado"
+        # Empresa aparece como investidora/parceira, não como a empresa de IA
+        if _PAPEL_INVESTIDOR.search(ev):
+            return 1, "empresa mencionada como investidora/parceira, não como usuária de IA"
         return 3, "artigo sobre IA diretamente relacionado à empresa"
 
     if camada == "gupy_vagas":

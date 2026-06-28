@@ -1,0 +1,7 @@
+empresa_id,cnpj,dominio,gupy_subdominio,produto,setor,modelo_negocio,clientes,mercado_alvo,estagio_funding,total_captado_usd,ultima_rodada_usd,ultima_rodada_data,investidores,founders,tecnologias,uso_ia_descricao,ia_e_core_product,ia_tipo,modelos_proprios,dados_proprietarios,infra_ia,ano_fundacao,produto_ia_lancado,acelerada_ia,programa_aceleracao,score_maturidade_ia,nivel_maturidade_ia,fonte_dados,enriquecido_em,razao_social,nome_fantasia,situacao_rf,municipio,uf,cnpj_pendente
+12,05969344000127,nava.com.br,,,tech,,,,,,,,,,,,,,,,,2003,,,,,,,2026-06-28 23:29:08.531126+00,Nava Software Ltda.,,ATIVA,Barueri,SP,false
+15,55148322000174,segura.ai,,,tech,,,,,,,,,,,,,,,,,2024,,,,,,,2026-06-28 23:29:08.531126+00,Segura Desenvolvimento Ltda,,ATIVA,Rio De Janeiro,RJ,false
+16,,,,,,,,,,,,,,,,,,,,,,,,,,,,,2026-06-28 23:29:00.871584+00,,,,,,true
+18,52603308000125,sinatraai.com,,,tech,,,,,,,,,,,,,,,,,2023,,,,,,,2026-06-28 23:29:08.531126+00,Sinatra Ltda.,,ATIVA,Rio De Janeiro,RJ,false
+22,,triaxis.com.br,,,,,,,,,,,,,,,,,,,,,,,,,,,2026-06-28 23:29:08.531126+00,,,,,,true
+23,02558157000162,vivo.com.br,vivo,,tech,,,,,,,,,,,,,,,,,1998,,,,,,,2026-06-28 23:29:08.531126+00,Telefonica Brasil S.A.,,ATIVA,Sao Paulo,SP,false

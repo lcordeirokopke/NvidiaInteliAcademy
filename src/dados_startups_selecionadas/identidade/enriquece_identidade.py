@@ -1,19 +1,51 @@
 from __future__ import annotations
 
+import json
 import os
 import time
+from datetime import datetime, timezone
 from pathlib import Path
 
 from dotenv import load_dotenv
 from supabase import create_client
 
-from . import brasil_api, cnae_setor
+from . import brasil_api
 from . import cnpj as cnpj_mod
 
-_RAIZ = Path(__file__).resolve().parent.parent.parent
+_PORTE_MAP = {
+    "MEI": "MEI",
+    "MICRO EMPRESA": "ME",
+    "EMPRESA DE PEQUENO PORTE": "EPP",
+    "DEMAIS": "DEMAIS",
+}
+
+_RAIZ = Path(__file__).resolve().parent.parent.parent.parent
 load_dotenv(_RAIZ / ".env")
 
 supabase = create_client(os.environ["SUPABASE_URL"], os.environ["SUPABASE_KEY"])
+
+_SAIDA = _RAIZ / "data" / "empresas_uso_ia" / "identidade.json"
+
+
+def _gravar_json(atualizacoes: list[dict]) -> None:
+    _SAIDA.parent.mkdir(parents=True, exist_ok=True)
+
+    existentes: dict[int, dict] = {}
+    if _SAIDA.exists():
+        for reg in json.loads(_SAIDA.read_text(encoding="utf-8")):
+            existentes[int(reg["empresa_id"])] = reg
+
+    for reg in atualizacoes:
+        existentes[int(reg["empresa_id"])] = {
+            **reg,
+            "atualizado_em": datetime.now(timezone.utc).isoformat(),
+        }
+
+    _SAIDA.write_text(
+        json.dumps(sorted(existentes.values(), key=lambda r: r["empresa_id"]), ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+    print(f"[json] {len(atualizacoes)} registro(s) salvo(s) em {_SAIDA}")
 
 
 def enriquecer(atualizar_banco: bool = True) -> list[dict]:
@@ -21,6 +53,7 @@ def enriquecer(atualizar_banco: bool = True) -> list[dict]:
         supabase.table("empresas_uso_ia")
         .select("empresa_id, cnpj")
         .is_("cnpj", "null")
+        .eq("cnpj_pendente", False)  # pula empresas já marcadas para preenchimento manual
         .execute()
         .data
     )
@@ -63,8 +96,13 @@ def enriquecer(atualizar_banco: bool = True) -> list[dict]:
 
         cnpj = cnpj_mod.obter(dominio, nome=nome)
         if not cnpj:
-            print(f"       [✗] CNPJ não encontrado (site + minhareceita)")
+            print(f"       [✗] CNPJ não encontrado — marcado como pendente (preencher manualmente)")
             sem_cnpj.append(nome)
+            if atualizar_banco:
+                supabase.table("empresas_uso_ia").upsert(
+                    {"empresa_id": empresa_id, "cnpj_pendente": True},
+                    on_conflict="empresa_id",
+                ).execute()
             time.sleep(0.5)
             continue
 
@@ -80,16 +118,37 @@ def enriquecer(atualizar_banco: bool = True) -> list[dict]:
         if situacao not in ("", "ATIVA"):
             print(f"       [aviso] situação cadastral: {situacao}")
 
-        atividades = brasil_api.atividades_principais(dados)
-        setor   = cnae_setor.inferir(atividades)
-        produto = brasil_api.nome_empresa(dados)
+        razao_social     = dados.get("razao_social", "").title()
+        nome_fantasia    = dados.get("nome_fantasia", "").title()
+        situacao_rf      = brasil_api.situacao(dados)
+        municipio        = dados.get("municipio", "").title()
+        uf               = dados.get("uf", "")
+        data_inicio      = dados.get("data_inicio_atividade")
 
-        print(f"       [setor] {setor}  |  [produto] {produto[:50]}")
+        cnae_codigo      = str(dados.get("cnae_fiscal", "")).strip()
+        cnae_desc        = dados.get("cnae_fiscal_descricao", "").strip()
+        cnae_principal   = f"{cnae_codigo} - {cnae_desc}" if cnae_codigo and cnae_desc else (cnae_desc or None)
+
+        porte_raw        = (dados.get("porte") or "").upper().strip()
+        porte            = _PORTE_MAP.get(porte_raw) or (porte_raw or None)
+
+        capital_social   = dados.get("capital_social")
+        natureza_juridica = dados.get("natureza_juridica") or None
+
+        print(f"       [cnae] {cnae_principal}  |  [porte] {porte}  |  [razao_social] {razao_social[:40]}")
         atualizacoes.append({
-            "empresa_id": empresa_id,
-            "cnpj":    cnpj,
-            "produto": produto,
-            "setor":   setor,
+            "empresa_id":        empresa_id,
+            "cnpj":              cnpj,
+            "razao_social":      razao_social or None,
+            "nome_fantasia":     nome_fantasia or None,
+            "situacao_rf":       situacao_rf or None,
+            "municipio":         municipio or None,
+            "uf":                uf or None,
+            "cnae_principal":    cnae_principal,
+            "porte":             porte,
+            "capital_social":    capital_social,
+            "natureza_juridica": natureza_juridica,
+            "ano_fundacao":      int(data_inicio[:4]) if data_inicio else None,
         })
 
         time.sleep(0.5)
@@ -99,11 +158,14 @@ def enriquecer(atualizar_banco: bool = True) -> list[dict]:
         f"{len(sem_cnpj)} sem CNPJ | {len(sem_dominio)} sem domínio"
     )
 
-    if atualizar_banco and atualizacoes:
-        supabase.table("empresas_uso_ia").upsert(
-            atualizacoes, on_conflict="empresa_id"
-        ).execute()
-        print(f"[banco] {len(atualizacoes)} registro(s) atualizado(s) em empresas_uso_ia")
+    if atualizacoes:
+        _gravar_json(atualizacoes)
+
+        if atualizar_banco:
+            supabase.table("empresas_uso_ia").upsert(
+                atualizacoes, on_conflict="empresa_id"
+            ).execute()
+            print(f"[banco] {len(atualizacoes)} registro(s) atualizado(s) em empresas_uso_ia")
 
     return atualizacoes
 

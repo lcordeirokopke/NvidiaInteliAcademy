@@ -73,13 +73,18 @@ def main() -> None:
     from dados_ia_startups.filtro_ia import filtrar as filtrar_ia
     filtrar_ia()
 
-    # 12. Enriquece identidade: CNPJ, produto, setor (BrasilAPI)
-    _titulo("12/13 · enriquece_identidade.py — CNPJ + BrasilAPI")
+    # 12. Cria linhas em empresas_uso_ia para aprovadas (seed)
+    _titulo("12/14 · inicia_aprofundamento.py — seed de aprovadas")
+    from dados_startups_selecionadas.inicia_aprofundamento import _seed_aprovadas
+    _seed_aprovadas()
+
+    # 13. Enriquece identidade: CNPJ, produto, setor (BrasilAPI)
+    _titulo("13/14 · enriquece_identidade.py — CNPJ + BrasilAPI")
     from dados_startups_selecionadas.identidade.enriquece_identidade import enriquecer
     enriquecer()
 
-    # 13. Calcula score e nível de maturidade de IA
-    _titulo("13/13 · define_maturidade.py — score de maturidade")
+    # 14. Calcula score e nível de maturidade de IA
+    _titulo("14/14 · define_maturidade.py — score de maturidade")
     from dados_startups_selecionadas.define_maturidade import classificar
     classificar()
 

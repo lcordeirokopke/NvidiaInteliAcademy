@@ -62,15 +62,19 @@ def main(nome: str) -> None:
     from dados_ia_startups.analisa_neofeed import classificar as classificar_neofeed
     classificar_neofeed()
 
-    _titulo("7/9 · filtro_ia.py — veredito de uso de IA")
+    _titulo("7/10 · filtro_ia.py — veredito de uso de IA")
     from dados_ia_startups.filtro_ia import filtrar as filtrar_ia
     filtrar_ia()
 
-    _titulo("8/9 · enriquece_identidade.py — CNPJ + BrasilAPI")
+    _titulo("8/10 · inicia_aprofundamento.py — seed de aprovadas")
+    from dados_startups_selecionadas.inicia_aprofundamento import _seed_aprovadas
+    _seed_aprovadas()
+
+    _titulo("9/10 · enriquece_identidade.py — CNPJ + BrasilAPI")
     from dados_startups_selecionadas.identidade.enriquece_identidade import enriquecer
     enriquecer()
 
-    _titulo("9/9 · define_maturidade.py — score de maturidade")
+    _titulo("10/10 · define_maturidade.py — score de maturidade")
     from dados_startups_selecionadas.define_maturidade import classificar
     classificar()
 
