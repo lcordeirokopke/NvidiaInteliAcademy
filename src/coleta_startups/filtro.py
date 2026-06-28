@@ -49,7 +49,8 @@ BLOCKLIST_INICIO: set[str] = {
     'Pelo', 'Pela', 'Pelos', 'Pelas',
     'Quem', 'Qual', 'Que', 'De',
     'Startup', 'Startups', 'Fintech', 'Healthtech', 'Edtech', 'Agtech',
-    'Gestoras', 'Drones', 'Retomada', 'Seleção',
+    'Gestoras', 'Drones', 'Retomada', 'Seleção', 'Boom', 'Alta', 'Crise',
+    'Corrida', 'Onda', 'Era', 'Mercado', 'Setor', 'Indústria',
 }
 
 _VERBOS = [
@@ -153,7 +154,7 @@ def filtrar(
     caminho_saida: str | None = CAMINHO_SAIDA,
     delay_entre_chamadas: float = 1.0,
 ) -> list[dict]:
-    """Lê artigos brutos gerados por coleta.py, extrai nomes de startups via
+    """Lê artigos brutos gerados por coleta_neofeed.py, extrai nomes de startups via
     Gemini API (com fallback spaCy NER + regex), aplica denylist e heurísticas,
     e retorna lista deduplicada.
 

@@ -1,6 +1,6 @@
 # Dependências do projeto
 
-## Coleta (`src/coleta_startups/coleta.py`)
+## Coleta (`src/coleta_startups/coleta_neofeed.py`)
 - **playwright** `1.60.0` — automação de browser para scraping do neofeed.com.br
 
 ## Filtragem (`src/coleta_startups/filtro.py`)

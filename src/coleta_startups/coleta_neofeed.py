@@ -77,7 +77,7 @@ def coletar(cliques_max: int = 3, caminho_saida: str = _SAIDA_PADRAO) -> list[di
 
 
 if __name__ == '__main__':
-    # uso: python coleta.py [numero_de_cliques_em_carregar_mais] [caminho_de_saida]
+    # uso: python coleta_neofeed.py [numero_de_cliques_em_carregar_mais] [caminho_de_saida]
     cliques = int(sys.argv[1]) if len(sys.argv) > 1 else 10
     saida = sys.argv[2] if len(sys.argv) > 2 else _SAIDA_PADRAO
     coletar(cliques_max=cliques, caminho_saida=saida)

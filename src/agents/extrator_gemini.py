@@ -48,6 +48,7 @@ Regras:
 - Se o sujeito for uma pessoa física (não uma empresa), retorne null.
 - Se o título descrever um tipo genérico de empresa sem citar um nome próprio específico (ex: "IA para dentistas", "fintech de crédito"), retorne null mesmo que investidores nomeados apareçam no título.
 - Se o título tratar de múltiplas startups sem uma protagonista clara (ex: "startups entram na guerra"), retorne null.
+- Se o sujeito for um fenômeno, tendência ou movimento genérico (ex: "Boom da IA", "Alta dos juros", "Crise do setor", "Corrida das fintechs"), retorne null — mesmo que apareça como sujeito gramatical da frase.
 
 Exemplos:
 Título: "Trace Finance capta mais de R$ 160 milhões em rodada Série B"
@@ -81,6 +82,9 @@ Título: "Drones versus mísseis: startups entram na guerra para resolver equaç
 Resposta: {{"startup": null}}
 
 Título: "Retomada dos IPOs deve começar a fomentar indústria de venture capital"
+Resposta: {{"startup": null}}
+
+Título: "Boom da IA cria nova safra de bilionários (pelo menos no papel)"
 Resposta: {{"startup": null}}
 
 Agora analise:

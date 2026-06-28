@@ -11,6 +11,7 @@ import requests
 from dotenv import load_dotenv
 from supabase import create_client
 
+from dados_ia_startups.fallback import gnews as _fallback_gnews
 from dados_ia_startups.fallback import newsdata_io as _fallback
 
 _RAIZ = Path(__file__).resolve().parent.parent.parent
@@ -22,20 +23,17 @@ _NEWS_API_KEY = os.environ["NEWS_API_KEY"]
 _NEWS_API_URL = "https://newsapi.org/v2/everything"
 
 _QUERIES = [
-    # técnicos específicos — sinal forte de uso real
+    # 1 — ação + produto com IA: empresa fez algo concreto ou tem produto com IA
     (
-        '"machine learning" OR "LLM" OR "deep learning" OR "modelo preditivo"'
-        ' OR "GPT" OR "inteligência artificial" OR "MLOps" OR "data science"'
+        '(implementou OR lançou OR integrou OR desenvolveu OR automatizou'
+        ' OR "com IA" OR "assistente virtual" OR chatbot OR copilot)'
+        ' AND ("inteligência artificial" OR "machine learning" OR "IA generativa"'
+        ' OR "modelo de linguagem" OR "GPT" OR "LLM")'
     ),
-    # ação concreta + IA — sinal mais forte (empresa fez algo, não só citou)
+    # 2 — aporte/investimento com foco em IA: veículos BR cobrem rodadas extensamente
     (
-        '("lançou" OR "implementou" OR "desenvolveu" OR "automatizou" OR "parceria")'
-        ' AND ("IA" OR "AI" OR "machine learning" OR "dados")'
-    ),
-    # cobertura internacional em inglês (TechCrunch, Bloomberg, Crunchbase)
-    (
-        '"artificial intelligence" OR "machine learning" OR "AI" OR "LLM"'
-        ' OR "data science" OR "predictive"'
+        '("aporte" OR "rodada" OR "captou" OR "investimento" OR "Series A" OR "seed")'
+        ' AND ("inteligência artificial" OR "IA" OR "machine learning")'
     ),
 ]
 
@@ -46,14 +44,11 @@ _DOMINIOS_BR = (
     "folha.uol.com.br,estadao.com.br,infomoney.com.br,"
     "tecmundo.com.br,olhardigital.com.br,canarinho.vc,"
     "forbes.com.br,pegn.globo.com,revistapegn.globo.com,"
-    "epocanegocios.globo.com,braziljournal.com,siliconvalleybrasil.com.br"
+    "epocanegocios.globo.com,braziljournal.com,siliconvalleybrasil.com.br,"
+    "canaltech.com.br,computerworld.com.br,startupi.com.br"
 )
 
-_DOMINIOS_EN = (
-    "techcrunch.com,crunchbase.com,bloomberg.com,reuters.com,"
-    "ft.com,wsj.com,businessinsider.com,wired.com,"
-    "latamlist.com,contxto.com,district0x.io"
-)
+_DOMINIOS_BR_SET = set(_DOMINIOS_BR.replace("\n", "").split(","))
 
 _DOMINIOS_BLOQUEADOS = {
     "nature.com", "arxiv.org", "pubmed.ncbi.nlm.nih.gov", "sciencedirect.com",
@@ -63,40 +58,53 @@ _DOMINIOS_BLOQUEADOS = {
 
 _SAIDA = _RAIZ / "data" / "imprensa"
 
+# Flag de sessão: quando True, pula News API para todas as empresas restantes
+# para não desperdiçar tentativas após cota diária esgotada (429)
+_news_api_esgotada = False
+
 
 def _buscar(nome: str, termos: str, lang: str = "pt", debug: bool = False) -> list[dict]:
-    params = {
-        "q": f'"{nome}" AND ({termos})',
-        "language": lang,
-        "sortBy": "relevancy",
-        "pageSize": 10,
-        "apiKey": _NEWS_API_KEY,
-    }
-    if lang == "pt":
-        params["domains"] = _DOMINIOS_BR
-    else:
-        params["domains"] = _DOMINIOS_EN
+    global _news_api_esgotada
 
     if debug:
-        q = params["q"]
+        q = f'"{nome}" AND ({termos})'
         print(f"      [debug] query [{lang}]: {q}")
 
     usar_fallback = False
-    try:
-        r = requests.get(_NEWS_API_URL, params=params, timeout=10)
-        r.raise_for_status()
-        data = r.json()
-        if data.get("status") != "ok":
-            print(f"      [erro] News API: {data.get('message')} — tentando fallback")
-            usar_fallback = True
-        else:
-            return data.get("articles", [])
-    except requests.RequestException as e:
-        print(f"      [erro] News API: {e} — tentando fallback")
+    if _news_api_esgotada:
         usar_fallback = True
+    else:
+        params = {
+            "q": f'"{nome}" AND ({termos})',
+            "language": lang,
+            "sortBy": "relevancy",
+            "pageSize": 10,
+            "apiKey": _NEWS_API_KEY,
+            "domains": _DOMINIOS_BR,
+        }
+        try:
+            r = requests.get(_NEWS_API_URL, params=params, timeout=10)
+            if r.status_code == 429:
+                print("      [erro] News API: cota diária esgotada — usando apenas fallbacks pelo restante da execução")
+                _news_api_esgotada = True
+                usar_fallback = True
+            else:
+                r.raise_for_status()
+                data = r.json()
+                if data.get("status") != "ok":
+                    print(f"      [erro] News API: {data.get('message')} — tentando fallback")
+                    usar_fallback = True
+                else:
+                    return data.get("articles", [])
+        except requests.RequestException as e:
+            print(f"      [erro] News API: {e} — tentando fallback")
+            usar_fallback = True
 
     if usar_fallback:
-        return _fallback.buscar(nome, termos, lang=lang, debug=debug)
+        resultado = _fallback.buscar(nome, termos, lang=lang, debug=debug)
+        if resultado:
+            return resultado
+        return _fallback_gnews.buscar(nome, debug=debug)
 
     return []
 
@@ -107,13 +115,21 @@ def _dominio_bloqueado(url: str) -> bool:
     return any(host == d or host.endswith("." + d) for d in _DOMINIOS_BLOQUEADOS)
 
 
+def _dominio_brasileiro(url: str) -> bool:
+    from urllib.parse import urlparse
+    host = urlparse(url).netloc.lower().lstrip("www.")
+    return host in _DOMINIOS_BR_SET
+
+
 def _filtrar(artigos: list[dict], nome: str) -> list[dict]:
-    """Mantém só artigos onde o nome exato aparece no TÍTULO e o domínio não é bloqueado."""
+    """Mantém só artigos onde o nome exato aparece no TÍTULO e o domínio é brasileiro."""
     padrao = re.compile(r'\b' + re.escape(nome.lower()) + r'\b')
     relevantes = []
     for a in artigos:
         url = a.get("url") or ""
         if _dominio_bloqueado(url):
+            continue
+        if not _dominio_brasileiro(url):
             continue
         titulo = (a.get("title") or "").lower()
         if padrao.search(titulo):
@@ -167,11 +183,9 @@ def pesquisar(debug: bool = False) -> None:
             print(f"    [skip] já checado anteriormente")
             continue
 
-        # query 1 e 2 em português, query 3 em inglês
-        langs = ["pt", "pt", "en"]
         vistos: set[str] = set()
         todos_artigos: list[dict] = []
-        for termos, lang in zip(_QUERIES, langs):
+        for termos, lang in zip(_QUERIES, ["pt", "pt"]):
             for artigo in _buscar(nome, termos, lang=lang, debug=debug):
                 url = artigo.get("url", "")
                 if url and url not in vistos:

@@ -17,7 +17,7 @@ NvidiaInteliAcademy/
 │
 ├── src/
 │   ├── coleta_startups/
-│   │   ├── coleta.py                           # scraping do Neofeed via Playwright
+│   │   ├── coleta_neofeed.py                           # scraping do Neofeed via Playwright
 │   │   └── filtro.py                           # extração de nomes via Gemini + spaCy + regex
 │   ├── interacoes_banco/
 │   │   └── upload_nomes_empresas.py            # envia nomes_empresas.json para o Supabase
@@ -39,7 +39,7 @@ NvidiaInteliAcademy/
 ## Pipeline de dados
 
 ```
-1. coleta.py
+1. coleta_neofeed.py
    → abre o Neofeed via Playwright
    → clica em "Carregar mais" até trazer todos os artigos
    → salva título, url e tags em:
@@ -72,7 +72,7 @@ python -m spacy download pt_core_news_sm
 playwright install chromium
 
 # 2. Coletar artigos brutos
-python src/coleta_startups/coleta.py
+python src/coleta_startups/coleta_neofeed.py
 
 # 3. Extrair nomes de startups
 python src/coleta_startups/filtro.py

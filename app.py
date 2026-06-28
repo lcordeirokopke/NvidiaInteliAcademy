@@ -19,8 +19,8 @@ def main() -> None:
     inicio = time.time()
 
     # 1. Coleta artigos brutos do Neofeed
-    _titulo("1/12 · coleta.py — raspagem Neofeed")
-    from coleta_startups.coleta import coletar
+    _titulo("1/12 · coleta_neofeed.py — raspagem Neofeed")
+    from coleta_startups.coleta_neofeed import coletar
     coletar()
 
     # 2. Filtra e extrai nomes de startups
@@ -53,12 +53,7 @@ def main() -> None:
     from dados_ia_startups.descobre_gupy_vagas import pesquisar
     pesquisar()
 
-    # 8. Busca perfil de cada empresa no Distrito
-    _titulo("8/12 · descobre_distrito.py — perfis no Distrito")
-    from dados_startups.descobre_distrito import descobrir as descobrir_distrito
-    descobrir_distrito()
-
-    # 9. Analisa site institucional de cada empresa
+    # 8. Analisa site institucional de cada empresa
     _titulo("9/12 · descobre_institucional.py — análise site institucional")
     from dados_ia_startups.descobre_institucional import pesquisar as pesquisar_institucional
     pesquisar_institucional()
