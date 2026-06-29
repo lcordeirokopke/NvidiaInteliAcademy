@@ -22,13 +22,14 @@ if _ENV_PATH.exists():
 _MODEL = "gemini-flash-lite-latest"
 _MAX_RETRIES = 3
 _RETRY_BASE_DELAY = 5.0
+_MERCADOS_VALIDOS = {"Brasil", "LATAM", "Global"}
 
 
 def _get_client() -> genai.Client:
     if not hasattr(_get_client, "_instance"):
-        api_key = os.environ.get("GEMINI_API_KEY2")
+        api_key = os.environ.get("GEMINI_API_KEY")
         if not api_key:
-            raise EnvironmentError("GEMINI_API_KEY2 não configurada no .env")
+            raise EnvironmentError("GEMINI_API_KEY não configurada no .env")
         http = httpx.Client(verify=False)
         _get_client._instance = genai.Client(
             api_key=api_key,
@@ -55,37 +56,54 @@ def _chamar_gemini(prompt: str) -> str | None:
                 logger.warning("Rate limit (429). Tentativa %d/%d — aguardando %.0fs.", tentativa, _MAX_RETRIES, delay)
                 time.sleep(delay)
                 continue
-            logger.error("Erro na API Gemini/produto (tentativa %d/%d): %s", tentativa, _MAX_RETRIES, exc)
+            logger.error("Erro na API Gemini/mercado_alvo (tentativa %d/%d): %s", tentativa, _MAX_RETRIES, exc)
             return None
     return None
 
 
-def resumir_produto(textos: list[str], nome_empresa: str) -> str | None:
-    """Resume textos coletados do site em 1-2 frases descrevendo o produto principal."""
-    conteudo = "\n\n".join(f"[Fonte {i+1}]\n{t}" for i, t in enumerate(textos) if t)
-    if not conteudo.strip():
-        return None
+def _parse_mercado(texto: str) -> str | None:
+    upper = texto.strip().upper()
+    if "BRASIL" in upper:
+        return "Brasil"
+    if "LATAM" in upper or "LATINA" in upper or "LATIN" in upper:
+        return "LATAM"
+    if "GLOBAL" in upper or "MUNDIAL" in upper or "WORLDWIDE" in upper:
+        return "Global"
+    return None
+
+
+def inferir_mercado_alvo(
+    nome_empresa: str,
+    tld: str,
+    produto: str | None = None,
+    uso_ia: str | None = None,
+    idioma_site: str | None = None,
+) -> str | None:
+    """Infere o mercado-alvo geográfico da empresa (Brasil / LATAM / Global).
+
+    Recebe sinais já coletados: TLD do domínio, produto, uso_ia_descricao
+    e, opcionalmente, o idioma detectado na homepage.
+    """
+    partes: list[str] = [f"TLD do domínio: {tld}"]
+    if produto:
+        partes.append(f"Produto/serviço: {produto}")
+    if uso_ia:
+        partes.append(f"Como usa IA: {uso_ia}")
+    if idioma_site:
+        partes.append(f"Idioma do site: {idioma_site}")
 
     prompt = (
-        f"Com base nos trechos abaixo do site da empresa '{nome_empresa}', "
-        "escreva UMA frase (máximo 2) descrevendo o produto ou serviço principal. "
-        "Seja objetivo e use linguagem de negócios. "
-        "Não reproduza slogans, chamadas de marketing ou frases genéricas — descreva concretamente o que o produto faz. "
-        "Responda apenas a frase, sem explicações.\n\n"
-        + conteudo
+        f"Com base nas informações abaixo sobre a empresa '{nome_empresa}', "
+        "determine o mercado-alvo geográfico principal. "
+        "Responda com UMA das opções: Brasil, LATAM ou Global. Sem explicações.\n\n"
+        "Critérios:\n"
+        "- Brasil: atende principalmente o mercado brasileiro\n"
+        "- LATAM: atende América Latina (além do Brasil)\n"
+        "- Global: atende mercados internacionais além da América Latina\n\n"
+        + "\n".join(partes)
     )
-    return _chamar_gemini(prompt)
 
-
-def inferir_produto(nome_empresa: str, dominio: str) -> str | None:
-    """Infere o produto da empresa a partir do conhecimento do modelo, sem conteúdo do site."""
-    prompt = (
-        f"Qual é o produto ou serviço principal da empresa '{nome_empresa}' "
-        f"(domínio: {dominio})? "
-        "Se você conhecer essa empresa, descreva em UMA frase objetiva o que ela oferece. "
-        "Se não tiver certeza, responda exatamente: NAO_ENCONTRADO"
-    )
     resultado = _chamar_gemini(prompt)
-    if not resultado or resultado.upper() == "NAO_ENCONTRADO":
+    if not resultado:
         return None
-    return resultado
+    return _parse_mercado(resultado)

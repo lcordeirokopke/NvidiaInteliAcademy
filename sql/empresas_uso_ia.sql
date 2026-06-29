@@ -31,23 +31,42 @@ CREATE TABLE empresas_uso_ia (
 
     -- Maturidade AI-native: posicionamento
     ia_e_core_product    BOOLEAN,     -- TRUE: produto principal É a IA; FALSE: IA é feature
-    ia_tipo              TEXT[],      -- {'generativa','preditiva','computer vision','NLP','automacao'}
+    ia_tipo              TEXT         -- conjunto fechado: 'NLP / LLM' | 'Visão Computacional' |
+                         CHECK (ia_tipo IS NULL OR ia_tipo IN (
+                             'NLP / LLM',
+                             'Visão Computacional',
+                             'Análise Preditiva',
+                             'IA Generativa',
+                             'Automação Inteligente',
+                             'Dados e Analytics'
+                         )),
 
     -- Maturidade AI-native: tempo e execução
     ano_fundacao         SMALLINT,    -- fundada após 2020 = provável AI-native por design
     produto_ia_lancado   BOOLEAN,     -- produto de IA já em produção (vs. "estamos construindo")
 
     -- Maturidade AI-native: validação externa
-    acelerada_ia         BOOLEAN,     -- passou por NVIDIA Inception, YC, Microsoft for Startups, etc.
-    programa_aceleracao  TEXT[],      -- ex: {'NVIDIA Inception', 'Y Combinator', 'Google for Startups'}
+    programa_aceleracao  TEXT,        -- programas detectados, separados por vírgula; ex: 'NVIDIA Inception, Google for Startups'
 
     -- Classificação final (calculada pelo programa a partir dos campos acima)
-    score_maturidade_ia  SMALLINT,    -- 0 a 4
+    score_maturidade_ia  SMALLINT,    -- 0 a 10
     nivel_maturidade_ia  TEXT,        -- 'ai-native' | 'ai-first' | 'ai-enabled' | 'ai-adjacent'
 
     -- Controle
-    fonte_dados          TEXT,        -- 'crunchbase', 'site', 'neofeed', 'linkedin'
-    enriquecido_em       TIMESTAMPTZ DEFAULT now()
+    enriquecido_em       TIMESTAMPTZ DEFAULT now(),
+
+    -- Status de coleta (gerenciado pelo pipeline e revisão humana)
+    -- 'informação pendente'   → padrão; algum campo obrigatório ainda não foi preenchido
+    -- 'completo'              → todos os campos obrigatórios preenchidos (auto, pelo pipeline)
+    -- 'empresa deve ser ignorada'                    → definido pelo humano; empresa não segue para a próxima fase
+    -- 'seguir para próxima fase apesar de incompleto' → override humano; segue mesmo com dados faltando
+    situacao_coleta      TEXT NOT NULL DEFAULT 'informação pendente'
+        CHECK (situacao_coleta IN (
+            'informação pendente',
+            'completo',
+            'empresa deve ser ignorada',
+            'seguir para próxima fase apesar de incompleto'
+        ))
 );
 
 -- Índice útil para filtrar por maturidade na próxima fase

@@ -70,7 +70,7 @@ _KW_IA_CORE = re.compile(
 
 def _buscar_pagina(url: str, timeout: int = 8) -> BeautifulSoup | None:
     try:
-        r = _SESSION.get(url, timeout=timeout, allow_redirects=True)
+        r = _SESSION.get(url, timeout=timeout, allow_redirects=True, verify=False)
         if r.status_code != 200 or "text/html" not in r.headers.get("Content-Type", ""):
             return None
         return BeautifulSoup(r.text, "html.parser")

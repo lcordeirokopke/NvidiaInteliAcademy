@@ -11,6 +11,9 @@ from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from supabase import create_client
 
+_PLAYWRIGHT_MIN_CHARS = 200
+_CLOUDFLARE_MARKERS = ["ray id:", "performing security verification", "just a moment", "cloudflare"]
+
 _RAIZ = Path(__file__).resolve().parent.parent.parent
 load_dotenv(_RAIZ / ".env")
 
@@ -160,7 +163,21 @@ def _trecho(texto: str, termo: str, janela: int = 200) -> str:
     return "..." + texto[inicio:fim].strip() + "..."
 
 
-def _buscar_pagina(url: str, debug: bool = False, tentativas: int = 3) -> str | None:
+def _buscar_pagina_playwright(url: str, pw_page, debug: bool = False) -> str | None:
+    try:
+        pw_page.goto(url, timeout=20000, wait_until="domcontentloaded")
+        time.sleep(1.5)
+        html = pw_page.content()
+        if debug:
+            print(f"      [playwright] {url} → {len(html)} chars")
+        return html
+    except Exception as e:
+        if debug:
+            print(f"      [playwright] erro em {url}: {e}")
+        return None
+
+
+def _buscar_pagina_requests(url: str, debug: bool = False, tentativas: int = 3) -> str | None:
     for tentativa in range(1, tentativas + 1):
         try:
             r = _SESSION.get(url, timeout=12, allow_redirects=True)
@@ -176,7 +193,6 @@ def _buscar_pagina(url: str, debug: bool = False, tentativas: int = 3) -> str | 
             if tentativa < tentativas:
                 time.sleep(2 * tentativa)
 
-    # Fallback: tenta http:// se https:// falhou
     if url.startswith("https://"):
         url_http = url.replace("https://", "http://", 1)
         if debug:
@@ -190,6 +206,22 @@ def _buscar_pagina(url: str, debug: bool = False, tentativas: int = 3) -> str | 
             pass
 
     return None
+
+
+def _buscar_pagina(url: str, debug: bool = False, tentativas: int = 3, pw_page=None) -> str | None:
+    html = _buscar_pagina_requests(url, debug=debug, tentativas=tentativas)
+
+    if html is None:
+        return None
+
+    if pw_page is not None and len(_extrair_texto(html)) < _PLAYWRIGHT_MIN_CHARS:
+        if debug:
+            print(f"      [debug] texto curto → tentando Playwright para {url}")
+        html_pw = _buscar_pagina_playwright(url, pw_page, debug=debug)
+        if html_pw:
+            return html_pw
+
+    return html
 
 
 def _pontuar_pagina(texto: str, debug: bool = False) -> tuple[int, str, str, str]:
@@ -233,18 +265,26 @@ def _pontuar_pagina(texto: str, debug: bool = False) -> tuple[int, str, str, str
     return pontuacao, melhor_termo, melhor_trecho, melhor_tipo
 
 
-def _analisar(dominio: str, debug: bool = False, max_falhas_consecutivas: int = 10) -> dict | None:
-    """
-    Acumula pontuação em todas as páginas. Retorna resultado se threshold atingido.
-    Abandona o domínio após max_falhas_consecutivas paths sem resposta seguidos.
-    """
+def _eh_cloudflare(texto: str) -> bool:
+    texto_lower = texto.lower()
+    return sum(1 for m in _CLOUDFLARE_MARKERS if m in texto_lower) >= 2
+
+
+def _eh_js_heavy(dominio: str, debug: bool = False) -> bool:
+    html = _buscar_pagina_requests(f"https://{dominio}/", debug=debug, tentativas=1)
+    if not html:
+        return False
+    return len(_extrair_texto(html)) < _PLAYWRIGHT_MIN_CHARS
+
+
+def _analisar_loop(dominio: str, debug: bool, max_falhas_consecutivas: int, pw_page) -> dict | None:
     pontuacao_total = 0
-    melhor: tuple[str, str, str, str] = ("", "", "", "")  # url, termo, trecho, tipo
+    melhor: tuple[str, str, str, str] = ("", "", "", "")
     falhas_consecutivas = 0
 
     for path in _PATHS:
         url = f"https://{dominio}{path}"
-        html = _buscar_pagina(url, debug=debug)
+        html = _buscar_pagina(url, debug=debug, pw_page=pw_page)
         if not html:
             falhas_consecutivas += 1
             if falhas_consecutivas >= max_falhas_consecutivas:
@@ -255,7 +295,6 @@ def _analisar(dominio: str, debug: bool = False, max_falhas_consecutivas: int = 
             continue
 
         falhas_consecutivas = 0
-
         texto = _extrair_texto(html)
         pontos, termo, trecho, tipo = _pontuar_pagina(texto, debug=debug)
 
@@ -266,7 +305,6 @@ def _analisar(dominio: str, debug: bool = False, max_falhas_consecutivas: int = 
         if termo and not melhor[1]:
             melhor = (url, termo, trecho, tipo)
 
-        # Se já passou do threshold, não precisa continuar raspando
         if pontuacao_total >= _THRESHOLD:
             break
 
@@ -288,18 +326,55 @@ def _analisar(dominio: str, debug: bool = False, max_falhas_consecutivas: int = 
     return None
 
 
+_CLOUDFLARE = {"cloudflare": True}
+
+
+def _analisar(dominio: str, debug: bool = False, max_falhas_consecutivas: int = 10) -> dict | None:
+    html_home = _buscar_pagina_requests(f"https://{dominio}/", debug=debug, tentativas=1)
+    texto_home = _extrair_texto(html_home) if html_home else ""
+
+    if _eh_cloudflare(texto_home):
+        if debug:
+            print(f"      [cloudflare] {dominio} bloqueado pelo Cloudflare → revisão manual")
+        return _CLOUDFLARE
+
+    if len(texto_home) >= _PLAYWRIGHT_MIN_CHARS:
+        return _analisar_loop(dominio, debug, max_falhas_consecutivas, pw_page=None)
+
+    if debug:
+        print(f"      [playwright] site JS detectado, abrindo browser para {dominio}")
+    from playwright.sync_api import sync_playwright
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        pw_page = browser.new_page()
+
+        # Verifica Cloudflare na homepage renderizada
+        html_pw = _buscar_pagina_playwright(f"https://{dominio}/", pw_page, debug=debug)
+        if html_pw and _eh_cloudflare(_extrair_texto(html_pw)):
+            browser.close()
+            if debug:
+                print(f"      [cloudflare] {dominio} bloqueado pelo Cloudflare → revisão manual")
+            return _CLOUDFLARE
+
+        resultado = _analisar_loop(dominio, debug, max_falhas_consecutivas, pw_page=pw_page)
+        browser.close()
+    return resultado
+
+
 _SAIDA = _RAIZ / "data" / "institucional"
 
 
 def pesquisar(debug: bool = False, nome: str | None = None) -> None:
-    query = supabase.table("empresas").select("id, nome, dominio").not_.is_("dominio", "null")
+    query = supabase.table("empresas").select("id, nome, dominio, revisao_manual").not_.is_("dominio", "null")
     if nome:
         query = query.eq("nome", nome)
     rows = query.execute().data
     empresas = [r for r in rows if r.get("dominio")]
     print(f"[info] {len(empresas)} empresa(s) com dominio no Supabase\n")
 
-    def _ja_checado(empresa_id: int) -> bool:
+    def _ja_checado(empresa_id: int, revisao_manual: bool) -> bool:
+        if revisao_manual:
+            return True
         res = supabase.table("sinais_ia").select("id").eq("empresa_id", empresa_id).eq("camada", "institucional").limit(1).execute()
         return len(res.data) > 0
 
@@ -312,11 +387,18 @@ def pesquisar(debug: bool = False, nome: str | None = None) -> None:
 
         print(f"[→] {nome}  ({dominio})")
 
-        if _ja_checado(empresa_id):
-            print(f"    [skip] já checado anteriormente")
+        revisao_manual = empresa.get("revisao_manual", False)
+        if _ja_checado(empresa_id, revisao_manual):
+            motivo = "revisão manual pendente" if revisao_manual else "já checado anteriormente"
+            print(f"    [skip] {motivo}")
             continue
 
         resultado = _analisar(dominio, debug=debug)
+
+        if resultado is _CLOUDFLARE:
+            supabase.table("empresas").update({"revisao_manual": True}).eq("id", empresa_id).execute()
+            print(f"    [⚠] Cloudflare detectado — marcado para revisão manual")
+            continue
 
         if resultado:
             supabase.table("sinais_ia").insert({

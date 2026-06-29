@@ -58,5 +58,20 @@
     "natureza_juridica": "Sociedade Anônima Fechada",
     "ano_fundacao": 2019,
     "atualizado_em": "2026-06-29T00:29:42.108295+00:00"
+  },
+  {
+    "empresa_id": 32,
+    "cnpj": "04413729000140",
+    "razao_social": "Curupira S.A",
+    "nome_fantasia": "Blip",
+    "situacao_rf": "ATIVA",
+    "municipio": "Belo Horizonte",
+    "uf": "MG",
+    "cnae_principal": "6202300 - Desenvolvimento e licenciamento de programas de computador customizáveis",
+    "porte": "DEMAIS",
+    "capital_social": 642561800,
+    "natureza_juridica": "Sociedade Anônima Fechada",
+    "ano_fundacao": 2001,
+    "atualizado_em": "2026-06-29T13:45:34.421200+00:00"
   }
 ]

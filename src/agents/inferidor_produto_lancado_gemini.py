@@ -19,7 +19,7 @@ if _ENV_PATH.exists():
             _k, _, _v = _line.partition("=")
             os.environ.setdefault(_k.strip(), _v.strip())
 
-_MODEL = "gemini-flash-lite-latest"
+_MODEL = "gemini-1.5-flash-8b"
 _MAX_RETRIES = 3
 _RETRY_BASE_DELAY = 5.0
 
@@ -55,37 +55,50 @@ def _chamar_gemini(prompt: str) -> str | None:
                 logger.warning("Rate limit (429). Tentativa %d/%d — aguardando %.0fs.", tentativa, _MAX_RETRIES, delay)
                 time.sleep(delay)
                 continue
-            logger.error("Erro na API Gemini/produto (tentativa %d/%d): %s", tentativa, _MAX_RETRIES, exc)
+            logger.error("Erro na API Gemini/produto_lancado (tentativa %d/%d): %s", tentativa, _MAX_RETRIES, exc)
             return None
     return None
 
 
-def resumir_produto(textos: list[str], nome_empresa: str) -> str | None:
-    """Resume textos coletados do site em 1-2 frases descrevendo o produto principal."""
-    conteudo = "\n\n".join(f"[Fonte {i+1}]\n{t}" for i, t in enumerate(textos) if t)
-    if not conteudo.strip():
+def inferir_produto_lancado(
+    nome_empresa: str,
+    produto: str | None,
+    uso_ia: str | None,
+    modelo_negocio: str | None,
+    ano_fundacao: int | None,
+) -> bool | None:
+    """Infere se a empresa já tem produto de IA lançado ao mercado.
+
+    Fallback para quando o scraping de rotas não encontra evidência.
+    Retorna True, False ou None se incerto.
+    """
+    partes: list[str] = []
+    if produto:
+        partes.append(f"Produto/serviço: {produto}")
+    if uso_ia:
+        partes.append(f"Como usa IA: {uso_ia}")
+    if modelo_negocio:
+        partes.append(f"Modelo de negócio: {modelo_negocio}")
+    if ano_fundacao:
+        partes.append(f"Ano de fundação: {ano_fundacao}")
+
+    if not partes:
         return None
 
     prompt = (
-        f"Com base nos trechos abaixo do site da empresa '{nome_empresa}', "
-        "escreva UMA frase (máximo 2) descrevendo o produto ou serviço principal. "
-        "Seja objetivo e use linguagem de negócios. "
-        "Não reproduza slogans, chamadas de marketing ou frases genéricas — descreva concretamente o que o produto faz. "
-        "Responda apenas a frase, sem explicações.\n\n"
-        + conteudo
+        f"Com base nas informações abaixo sobre a empresa '{nome_empresa}', "
+        "responda: esta empresa já lançou um produto ou serviço de IA acessível a clientes? "
+        "Responda apenas SIM, NAO ou INCERTO. Sem explicações.\n\n"
+        + "\n".join(partes)
     )
-    return _chamar_gemini(prompt)
 
-
-def inferir_produto(nome_empresa: str, dominio: str) -> str | None:
-    """Infere o produto da empresa a partir do conhecimento do modelo, sem conteúdo do site."""
-    prompt = (
-        f"Qual é o produto ou serviço principal da empresa '{nome_empresa}' "
-        f"(domínio: {dominio})? "
-        "Se você conhecer essa empresa, descreva em UMA frase objetiva o que ela oferece. "
-        "Se não tiver certeza, responda exatamente: NAO_ENCONTRADO"
-    )
     resultado = _chamar_gemini(prompt)
-    if not resultado or resultado.upper() == "NAO_ENCONTRADO":
+    if not resultado:
         return None
-    return resultado
+
+    upper = resultado.strip().upper()
+    if "SIM" in upper:
+        return True
+    if "NAO" in upper or "NÃO" in upper:
+        return False
+    return None

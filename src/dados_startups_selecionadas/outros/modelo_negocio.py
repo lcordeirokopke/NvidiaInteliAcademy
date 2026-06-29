@@ -30,12 +30,16 @@ from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urljoin
 
+import urllib3
+
 import requests
 from bs4 import BeautifulSoup, Tag
 from dotenv import load_dotenv
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 from supabase import create_client
 
-from src.agents.extrator_nome_empresas_gemini_modelo_negocio import classificar_modelo_negocio
+from src.agents.extractor_gemini_modelo_negocios import classificar_modelo_negocio
 
 _RAIZ = Path(__file__).resolve().parent.parent.parent.parent
 load_dotenv(_RAIZ / ".env")
@@ -99,7 +103,7 @@ _PRECO_B2B = re.compile(
 
 def _buscar_pagina(url: str, timeout: int = 8) -> BeautifulSoup | None:
     try:
-        r = _SESSION.get(url, timeout=timeout, allow_redirects=True)
+        r = _SESSION.get(url, timeout=timeout, allow_redirects=True, verify=False)
         if r.status_code != 200 or "text/html" not in r.headers.get("Content-Type", ""):
             return None
         return BeautifulSoup(r.text, "html.parser")

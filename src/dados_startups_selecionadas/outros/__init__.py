@@ -1,17 +1,23 @@
 from . import (
+    acelerada_ia,
     define_setor,
-    descobre_ia_core_product,
-    descobre_modelo_negocio,
-    descobre_produto,
-    descobre_produto_ia_lancado,
-    descobre_uso_ia,
+    ia_core_product,
+    ia_tipo,
+    mercado_alvo,
+    modelo_negocio,
+    produto,
+    produto_ia_lancado,
+    uso_ia,
 )
 
 __all__ = [
+    "acelerada_ia",
     "define_setor",
-    "descobre_ia_core_product",
-    "descobre_modelo_negocio",
-    "descobre_produto",
-    "descobre_produto_ia_lancado",
-    "descobre_uso_ia",
+    "ia_core_product",
+    "ia_tipo",
+    "mercado_alvo",
+    "modelo_negocio",
+    "produto",
+    "produto_ia_lancado",
+    "uso_ia",
 ]
