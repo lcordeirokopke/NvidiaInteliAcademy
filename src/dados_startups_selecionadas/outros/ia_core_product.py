@@ -40,7 +40,7 @@ _SESSION.headers["User-Agent"] = (
     "Chrome/124.0 Safari/537.36"
 )
 
-_SAIDA = _RAIZ / "data" / "empresas_uso_ia" / "ia_core_product.json"
+_SAIDA = _RAIZ / "data" / "jsons" / "empresas_uso_ia" / "ia_core_product.json"
 
 _SLUGS = [
     "",

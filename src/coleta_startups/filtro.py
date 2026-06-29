@@ -17,8 +17,8 @@ except ImportError:
 # Caminhos absolutos resolvidos a partir do próprio script, portanto funcionam
 # independentemente do diretório de onde o script é executado.
 _RAIZ = Path(__file__).resolve().parent.parent.parent
-CAMINHO_BRUTOS = str(_RAIZ / 'data/artigos_nomes_empresas/artigos_brutos.json')
-CAMINHO_SAIDA  = str(_RAIZ / 'data/nomes_empresas/nomes_empresas.json')
+CAMINHO_BRUTOS = str(_RAIZ / 'data/jsons/artigos_nomes_empresas/artigos_brutos.json')
+CAMINHO_SAIDA  = str(_RAIZ / 'data/jsons/nomes_empresas/nomes_empresas.json')
 
 MODELO_SPACY = 'pt_core_news_sm'
 
@@ -158,8 +158,8 @@ def filtrar(
     Gemini API (com fallback spaCy NER + regex), aplica denylist e heurísticas,
     e retorna lista deduplicada.
 
-    Caminho padrão de entrada : data/artigos_nomes_empresas/artigos_brutos.json
-    Caminho padrão de saída   : data/nomes_empresas/nomes_empresas.json
+    Caminho padrão de entrada : data/jsons/artigos_nomes_empresas/artigos_brutos.json
+    Caminho padrão de saída   : data/jsons/nomes_empresas/nomes_empresas.json
     delay_entre_chamadas      : pausa em segundos entre chamadas à Gemini API
                                 (reduz risco de 429 no tier gratuito)
     """

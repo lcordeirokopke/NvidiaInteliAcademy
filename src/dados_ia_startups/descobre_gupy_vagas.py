@@ -49,7 +49,7 @@ _TERMOS_IA = [
     " ia ", " ai ", " ml ", " bi ",
 ]
 
-_SAIDA = _RAIZ / "data" / "gupy_vagas"
+_SAIDA = _RAIZ / "data" / "jsons" / "gupy_vagas"
 
 
 def _contem_termo_ia(texto: str) -> str | None:

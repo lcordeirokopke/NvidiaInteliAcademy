@@ -14,7 +14,7 @@ load_dotenv(_RAIZ / ".env")
 
 supabase = create_client(os.environ["SUPABASE_URL"], os.environ["SUPABASE_KEY"])
 
-_SAIDA = _RAIZ / "data" / "neofeed"
+_SAIDA = _RAIZ / "data" / "jsons" / "neofeed"
 
 _PALAVRAS_IA = re.compile(
     r'\b('

@@ -11,7 +11,7 @@ load_dotenv(_RAIZ / ".env")
 
 def upload() -> int:
     supabase = create_client(os.environ["SUPABASE_URL"], os.environ["SUPABASE_KEY"])
-    json_path = _RAIZ / "data" / "nomes_empresas" / "nomes_empresas.json"
+    json_path = _RAIZ / "data" / "jsons" / "nomes_empresas" / "nomes_empresas.json"
     with open(json_path, encoding="utf-8") as f:
         dados = json.load(f)
     nomes_unicos = list({item["startup"] for item in dados if item.get("startup")})

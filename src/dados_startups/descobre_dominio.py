@@ -149,7 +149,7 @@ def _normalizar_dominio(url_final: str) -> str:
     return host
 
 
-_SAIDA = _RAIZ / "data" / "dominio_empresas"
+_SAIDA = _RAIZ / "data" / "jsons" / "dominio_empresas"
 _APENAS_JSON = False
 
 

@@ -7,7 +7,7 @@ from playwright.sync_api import sync_playwright
 URL_BASE = 'https://neofeed.com.br/startups/'
 
 _RAIZ = Path(__file__).resolve().parent.parent.parent
-_SAIDA_PADRAO = str(_RAIZ / 'data/artigos_nomes_empresas/artigos_brutos.json')
+_SAIDA_PADRAO = str(_RAIZ / 'data/jsons/artigos_nomes_empresas/artigos_brutos.json')
 
 
 def contar_artigos(page) -> int:

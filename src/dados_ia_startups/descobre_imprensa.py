@@ -56,7 +56,7 @@ _DOMINIOS_BLOQUEADOS = {
     "highsnobiety.com", "naturalnews.com",
 }
 
-_SAIDA = _RAIZ / "data" / "imprensa"
+_SAIDA = _RAIZ / "data" / "jsons" / "imprensa"
 
 # Flag de sessão: quando True, pula News API para todas as empresas restantes
 # para não desperdiçar tentativas após cota diária esgotada (429)

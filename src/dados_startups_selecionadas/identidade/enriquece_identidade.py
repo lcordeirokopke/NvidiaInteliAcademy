@@ -24,7 +24,7 @@ load_dotenv(_RAIZ / ".env")
 
 supabase = create_client(os.environ["SUPABASE_URL"], os.environ["SUPABASE_KEY"])
 
-_SAIDA = _RAIZ / "data" / "empresas_uso_ia" / "identidade.json"
+_SAIDA = _RAIZ / "data" / "jsons" / "empresas_uso_ia" / "identidade.json"
 
 
 def _gravar_json(atualizacoes: list[dict]) -> None:

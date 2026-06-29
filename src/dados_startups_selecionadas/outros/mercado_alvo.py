@@ -46,7 +46,7 @@ _SESSION.headers["User-Agent"] = (
     "Chrome/124.0 Safari/537.36"
 )
 
-_SAIDA = _RAIZ / "data" / "empresas_uso_ia" / "mercado_alvo.json"
+_SAIDA = _RAIZ / "data" / "jsons" / "empresas_uso_ia" / "mercado_alvo.json"
 
 # Palavras que indicam expansão além do Brasil, mesmo com TLD .com.br
 _KW_EXPANSAO = re.compile(

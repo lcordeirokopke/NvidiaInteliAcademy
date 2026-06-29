@@ -361,7 +361,7 @@ def _analisar(dominio: str, debug: bool = False, max_falhas_consecutivas: int = 
     return resultado
 
 
-_SAIDA = _RAIZ / "data" / "institucional"
+_SAIDA = _RAIZ / "data" / "jsons" / "institucional"
 
 
 def pesquisar(debug: bool = False, nome: str | None = None) -> None:

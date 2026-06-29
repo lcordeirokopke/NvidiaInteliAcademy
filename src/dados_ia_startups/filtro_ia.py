@@ -14,7 +14,7 @@ load_dotenv(_RAIZ / ".env")
 
 supabase = create_client(os.environ["SUPABASE_URL"], os.environ["SUPABASE_KEY"])
 
-_SAIDA = _RAIZ / "data" / "vereditos_ia"
+_SAIDA = _RAIZ / "data" / "jsons" / "vereditos_ia"
 
 THRESHOLD = 3
 

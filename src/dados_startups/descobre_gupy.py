@@ -74,7 +74,7 @@ def _provar_subdominio(slug: str, timeout: int = 5, debug: bool = False) -> bool
         return False
 
 
-_SAIDA = _RAIZ / "data" / "gupy_empresas"
+_SAIDA = _RAIZ / "data" / "jsons" / "gupy_empresas"
 
 
 def descobrir(debug: bool = False, nome: str | None = None) -> None:

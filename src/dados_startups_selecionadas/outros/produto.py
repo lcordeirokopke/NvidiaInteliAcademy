@@ -42,7 +42,7 @@ _SESSION.headers["User-Agent"] = (
     "Chrome/124.0 Safari/537.36"
 )
 
-_SAIDA = _RAIZ / "data" / "empresas_uso_ia" / "produto.json"
+_SAIDA = _RAIZ / "data" / "jsons" / "empresas_uso_ia" / "produto.json"
 
 # Slugs a tentar em cada domínio, em ordem de prioridade
 _SLUGS = [
