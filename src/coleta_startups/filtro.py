@@ -7,12 +7,12 @@ from pathlib import Path
 import spacy
 
 try:
-    from agents.extrator_gemini import extrair_nome_gemini
+    from agents.extrato_nomes_startups_gemini import extrair_nome_gemini
 except ImportError:
     # fallback quando executado diretamente com sys.path apontando para src/
     import sys as _sys, pathlib as _pl
     _sys.path.insert(0, str(_pl.Path(__file__).resolve().parent.parent / 'agents'))
-    from extrator_gemini import extrair_nome_gemini  # type: ignore[no-redef]
+    from extrato_nomes_startups_gemini import extrair_nome_gemini  # type: ignore[no-redef]
 
 # Caminhos absolutos resolvidos a partir do próprio script, portanto funcionam
 # independentemente do diretório de onde o script é executado.

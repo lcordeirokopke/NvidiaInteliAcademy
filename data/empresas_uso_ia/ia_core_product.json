@@ -1,0 +1,22 @@
+[
+  {
+    "empresa_id": 15,
+    "ia_e_core_product": false,
+    "atualizado_em": "2026-06-29T01:45:52.654159+00:00"
+  },
+  {
+    "empresa_id": 18,
+    "ia_e_core_product": true,
+    "atualizado_em": "2026-06-29T01:45:52.654159+00:00"
+  },
+  {
+    "empresa_id": 23,
+    "ia_e_core_product": false,
+    "atualizado_em": "2026-06-29T01:45:52.654159+00:00"
+  },
+  {
+    "empresa_id": 28,
+    "ia_e_core_product": true,
+    "atualizado_em": "2026-06-29T01:45:52.654159+00:00"
+  }
+]

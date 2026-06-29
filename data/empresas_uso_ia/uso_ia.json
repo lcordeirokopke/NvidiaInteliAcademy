@@ -1,0 +1,22 @@
+[
+  {
+    "empresa_id": 15,
+    "uso_ia_descricao": "A Segura utiliza inteligência artificial para otimizar a gestão de carteiras e a segmentação de clientes, potencializando a eficiência operacional e a produtividade no relacionamento entre seguradoras e corretoras.",
+    "atualizado_em": "2026-06-29T01:39:02.332506+00:00"
+  },
+  {
+    "empresa_id": 18,
+    "uso_ia_descricao": "A Sinatra AI utiliza inteligência artificial para automatizar a criação de conteúdo personalizado, como e-mails e materiais de vendas, integrando-se diretamente aos fluxos de trabalho de CRM das empresas.",
+    "atualizado_em": "2026-06-29T01:39:02.332506+00:00"
+  },
+  {
+    "empresa_id": 23,
+    "uso_ia_descricao": "A Vivo integra a inteligência artificial do Google, Gemini, ao seu portfólio de serviços para oferecer aos clientes acesso a ferramentas avançadas de produtividade e tecnologia generativa.",
+    "atualizado_em": "2026-06-29T01:39:02.332506+00:00"
+  },
+  {
+    "empresa_id": 28,
+    "uso_ia_descricao": "A Fintalk utiliza uma IA híbrida, que combina modelos generativos e determinísticos, para automatizar a escala de vendas, atendimento e cobrança, integrando pagamentos diretos na jornada para maximizar a conversão.",
+    "atualizado_em": "2026-06-29T01:39:02.332506+00:00"
+  }
+]

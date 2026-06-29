@@ -24,16 +24,7 @@ CREATE TABLE empresas_uso_ia (
     -- Mercado
     modelo_negocio       TEXT,        -- B2B, B2C, B2B2C
     mercado_alvo         TEXT,        -- Brasil, LATAM, global
-
-    -- Financeiro
-    estagio_funding      TEXT,        -- pre-seed, seed, series-a, series-b...
-    total_captado_usd    NUMERIC,     -- valor total captado em USD
-    ultima_rodada_usd    NUMERIC,
-    ultima_rodada_data   DATE,
-    investidores         TEXT[],      -- ex: {'Kaszek', 'Andreessen Horowitz'}
-
-    -- Pessoas
-    founders             JSONB,       -- [{"nome": "...", "linkedin": "..."}]
+    setor                TEXT,        -- domínio de mercado: Fintech, Healthtech, Edtech...
 
     -- Tecnologia
     uso_ia_descricao     TEXT,        -- como a empresa usa IA (1-2 frases)

@@ -8,7 +8,7 @@ from supabase import create_client
 
 from . import define_maturidade
 from .identidade import enriquece_identidade
-from .outros import descobre_produto
+from .outros import define_setor, descobre_ia_core_product, descobre_modelo_negocio, descobre_produto, descobre_produto_ia_lancado, descobre_uso_ia
 
 _RAIZ = Path(__file__).resolve().parent.parent.parent
 load_dotenv(_RAIZ / ".env")
@@ -81,8 +81,10 @@ def atualizar(atualizar_banco: bool = True) -> None:
     """
     Pipeline completo de atualização de empresas_uso_ia:
       1. Seed — cria linhas para aprovadas ainda ausentes
-      2. Enriquecimento — preenche cnpj, produto, setor via BrasilAPI
-      3. Maturidade — calcula score e nível AI-native
+      2. Enriquecimento — preenche cnpj e campos BrasilAPI
+      3. Descoberta de produto — scraping + Playwright + Claude
+      4. Descoberta de uso de IA — scraping + Playwright + Gemini
+      5. Maturidade — calcula score e nível AI-native
     """
     print("=" * 55)
     print("  PASSO 1 — seed de aprovadas")
@@ -103,7 +105,37 @@ def atualizar(atualizar_banco: bool = True) -> None:
 
     print()
     print("=" * 55)
-    print("  PASSO 4 — classificação de maturidade")
+    print("  PASSO 4 — descoberta de uso de IA")
+    print("=" * 55)
+    descobre_uso_ia.descobrir(atualizar_banco=atualizar_banco)
+
+    print()
+    print("=" * 55)
+    print("  PASSO 5 — classificação ia_e_core_product")
+    print("=" * 55)
+    descobre_ia_core_product.descobrir(atualizar_banco=atualizar_banco)
+
+    print()
+    print("=" * 55)
+    print("  PASSO 6 — classificação modelo_negocio")
+    print("=" * 55)
+    descobre_modelo_negocio.descobrir(atualizar_banco=atualizar_banco)
+
+    print()
+    print("=" * 55)
+    print("  PASSO 7 — verificação de produto_ia_lancado")
+    print("=" * 55)
+    descobre_produto_ia_lancado.descobrir(atualizar_banco=atualizar_banco)
+
+    print()
+    print("=" * 55)
+    print("  PASSO 8 — classificação de setor")
+    print("=" * 55)
+    define_setor.descobrir(atualizar_banco=atualizar_banco)
+
+    print()
+    print("=" * 55)
+    print("  PASSO 9 — classificação de maturidade")
     print("=" * 55)
     define_maturidade.classificar(atualizar_banco=atualizar_banco)
 

@@ -26,7 +26,7 @@ def _score_ano_fundacao(ano: int | None) -> float:
 
 
 def _nivel(score: float) -> str:
-    # Score máximo = 4.0 (ia_e_core=2 + produto_lancado=1 + acelerada=0.5 + ano=0.5)
+    # Score máximo = 4.0 (ia_e_core=2 + produto_lancado=1 + acelerada=0.5 + ano_fundacao=0.5)
     if score >= 3.5:
         return "ai-native"
     if score >= 2.0:

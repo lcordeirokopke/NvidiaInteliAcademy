@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 """
-Descobre o produto/serviço principal de cada startup a partir do site institucional.
+Descobre como cada startup usa IA a partir do site institucional.
 
 Estratégia (em ordem de prioridade):
-  1. Scraping via requests + BeautifulSoup: meta description / og:description,
-     hero (h1 + tagline), seções em /, /sobre, /produto, /solucoes, /plataforma…
+  1. Scraping via requests + BeautifulSoup: seções em /, /tecnologia, /como-funciona,
+     /how-it-works, /technology — busca parágrafos com menção a IA/ML
   2. Playwright — renderiza o JS do site e reaplica o mesmo extrator BS4
      (requer: pip install playwright && playwright install chromium)
-  3. Claude API (ANTHROPIC_API_KEY no .env) — resume os textos coletados em 1-2 frases
+  3. Gemini API (GEMINI_API_KEY no .env) — resume ou infere o uso de IA
 """
 
 import json
@@ -24,7 +24,7 @@ from bs4 import BeautifulSoup, Tag
 from dotenv import load_dotenv
 from supabase import create_client
 
-from src.agents.extrator_gemini_produto import inferir_produto, resumir_produto
+from src.agents.extrator_uso_ia_gemini import inferir_uso_ia, resumir_uso_ia
 
 _RAIZ = Path(__file__).resolve().parent.parent.parent.parent
 load_dotenv(_RAIZ / ".env")
@@ -38,28 +38,26 @@ _SESSION.headers["User-Agent"] = (
     "Chrome/124.0 Safari/537.36"
 )
 
-_SAIDA = _RAIZ / "data" / "empresas_uso_ia" / "produto.json"
+_SAIDA = _RAIZ / "data" / "empresas_uso_ia" / "uso_ia.json"
 
-# Slugs a tentar em cada domínio, em ordem de prioridade
 _SLUGS = [
-    "",           # homepage
-    "/sobre",
-    "/produto",
-    "/solucoes",
+    "",
+    "/tecnologia",
+    "/como-funciona",
+    "/how-it-works",
+    "/technology",
     "/plataforma",
-    "/about",
-    "/product",
-    "/solutions",
+    "/produto",
 ]
 
-# Palavras-chave que identificam seções relevantes para produto
-_KW_PRODUTO = re.compile(
-    r"(produto|solução|plataforma|serviço|o que (fazemos|é|oferecemos)|"
-    r"como funciona|sobre nós|nossa (solução|tecnologia|plataforma))",
+_KW_IA = re.compile(
+    r"(intelig[eê]ncia artificial|machine learning|deep learning|llm|"
+    r"modelo de linguagem|visão computacional|nlp|processamento de linguagem|"
+    r"\bia\b|automação inteligente|generativ|predict)",
     re.IGNORECASE,
 )
 
-_MAX_CHARS = 500   # tamanho máximo da descrição final salva
+_MAX_CHARS = 500
 
 
 # ---------------------------------------------------------------------------
@@ -76,74 +74,47 @@ def _buscar_pagina(url: str, timeout: int = 8) -> BeautifulSoup | None:
         return None
 
 
-def _meta_descricao(soup: BeautifulSoup) -> str:
-    for attrs in [
-        {"name": "description"},
-        {"property": "og:description"},
-        {"name": "twitter:description"},
-    ]:
-        tag = soup.find("meta", attrs=attrs)
-        if tag and isinstance(tag, Tag):
-            content = tag.get("content", "")
-            if isinstance(content, str) and len(content.strip()) > 30:
-                return content.strip()
-    return ""
+def _paragrafos_ia(soup: BeautifulSoup) -> str:
+    """Coleta parágrafos e itens de lista que mencionam IA/ML explicitamente."""
+    candidatos: list[str] = []
+
+    for tag in soup.find_all(["p", "li", "h2", "h3"]):
+        if not isinstance(tag, Tag):
+            continue
+        texto = tag.get_text(" ", strip=True)
+        if len(texto) < 40:
+            continue
+        if _KW_IA.search(texto):
+            candidatos.append(texto)
+        if len(candidatos) >= 3:
+            break
+
+    return " | ".join(candidatos[:2])
 
 
 def _hero_texto(soup: BeautifulSoup) -> str:
-    """Extrai h1 + subtítulo/tagline imediata do hero da página."""
     h1 = soup.find("h1")
     if not h1 or not isinstance(h1, Tag):
         return ""
 
     partes = [h1.get_text(" ", strip=True)]
 
-    # Procura subtítulo nos elementos seguintes ao h1
     for sib in h1.find_next_siblings():
         if not isinstance(sib, Tag):
             continue
         if sib.name in ("h1", "h2", "nav", "header", "footer"):
             break
-        if sib.name in ("p", "span", "h3", "h4") or (
-            sib.name and sib.get("class") and
-            any(c for c in (sib.get("class") or []) if "subtitle" in c or "tagline" in c or "desc" in c)
-        ):
+        if sib.name in ("p", "span", "h3", "h4"):
             texto = sib.get_text(" ", strip=True)
-            if len(texto) > 20:
+            if len(texto) > 20 and _KW_IA.search(texto):
                 partes.append(texto)
                 break
 
-    return " — ".join(partes) if partes else ""
+    return " — ".join(partes) if len(partes) > 1 else ""
 
 
-def _secoes_produto(soup: BeautifulSoup) -> str:
-    """Procura seções/parágrafos que falam explicitamente sobre produto ou solução."""
-    candidatos: list[str] = []
-
-    for tag in soup.find_all(["h2", "h3", "h4"]):
-        if not isinstance(tag, Tag):
-            continue
-        titulo = tag.get_text(" ", strip=True)
-        if not _KW_PRODUTO.search(titulo):
-            continue
-        # Pega o primeiro parágrafo imediatamente após o heading
-        for sib in tag.find_next_siblings():
-            if not isinstance(sib, Tag):
-                continue
-            if sib.name in ("h2", "h3", "h4"):
-                break
-            if sib.name in ("p", "li"):
-                texto = sib.get_text(" ", strip=True)
-                if len(texto) > 40:
-                    candidatos.append(f"{titulo}: {texto}")
-                    break
-
-    return " | ".join(candidatos[:2])
-
-
-def _extrair_descricao(soup: BeautifulSoup) -> str:
-    """Tenta extrair a melhor descrição de produto de uma página, em ordem de qualidade."""
-    for extrator in [_meta_descricao, _hero_texto, _secoes_produto]:
+def _extrair_uso_ia(soup: BeautifulSoup) -> str:
+    for extrator in [_paragrafos_ia, _hero_texto]:
         texto = extrator(soup)
         if texto:
             return texto[:_MAX_CHARS]
@@ -165,6 +136,7 @@ def _buscar_com_playwright(url: str) -> BeautifulSoup | None:
             browser = p.chromium.launch(headless=True)
             try:
                 page = browser.new_page()
+                # domcontentloaded é mais rápido que networkidle — suficiente para extrair texto
                 page.goto(url, wait_until="domcontentloaded", timeout=6000)
                 html = page.content()
             finally:
@@ -181,11 +153,9 @@ def _extrair_via_playwright(base_url: str) -> list[str]:
         soup = _buscar_com_playwright(url)
         if soup is None:
             continue
-        desc = _extrair_descricao(soup)
+        desc = _extrair_uso_ia(soup)
         if desc:
             textos.append(desc)
-        if slug == "" and desc and len(desc) > 60:
-            break
         time.sleep(0.5)
     return textos
 
@@ -194,7 +164,7 @@ def _extrair_via_playwright(base_url: str) -> list[str]:
 # Pipeline principal
 # ---------------------------------------------------------------------------
 
-def _descobrir_produto_empresa(dominio: str, nome: str) -> str:
+def _descobrir_uso_ia_empresa(dominio: str, nome: str) -> str:
     base_url = f"https://{dominio}"
     textos_coletados: list[str] = []
 
@@ -204,28 +174,23 @@ def _descobrir_produto_empresa(dominio: str, nome: str) -> str:
         if soup is None:
             continue
 
-        desc = _extrair_descricao(soup)
+        desc = _extrair_uso_ia(soup)
         if desc:
             textos_coletados.append(desc)
 
-        # Se a meta description da homepage já for boa, não precisa continuar
-        if slug == "" and desc and len(desc) > 60:
-            break
-
         time.sleep(0.3)
 
-    # BS4 não retornou nada — tenta renderizar com Playwright
+    # BS4 não retornou nada — tenta Playwright
     if not textos_coletados:
         print("       [playwright] scraping vazio, tentando renderização JS...")
         textos_coletados = _extrair_via_playwright(base_url)
 
-    # Playwright também falhou — Claude tenta inferir pelo próprio conhecimento
+    # Playwright também falhou — Gemini tenta resumir ou inferir
     if not textos_coletados:
         print("       [gemini] site inacessível, inferindo a partir do conhecimento do modelo...")
-        return (inferir_produto(nome, dominio) or "")[:_MAX_CHARS]
+        return (inferir_uso_ia(nome, dominio) or "")[:_MAX_CHARS]
 
-    # Tenta resumo via Claude; senão usa o melhor texto coletado
-    resumo = resumir_produto(textos_coletados, nome)
+    resumo = resumir_uso_ia(textos_coletados, nome)
     if resumo:
         return resumo[:_MAX_CHARS]
 
@@ -259,13 +224,13 @@ def _gravar_json(registros: list[dict]) -> None:
 
 def descobrir(atualizar_banco: bool = True, nome: str | None = None) -> list[dict]:
     """
-    Para cada empresa em empresas_uso_ia sem campo 'produto' preenchido,
-    com CNPJ confirmado, tenta descobrir a descrição do produto via scraping.
+    Para cada empresa em empresas_uso_ia sem campo 'uso_ia_descricao' preenchido,
+    tenta descobrir como a empresa usa IA via scraping do site.
     """
     query = (
         supabase.table("empresas_uso_ia")
         .select("empresa_id, dominio")
-        .is_("produto", "null")
+        .is_("uso_ia_descricao", "null")
         .not_.is_("dominio", "null")
         .not_.is_("cnpj", "null")
         .eq("cnpj_pendente", False)
@@ -273,7 +238,7 @@ def descobrir(atualizar_banco: bool = True, nome: str | None = None) -> list[dic
     registros = query.execute().data
 
     if not registros:
-        print("[info] nenhuma empresa pendente de descoberta de produto")
+        print("[info] nenhuma empresa pendente de descoberta de uso de IA")
         return []
 
     ids = [r["empresa_id"] for r in registros]
@@ -291,7 +256,7 @@ def descobrir(atualizar_banco: bool = True, nome: str | None = None) -> list[dic
 
     mapa_nome = {int(r["id"]): r["nome"] for r in nomes_rows}
 
-    print(f"[info] {len(nomes_rows)} empresa(s) para descobrir produto\n")
+    print(f"[info] {len(nomes_rows)} empresa(s) para descobrir uso de IA\n")
 
     atualizacoes: list[dict] = []
     sem_resultado: list[str] = []
@@ -306,11 +271,11 @@ def descobrir(atualizar_banco: bool = True, nome: str | None = None) -> list[dic
             continue
 
         print(f"  [→] {nome_emp}  ({dominio})")
-        produto = _descobrir_produto_empresa(dominio, nome_emp)
+        uso_ia = _descobrir_uso_ia_empresa(dominio, nome_emp)
 
-        if produto:
-            print(f"       [✓] {produto[:120]}")
-            atualizacoes.append({"empresa_id": empresa_id, "produto": produto})
+        if uso_ia:
+            print(f"       [✓] {uso_ia[:120]}")
+            atualizacoes.append({"empresa_id": empresa_id, "uso_ia_descricao": uso_ia})
         else:
             print(f"       [✗] nenhuma descrição encontrada")
             sem_resultado.append(nome_emp)
@@ -319,12 +284,6 @@ def descobrir(atualizar_banco: bool = True, nome: str | None = None) -> list[dic
 
     print(f"\n[resumo] {len(atualizacoes)} encontrado(s) | {len(sem_resultado)} sem resultado")
 
-    if sem_resultado:
-        print("[sem resultado — tentar manualmente]:")
-        for n in sem_resultado:
-            print(f"  - {n}")
-        _imprimir_fallbacks()
-
     if atualizacoes:
         _gravar_json(atualizacoes)
 
@@ -332,21 +291,9 @@ def descobrir(atualizar_banco: bool = True, nome: str | None = None) -> list[dic
             supabase.table("empresas_uso_ia").upsert(
                 atualizacoes, on_conflict="empresa_id"
             ).execute()
-            print(f"[banco] {len(atualizacoes)} produto(s) atualizado(s) em empresas_uso_ia")
+            print(f"[banco] {len(atualizacoes)} uso_ia_descricao atualizado(s) em empresas_uso_ia")
 
     return atualizacoes
-
-
-# ---------------------------------------------------------------------------
-# Fallbacks alternativos para quando o scraping falha
-# ---------------------------------------------------------------------------
-
-def _imprimir_fallbacks() -> None:
-    print(
-        "[dica] Playwright e Gemini já estão integrados automaticamente.\n"
-        "       Playwright requer: pip install playwright && playwright install chromium\n"
-        "       Gemini requer: pip install google-genai  e  GEMINI_API_KEY2 no .env"
-    )
 
 
 if __name__ == "__main__":

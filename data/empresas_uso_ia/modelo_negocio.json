@@ -1,0 +1,22 @@
+[
+  {
+    "empresa_id": 15,
+    "modelo_negocio": "B2B",
+    "atualizado_em": "2026-06-29T12:53:08.020756+00:00"
+  },
+  {
+    "empresa_id": 18,
+    "modelo_negocio": "B2B",
+    "atualizado_em": "2026-06-29T12:53:08.020756+00:00"
+  },
+  {
+    "empresa_id": 23,
+    "modelo_negocio": "B2C",
+    "atualizado_em": "2026-06-29T12:53:08.020756+00:00"
+  },
+  {
+    "empresa_id": 28,
+    "modelo_negocio": "B2B",
+    "atualizado_em": "2026-06-29T12:53:08.020756+00:00"
+  }
+]
