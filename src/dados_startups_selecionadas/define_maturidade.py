@@ -11,15 +11,13 @@ load_dotenv(_RAIZ / ".env")
 
 supabase = create_client(os.environ["SUPABASE_URL"], os.environ["SUPABASE_KEY"])
 
-# Campos obrigatórios para classificar — se todos NULL, empresa fica pendente
-_CAMPOS_CRITICOS = {"ia_e_core_product", "modelos_proprios", "dados_proprietarios"}
+# Campo obrigatório para classificar — se NULL, empresa fica pendente
+_CAMPOS_CRITICOS = {"ia_e_core_product"}
 
 _PESOS: dict[str, float] = {
-    "ia_e_core_product":   2.0,
-    "modelos_proprios":    1.0,
-    "dados_proprietarios": 1.0,
-    "produto_ia_lancado":  1.0,
-    "acelerada_ia":        0.5,
+    "ia_e_core_product":  2.0,
+    "produto_ia_lancado": 1.0,
+    "acelerada_ia":       0.5,
 }
 
 
@@ -28,11 +26,12 @@ def _score_ano_fundacao(ano: int | None) -> float:
 
 
 def _nivel(score: float) -> str:
-    if score >= 5:
+    # Score máximo = 4.0 (ia_e_core=2 + produto_lancado=1 + acelerada=0.5 + ano=0.5)
+    if score >= 3.5:
         return "ai-native"
-    if score >= 3:
+    if score >= 2.0:
         return "ai-first"
-    if score >= 1:
+    if score >= 0.5:
         return "ai-enabled"
     return "ai-adjacent"
 
@@ -55,21 +54,22 @@ def _calcular(empresa: dict) -> tuple[float, str] | None:
     return round(score, 1), _nivel(score)
 
 
-def classificar(atualizar_banco: bool = True) -> list[dict]:
-    empresas = (
-        supabase.table("empresas_uso_ia")
-        .select(
-            "empresa_id, ia_e_core_product, modelos_proprios, dados_proprietarios,"
-            " produto_ia_lancado, acelerada_ia, ano_fundacao"
-        )
-        .execute()
-        .data
+def classificar(atualizar_banco: bool = True, nome: str | None = None) -> list[dict]:
+    query = supabase.table("empresas_uso_ia").select(
+        "empresa_id, ia_e_core_product, produto_ia_lancado, acelerada_ia, ano_fundacao"
     )
+    empresas = query.execute().data
 
-    nomes_rows = supabase.table("empresas").select("id, nome, dominio, gupy_subdominio").execute().data
+    nomes_query = supabase.table("empresas").select("id, nome, dominio, gupy_subdominio")
+    if nome:
+        nomes_query = nomes_query.eq("nome", nome)
+    nomes_rows = nomes_query.execute().data
     mapa_nomes    = {int(r["id"]): r["nome"]            for r in nomes_rows}
     mapa_dominios = {int(r["id"]): r["dominio"]         for r in nomes_rows}
     mapa_gupy     = {int(r["id"]): r["gupy_subdominio"] for r in nomes_rows}
+
+    if nome:
+        empresas = [e for e in empresas if int(e["empresa_id"]) in mapa_nomes]
 
     print(f"[info] {len(empresas)} empresa(s) carregada(s) para classificação\n")
 

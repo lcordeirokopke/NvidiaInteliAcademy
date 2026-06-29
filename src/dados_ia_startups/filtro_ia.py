@@ -36,6 +36,10 @@ _PALAVRAS_IA = re.compile(
     r'|generativ[ao]|gen.?ai|copilot'
     r'|processamento de linguagem|NLP|computer vision'
     r'|reconhecimento de imagem|aprendizado de m[áa]quina'
+    r'|retrieval.augmented|embeddings?|fine.tuning|finetuning'
+    r'|vector.database|banco.vetorial|feature.store|llmops'
+    r'|foundation.model|large.language.model|multimodal'
+    r'|hugging.face|langchain|openai|anthropic|claude|gemini|llama'
     r')\b',
     re.IGNORECASE,
 )
@@ -232,10 +236,12 @@ def _gravar_json(avaliacoes: list[dict]) -> None:
     print(f"[json] vereditos salvos em {caminho}")
 
 
-def filtrar(gravar_banco: bool = True) -> list[dict]:
+def filtrar(gravar_banco: bool = True, filtrar_nome: str | None = None) -> list[dict]:
     """Lê sinais do Supabase, avalia cada empresa e grava resultados."""
     print("[info] carregando dados do Supabase...")
     mapa_nomes, sinais = _carregar_dados()
+    if filtrar_nome:
+        mapa_nomes = {eid: n for eid, n in mapa_nomes.items() if n.strip().lower() == filtrar_nome.strip().lower()}
     agrupado = _agrupar_por_empresa(sinais)
 
     avaliacoes: list[dict] = []

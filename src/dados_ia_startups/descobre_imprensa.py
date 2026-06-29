@@ -168,8 +168,11 @@ def _ja_checado(empresa_id: int) -> bool:
     return len(resultado.data) > 0
 
 
-def pesquisar(debug: bool = False) -> None:
-    empresas = supabase.table("empresas").select("id, nome").execute().data
+def pesquisar(debug: bool = False, nome: str | None = None) -> None:
+    query = supabase.table("empresas").select("id, nome")
+    if nome:
+        query = query.eq("nome", nome)
+    empresas = query.execute().data
     print(f"[info] {len(empresas)} empresa(s) carregada(s) do Supabase\n")
 
     todos_registros: list[dict] = []

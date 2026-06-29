@@ -8,6 +8,7 @@ from supabase import create_client
 
 from . import define_maturidade
 from .identidade import enriquece_identidade
+from .outros import descobre_produto
 
 _RAIZ = Path(__file__).resolve().parent.parent.parent
 load_dotenv(_RAIZ / ".env")
@@ -15,7 +16,7 @@ load_dotenv(_RAIZ / ".env")
 supabase = create_client(os.environ["SUPABASE_URL"], os.environ["SUPABASE_KEY"])
 
 
-def _seed_aprovadas() -> int:
+def _seed_aprovadas(nome: str | None = None) -> int:
     """Cria linhas em empresas_uso_ia para todas as aprovadas que ainda não estão lá."""
     aprovadas = (
         supabase.table("avaliacoes_ia")
@@ -29,6 +30,14 @@ def _seed_aprovadas() -> int:
         return 0
 
     ids_aprovadas = [int(r["empresa_id"]) for r in aprovadas]
+
+    if nome:
+        row = supabase.table("empresas").select("id").eq("nome", nome).limit(1).execute().data
+        if row:
+            target_id = int(row[0]["id"])
+            ids_aprovadas = [eid for eid in ids_aprovadas if eid == target_id]
+        else:
+            ids_aprovadas = []
 
     existentes = (
         supabase.table("empresas_uso_ia")
@@ -88,7 +97,13 @@ def atualizar(atualizar_banco: bool = True) -> None:
 
     print()
     print("=" * 55)
-    print("  PASSO 3 — classificação de maturidade")
+    print("  PASSO 3 — descoberta de produto")
+    print("=" * 55)
+    descobre_produto.descobrir(atualizar_banco=atualizar_banco)
+
+    print()
+    print("=" * 55)
+    print("  PASSO 4 — classificação de maturidade")
     print("=" * 55)
     define_maturidade.classificar(atualizar_banco=atualizar_banco)
 

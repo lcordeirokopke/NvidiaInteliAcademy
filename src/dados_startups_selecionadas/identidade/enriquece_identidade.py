@@ -48,12 +48,19 @@ def _gravar_json(atualizacoes: list[dict]) -> None:
     print(f"[json] {len(atualizacoes)} registro(s) salvo(s) em {_SAIDA}")
 
 
-def enriquecer(atualizar_banco: bool = True) -> list[dict]:
+def enriquecer(atualizar_banco: bool = True, nome: str | None = None) -> list[dict]:
+    # Busca empresas onde o CNPJ está ausente OU algum campo BrasilAPI ainda está vazio
     registros = (
         supabase.table("empresas_uso_ia")
         .select("empresa_id, cnpj")
-        .is_("cnpj", "null")
-        .eq("cnpj_pendente", False)  # pula empresas já marcadas para preenchimento manual
+        .eq("cnpj_pendente", False)
+        .or_(
+            "cnpj.is.null,"
+            "cnae_principal.is.null,"
+            "porte.is.null,"
+            "capital_social.is.null,"
+            "natureza_juridica.is.null"
+        )
         .execute()
         .data
     )
@@ -63,14 +70,12 @@ def enriquecer(atualizar_banco: bool = True) -> list[dict]:
         return []
 
     ids = [r["empresa_id"] for r in registros]
+    mapa_cnpj = {int(r["empresa_id"]): r for r in registros}
 
-    dominios_rows = (
-        supabase.table("empresas")
-        .select("id, nome, dominio")
-        .in_("id", ids)
-        .execute()
-        .data
-    )
+    query = supabase.table("empresas").select("id, nome, dominio").in_("id", ids)
+    if nome:
+        query = query.eq("nome", nome)
+    dominios_rows = query.execute().data
     mapa = {int(r["id"]): r for r in dominios_rows}
 
     print(f"[info] {len(ids)} empresa(s) para enriquecer\n")
@@ -84,6 +89,7 @@ def enriquecer(atualizar_banco: bool = True) -> list[dict]:
         if not info:
             continue
 
+        info_registro = mapa_cnpj.get(empresa_id, {})
         nome    = info.get("nome", f"id={empresa_id}")
         dominio = info.get("dominio")
 
@@ -92,19 +98,25 @@ def enriquecer(atualizar_banco: bool = True) -> list[dict]:
             sem_dominio.append(nome)
             continue
 
-        print(f"  [→] {nome}  ({dominio})")
+        cnpj_existente = info_registro.get("cnpj")
 
-        cnpj = cnpj_mod.obter(dominio, nome=nome)
-        if not cnpj:
-            print(f"       [✗] CNPJ não encontrado — marcado como pendente (preencher manualmente)")
-            sem_cnpj.append(nome)
-            if atualizar_banco:
-                supabase.table("empresas_uso_ia").upsert(
-                    {"empresa_id": empresa_id, "cnpj_pendente": True},
-                    on_conflict="empresa_id",
-                ).execute()
-            time.sleep(0.5)
-            continue
+        if cnpj_existente:
+            # CNPJ já conhecido — só faltam campos BrasilAPI
+            print(f"  [→] {nome}  ({dominio})  [cnpj já existe, atualizando campos BrasilAPI]")
+            cnpj = cnpj_existente
+        else:
+            print(f"  [→] {nome}  ({dominio})")
+            cnpj = cnpj_mod.obter(dominio, nome=nome)
+            if not cnpj:
+                print(f"       [✗] CNPJ não encontrado — marcado como pendente (preencher manualmente)")
+                sem_cnpj.append(nome)
+                if atualizar_banco:
+                    supabase.table("empresas_uso_ia").upsert(
+                        {"empresa_id": empresa_id, "cnpj_pendente": True},
+                        on_conflict="empresa_id",
+                    ).execute()
+                time.sleep(0.5)
+                continue
 
         print(f"       [cnpj] {cnpj_mod.formatar(cnpj)}")
 

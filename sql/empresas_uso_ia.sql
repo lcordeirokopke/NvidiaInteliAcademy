@@ -23,7 +23,6 @@ CREATE TABLE empresas_uso_ia (
 
     -- Mercado
     modelo_negocio       TEXT,        -- B2B, B2C, B2B2C
-    clientes             TEXT[],      -- ex: {'hospitais', 'corretoras', 'PMEs'}
     mercado_alvo         TEXT,        -- Brasil, LATAM, global
 
     -- Financeiro
@@ -37,17 +36,11 @@ CREATE TABLE empresas_uso_ia (
     founders             JSONB,       -- [{"nome": "...", "linkedin": "..."}]
 
     -- Tecnologia
-    tecnologias          TEXT[],      -- ex: {'LLM', 'computer vision', 'Python'}
     uso_ia_descricao     TEXT,        -- como a empresa usa IA (1-2 frases)
 
     -- Maturidade AI-native: posicionamento
     ia_e_core_product    BOOLEAN,     -- TRUE: produto principal É a IA; FALSE: IA é feature
     ia_tipo              TEXT[],      -- {'generativa','preditiva','computer vision','NLP','automacao'}
-
-    -- Maturidade AI-native: profundidade técnica
-    modelos_proprios     BOOLEAN,     -- treina/fine-tuna modelos vs. apenas consome APIs
-    dados_proprietarios  BOOLEAN,     -- possui dados exclusivos de treinamento (moat)
-    infra_ia             TEXT[],      -- {'fine-tuning','RAG','GPU cluster','prompt engineering','API wrapper'}
 
     -- Maturidade AI-native: tempo e execução
     ano_fundacao         SMALLINT,    -- fundada após 2020 = provável AI-native por design
@@ -58,7 +51,7 @@ CREATE TABLE empresas_uso_ia (
     programa_aceleracao  TEXT[],      -- ex: {'NVIDIA Inception', 'Y Combinator', 'Google for Startups'}
 
     -- Classificação final (calculada pelo programa a partir dos campos acima)
-    score_maturidade_ia  SMALLINT,    -- 0 a 6
+    score_maturidade_ia  SMALLINT,    -- 0 a 4
     nivel_maturidade_ia  TEXT,        -- 'ai-native' | 'ai-first' | 'ai-enabled' | 'ai-adjacent'
 
     -- Controle

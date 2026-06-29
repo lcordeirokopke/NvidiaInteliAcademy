@@ -39,6 +39,8 @@ _DOMINIOS_ERRADOS = {
     "loggi.com.br",  # empresa de logística, não a startup Loggi
     "btg.io",  # empresa de tecnologia, não a startup BTG
     "segura.com", # empresa de seguros, não a startup Segura
+    "fintalk.com.br",  # empresa de fintech, não a startup Fintalk
+    "fintalk.com",  # empresa de fintech, não a startup Fintalk
 }
 
 
@@ -151,13 +153,11 @@ _SAIDA = _RAIZ / "data" / "dominio_empresas"
 _APENAS_JSON = False
 
 
-def descobrir(debug: bool = False) -> None:
-    rows = (
-        supabase.table("empresas")
-        .select("id, nome, dominio")
-        .execute()
-        .data
-    )
+def descobrir(debug: bool = False, nome: str | None = None) -> None:
+    query = supabase.table("empresas").select("id, nome, dominio")
+    if nome:
+        query = query.eq("nome", nome)
+    rows = query.execute().data
 
     pendentes = [r for r in rows if not r.get("dominio")]
     print(f"[info] {len(pendentes)} empresa(s) sem dominio registrado")

@@ -69,8 +69,10 @@ def _ja_checado(empresa_id: int) -> bool:
     return len(resultado.data) > 0
 
 
-def classificar(atualizar_banco: bool = True) -> list[dict]:
+def classificar(atualizar_banco: bool = True, nome: str | None = None) -> list[dict]:
     artigos: list[dict] = supabase.table("nomes_empresas").select("startup, titulo, url").execute().data
+    if nome:
+        artigos = [a for a in artigos if (a.get("startup") or "").strip().lower() == nome.strip().lower()]
     print(f"[info] {len(artigos)} artigo(s) carregado(s) do Supabase")
 
     mapa_empresas = _carregar_mapa_empresas()

@@ -77,13 +77,11 @@ def _provar_subdominio(slug: str, timeout: int = 5, debug: bool = False) -> bool
 _SAIDA = _RAIZ / "data" / "gupy_empresas"
 
 
-def descobrir(debug: bool = False) -> None:
-    rows = (
-        supabase.table("empresas")
-        .select("id, nome, gupy_subdominio")
-        .execute()
-        .data
-    )
+def descobrir(debug: bool = False, nome: str | None = None) -> None:
+    query = supabase.table("empresas").select("id, nome, gupy_subdominio")
+    if nome:
+        query = query.eq("nome", nome)
+    rows = query.execute().data
 
     pendentes = [r for r in rows if not r.get("gupy_subdominio")]
     print(f"[info] {len(pendentes)} empresa(s) sem gupy_subdominio registrado")

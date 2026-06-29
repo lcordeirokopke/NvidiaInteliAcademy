@@ -96,14 +96,11 @@ def _buscar_vagas(subdominio: str, debug: bool = False) -> list[dict]:
     return jobs
 
 
-def pesquisar(debug: bool = False) -> None:
-    rows = (
-        supabase.table("empresas")
-        .select("id, nome, gupy_subdominio")
-        .not_.is_("gupy_subdominio", "null")
-        .execute()
-        .data
-    )
+def pesquisar(debug: bool = False, nome: str | None = None) -> None:
+    query = supabase.table("empresas").select("id, nome, gupy_subdominio").not_.is_("gupy_subdominio", "null")
+    if nome:
+        query = query.eq("nome", nome)
+    rows = query.execute().data
     empresas = [
         {"empresa_id": r["id"], "nome": r["nome"], "gupy_subdominio": r["gupy_subdominio"]}
         for r in rows

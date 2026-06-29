@@ -40,43 +40,43 @@ def main(nome: str) -> None:
 
     _titulo("1/9 · descobre_dominio.py — descoberta de domínios")
     from dados_startups.descobre_dominio import descobrir as descobrir_dominio
-    descobrir_dominio()
+    descobrir_dominio(nome=nome)
 
     _titulo("2/9 · descobre_gupy.py — descoberta de subdominios Gupy")
     from dados_startups.descobre_gupy import descobrir as descobrir_gupy
-    descobrir_gupy()
+    descobrir_gupy(nome=nome)
 
     _titulo("3/9 · descobre_gupy_vagas.py — vagas de IA no Gupy")
     from dados_ia_startups.descobre_gupy_vagas import pesquisar
-    pesquisar()
+    pesquisar(nome=nome)
 
     _titulo("4/9 · descobre_institucional.py — análise site institucional")
     from dados_ia_startups.descobre_institucional import pesquisar as pesquisar_institucional
-    pesquisar_institucional()
+    pesquisar_institucional(nome=nome)
 
     _titulo("5/9 · descobre_imprensa.py — notícias de IA (News API)")
     from dados_ia_startups.descobre_imprensa import pesquisar as pesquisar_imprensa
-    pesquisar_imprensa()
+    pesquisar_imprensa(nome=nome)
 
     _titulo("6/9 · analisa_neofeed.py — tag ecossistema")
     from dados_ia_startups.analisa_neofeed import classificar as classificar_neofeed
-    classificar_neofeed()
+    classificar_neofeed(nome=nome)
 
     _titulo("7/10 · filtro_ia.py — veredito de uso de IA")
     from dados_ia_startups.filtro_ia import filtrar as filtrar_ia
-    filtrar_ia()
+    filtrar_ia(filtrar_nome=nome)
 
     _titulo("8/10 · inicia_aprofundamento.py — seed de aprovadas")
     from dados_startups_selecionadas.inicia_aprofundamento import _seed_aprovadas
-    _seed_aprovadas()
+    _seed_aprovadas(nome=nome)
 
     _titulo("9/10 · enriquece_identidade.py — CNPJ + BrasilAPI")
     from dados_startups_selecionadas.identidade.enriquece_identidade import enriquecer
-    enriquecer()
+    enriquecer(nome=nome)
 
     _titulo("10/10 · define_maturidade.py — score de maturidade")
     from dados_startups_selecionadas.define_maturidade import classificar
-    classificar()
+    classificar(nome=nome)
 
     elapsed = time.time() - inicio
     print(f"\n{'=' * 60}")

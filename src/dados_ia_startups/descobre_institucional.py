@@ -52,8 +52,8 @@ _SINAIS_FORTES = [
     "databricks", "mlflow", "kubeflow", "airflow", "prefect", "metaflow",
     "weights & biases", "wandb", "dvc", "bentoml", "seldon", "triton",
     # Conceitos técnicos de ML
-    "embeddings", "fine-tuning", "finetuning", "feature store", "rag",
-    "retrieval augmented", "vector database", "banco vetorial",
+    "embeddings", "fine-tuning", "finetuning", "feature store",
+    "retrieval augmented", "retrieval-augmented", "vector database", "banco vetorial",
     "modelo treinado", "trained model", "treinamento do modelo",
     "rede neural", "neural network", "transformer", "attention mechanism",
     "gradient descent", "backpropagation", "overfitting", "underfitting",
@@ -291,16 +291,17 @@ def _analisar(dominio: str, debug: bool = False, max_falhas_consecutivas: int = 
 _SAIDA = _RAIZ / "data" / "institucional"
 
 
-def pesquisar(debug: bool = False) -> None:
-    rows = (
-        supabase.table("empresas")
-        .select("id, nome, dominio")
-        .not_.is_("dominio", "null")
-        .execute()
-        .data
-    )
+def pesquisar(debug: bool = False, nome: str | None = None) -> None:
+    query = supabase.table("empresas").select("id, nome, dominio").not_.is_("dominio", "null")
+    if nome:
+        query = query.eq("nome", nome)
+    rows = query.execute().data
     empresas = [r for r in rows if r.get("dominio")]
     print(f"[info] {len(empresas)} empresa(s) com dominio no Supabase\n")
+
+    def _ja_checado(empresa_id: int) -> bool:
+        res = supabase.table("sinais_ia").select("id").eq("empresa_id", empresa_id).eq("camada", "institucional").limit(1).execute()
+        return len(res.data) > 0
 
     todos_registros: list[dict] = []
 
@@ -310,6 +311,10 @@ def pesquisar(debug: bool = False) -> None:
         dominio = empresa["dominio"]
 
         print(f"[→] {nome}  ({dominio})")
+
+        if _ja_checado(empresa_id):
+            print(f"    [skip] já checado anteriormente")
+            continue
 
         resultado = _analisar(dominio, debug=debug)
 
