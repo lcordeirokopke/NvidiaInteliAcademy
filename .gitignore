@@ -1,5 +1,6 @@
 # Credenciais — nunca subir
 .env
+.streamlit/secrets.toml
 
 # Dados gerados pelo pipeline (recriados pelo botão Atualizar)
 data/jsons/artigos_nomes_empresas/
@@ -13,9 +14,11 @@ data/jsons/neofeed/
 data/jsons/vereditos_ia/
 data/jsons/empresas_uso_ia/
 
-# Análises por camadas (arquivos locais de documentação)
+# arquivos extras
 zzz/
+documentacao/rever
 
+# Arquivos de ambiente virtual
 .venv
 
 # Bytecode gerado pelo Python
