@@ -1,5 +1,5 @@
 -- Resultados do pipeline multi-agente de recomendação de tecnologias NVIDIA.
--- Gerada a partir do perfil em empresas_uso_ia via LangGraph (src/agents/recomendador/).
+-- Gerada a partir do perfil em empresas_uso_ia via LangGraph (src/agents/extras/).
 -- Separada de empresas_uso_ia intencionalmente: aquela tabela armazena fatos coletados
 -- sobre a startup; esta armazena o que o sistema gerou a partir desses fatos.
 CREATE TABLE recomendacoes_nvidia (
@@ -8,43 +8,38 @@ CREATE TABLE recomendacoes_nvidia (
 
     -- Controle de geração
     gerado_em                TIMESTAMPTZ NOT NULL DEFAULT now(),
-    versao_base_conhecimento TEXT,        -- data ou hash da collection Qdrant usada na geração
+    versao_base_conhecimento TEXT,        -- data ISO da collection Qdrant usada na geração
+
+    -- Query semântica gerada pelo montar_query e enviada ao Qdrant
+    query                    TEXT,
 
     -- Retrieval (referências sem texto; texto completo permanece no Qdrant)
+    -- Permite distinguir retrieval ruim (chunks errados) de LLM ruim (chunks certos, LLM alucionou).
     -- Estrutura de cada item:
     --   {"tecnologia": "NIM", "url": "https://...", "chunk_index": 2, "rerank_score": 0.92}
     chunks_reranqueados      JSONB,
 
-    -- Passo 3 — Recomendações em linguagem natural (top 3 tecnologias do reranking)
-    -- Cada item: "TECNOLOGIA — justificativa contextualizada para a startup"
-    recomendacoes            TEXT[],
-
     -- LLM 1 — Agente de Explicação (explicar_tecnico / explicar_negocio)
     -- Responde: por que essas tecnologias são relevantes para esta startup?
+    -- Prompt técnico quando ia_e_core_product = true; prompt de negócio quando false.
     -- Estrutura: {"tecnologias": [{"tecnologia": "...", "justificativa": "..."}], "fontes": [...]}
     explicacao               JSONB,
 
     -- LLM 2 — Agente de Síntese Executiva
-    -- Responde: o que o CEO e o gerente de conta da NVIDIA precisam saber?
+    -- Responde: o que o CEO e o account manager NVIDIA precisam saber, sem jargão?
     -- Estrutura: {"resumo": "...", "impacto_principal": "...", "diferencial_competitivo": "...",
     --             "investimento_estimado": "...", "proximo_passo": "..."}
     sintese_executiva        JSONB,
 
-    -- LLM 3 — Agente de Integração com Stack Atual
-    -- Responde: isso funciona com o que a startup já usa?
-    -- NULL quando empresas_uso_ia.stack_atual for NULL (nó condicional no grafo)
-    -- Estrutura: {"integracoes": [{"tecnologia": "...", "ponto_de_integracao": "...",
-    --             "esforco_estimado": "...", "mudanca_necessaria": "..."}]}
-    integracoes              JSONB,
-
-    -- LLM 4 — Agente de Roadmap de Adoção
+    -- LLM 3 — Agente de Roadmap de Adoção
     -- Responde: por onde começa e em que ordem?
+    -- Calibrado por nivel_maturidade_ia e score_maturidade_ia do perfil.
     -- Estrutura: {"tecnologia_prioritaria": "...", "justificativa_prioridade": "...",
     --             "plano": {"30_dias": [...], "60_dias": [...], "90_dias": [...]},
     --             "dependencias": [...], "metrica_de_sucesso": "..."}
     roadmap                  JSONB,
 
-    -- LLM 5 — Agente de Kit de Início
+    -- LLM 4 — Agente de Kit de Início
     -- Responde: qual container NGC, tutorial e crédito Inception usar agora?
     -- Estrutura: {"kit": [{"tecnologia": "...", "container_ngc": "nvcr.io/...",
     --             "tutorial_entrada": "...", "creditos_inception": "...",

@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from qdrant_client.models import Distance, VectorParams
 
-from src.rag.client import get_client
+from rag.client import get_client
 
 COLLECTION_NAME = "nvidia_knowledge"
-EMBEDDING_DIM = 768  # dimensão do text-embedding-004
+EMBEDDING_DIM = 3072  # dimensão do gemini-embedding-001
 
 
 def criar_collection() -> None:

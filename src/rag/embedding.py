@@ -16,7 +16,7 @@ if _ENV_PATH.exists():
             _k, _, _v = _line.partition("=")
             os.environ.setdefault(_k.strip(), _v.strip())
 
-_GEMINI_MODEL = "text-embedding-004"
+_GEMINI_MODEL = "gemini-embedding-001"
 
 
 def _get_gemini_client() -> genai.Client:

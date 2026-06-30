@@ -28,6 +28,7 @@ _SETOR_PARA_QDRANT: dict[str, str] = {
     "fintech": "financas",
     "finanças": "financas",
     "financas": "financas",
+    "insurtech": "financas",
     "agritech": "agro",
     "agronegócio": "agro",
     "agronegocio": "agro",
@@ -102,6 +103,7 @@ def _construir_prompt(perfil: dict) -> str:
     setor = perfil.get("setor") or "não informado"
     produto = perfil.get("produto") or "não informado"
     ia_tipo = perfil.get("ia_tipo") or "não informado"
+    uso_ia = perfil.get("uso_ia_descricao") or "não informado"
     maturidade = perfil.get("maturidade") or "não informado"
     ia_core = perfil.get("ia_core_product")
 
@@ -119,21 +121,19 @@ Você recebeu o perfil de uma startup e deve gerar uma query semântica que ser�
 ## Perfil da startup
 - Setor: {setor}
 - Produto: {produto}
+- Como a IA é usada: {uso_ia}
 - Tipo de IA utilizado: {ia_tipo}
 - Estágio de maturidade: {maturidade}
 - Papel da IA: {foco_ia}
 
 ## Sua tarefa
-1. Analise o perfil e identifique os principais gaps técnicos de IA dessa startup (o que ela provavelmente ainda não tem mas precisa para crescer).
-2. Com base nesses gaps, monte uma query semântica em linguagem natural que capture:
-   - O contexto do negócio (setor + produto)
-   - O tipo de IA e o estágio atual
-   - O que a startup precisa resolver (o gap identificado)
+Monte uma query semântica em linguagem natural que capture fielmente o que essa startup faz com IA e o que ela precisa para escalar ou melhorar isso.
 
 ## Regras
 - A query deve ter entre 1 e 3 frases
 - Escreva em português
-- Seja específico: mencione domínio, tipo de tarefa de IA e necessidade técnica
+- Baseie-se APENAS no que está descrito no perfil — NÃO invente casos de uso, tecnologias ou problemas que não estejam explicitamente mencionados
+- Seja específico: mencione o domínio, o tipo real de tarefa de IA e a necessidade técnica derivada do perfil
 - NÃO cite marcas ou produtos NVIDIA na query — ela será usada para busca semântica
 - NÃO adicione texto explicativo ou introdução — responda APENAS com a query
 
@@ -146,7 +146,7 @@ Responda APENAS com a query, sem mais nenhum texto."""
 def _query_fallback(perfil: dict) -> str:
     """Fallback determinístico caso o LLM não esteja disponível."""
     setor = perfil.get("setor") or ""
-    produto = perfil.get("produto") or ""
+    uso_ia = perfil.get("uso_ia_descricao") or perfil.get("produto") or ""
     ia_tipo = perfil.get("ia_tipo") or ""
     maturidade = perfil.get("maturidade") or ""
     ia_core = perfil.get("ia_core_product")
@@ -154,17 +154,17 @@ def _query_fallback(perfil: dict) -> str:
     partes: list[str] = []
     if setor:
         partes.append(f"startup de {setor}")
-    if produto:
-        partes.append(f"com produto de {produto}")
+    if uso_ia:
+        partes.append(f"que {uso_ia}")
     if ia_tipo:
         partes.append(f"usando {ia_tipo}")
     if maturidade:
         partes.append(f"em estágio {maturidade}")
 
     if ia_core is True:
-        partes.append("buscando stack técnica para inferência e deploy de modelos em produção")
+        partes.append("buscando stack técnica para acelerar e escalar modelos em produção")
     elif ia_core is False:
-        partes.append("buscando casos de uso de IA para acelerar o negócio")
+        partes.append("buscando soluções de IA aplicadas ao negócio")
     else:
         partes.append("buscando soluções de IA")
 

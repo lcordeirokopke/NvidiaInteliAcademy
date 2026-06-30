@@ -28,9 +28,9 @@ from pathlib import Path
 import tiktoken
 from qdrant_client.models import PointStruct
 
-from src.rag.client import get_client
-from src.rag.embedding import gerar_embedding
-from src.rag.setup_qdrant import COLLECTION_NAME
+from rag.client import get_client
+from rag.embedding import gerar_embedding
+from rag.setup_qdrant import COLLECTION_NAME
 
 _ENCODING = tiktoken.get_encoding("cl100k_base")
 _CHUNK_SIZE = 400

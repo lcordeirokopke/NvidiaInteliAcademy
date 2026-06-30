@@ -26,12 +26,18 @@
   - requer `NEWS_DATA_KEY` no `.env` (chave do [newsdata.io](https://newsdata.io))
   - acionado automaticamente quando `newsapi.org` retorna erro ou limite esgotado
 
+## Plataforma multi-agente (`src/agents/extras/`)
+- **langgraph** — orquestração do grafo de agentes (nós, arestas condicionais, ciclos de retry)
+  - instalar com `pip install langgraph`
+- **openai** — cliente HTTP usado por `agents/query.py` para chamar o OpenRouter
+  - requer `OPENROUTER_API_KEY` no `.env`
+
 ## RAG (`src/rag/`)
 - **qdrant-client** — cliente do Qdrant para armazenamento e busca vetorial
   - requer Qdrant rodando em `http://localhost:6333`
-- **google-genai** — já listado acima; reutilizado para embedding via `text-embedding-004`
+- **google-genai** — já listado acima; reutilizado para embedding via `gemini-embedding-001` (3072 dims)
   - requer `GEMINI_API_KEY2` no `.env`
-- **sentence-transformers** — fallback local de embedding (`paraphrase-multilingual-mpnet-base-v2`)
+- **sentence-transformers** — reranker cross-encoder (`cross-encoder/mmarco-mMiniLMv2-L12-H384-v1`); execução local, sem API externa
 
 ## Scraping NVIDIA (`src/scraping_nvidia/`)
 - **trafilatura** — extração de conteúdo principal de páginas web (remove nav, footer, ads automaticamente)
@@ -42,7 +48,7 @@
 ## Instalação
 
 ```bash
-pip install playwright spacy click google-genai supabase python-dotenv requests qdrant-client sentence-transformers trafilatura tiktoken
+pip install playwright spacy click google-genai supabase python-dotenv requests qdrant-client sentence-transformers trafilatura tiktoken langgraph openai
 python -m spacy download pt_core_news_sm
 playwright install chromium
 ```

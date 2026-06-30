@@ -3,21 +3,22 @@ from __future__ import annotations
 """
 Orquestrador do pipeline de recomendação de tecnologias NVIDIA.
 
-Ordem de execução:
-  1. verifica_situacao_coleta  — garante que só empresas completas avancem
-  2. gerar_queries             — gera query semântica via LLM e salva no banco
-  3. buscar_chunks             — embedding + busca Qdrant + reranking
-  4. recomendar                — LLM gera justificativas e salva recomendações
+Executa um grafo LangGraph com 4 agentes LLM sequenciais para cada empresa elegível:
+  carregar_perfil → montar_query → buscar_e_reranquear
+  → explicar_tecnico / explicar_negocio → validar_json
+  → sintese_executiva → roadmap_adocao → kit_inicio → salvar_resultado
 
 Execute com:
   python src/recomendacao/inicia_recomendacao.py
   python src/recomendacao/inicia_recomendacao.py --empresa-id 42
-  python src/recomendacao/inicia_recomendacao.py --forcar --passo gerar_queries
+  python src/recomendacao/inicia_recomendacao.py --forcar
 """
 
 import argparse
 import logging
+import os
 import sys
+import time
 from pathlib import Path
 
 _RAIZ = Path(__file__).resolve().parent.parent.parent
@@ -32,12 +33,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-_PASSOS_DISPONIVEIS = [
-    "verifica_situacao_coleta",
-    "gerar_queries",
-    "buscar_chunks",
-    "recomendar",
-]
+_PAUSA_ENTRE_EMPRESAS = 2.0
 
 
 def _separador(titulo: str) -> None:
@@ -47,67 +43,97 @@ def _separador(titulo: str) -> None:
     print("=" * 60)
 
 
-def _rodar_passo(nome: str, empresa_id: int | None, forcar: bool) -> bool:
-    """Importa e executa um passo do pipeline. Retorna False se o módulo ainda não existe."""
-    try:
-        import importlib
-        modulo = importlib.import_module(f"recomendacao.{nome}")
-    except ModuleNotFoundError:
-        logger.warning("Passo '%s' ainda não implementado — pulando.", nome)
-        return False
+def _ja_tem_resultado(empresa_id: int) -> bool:
+    """Retorna True se a empresa já tem explicacao gerada pelo grafo no banco."""
+    from supabase import create_client
+    supabase = create_client(os.environ["SUPABASE_URL"], os.environ["SUPABASE_KEY"])
+    resultado = (
+        supabase.table("recomendacoes_nvidia")
+        .select("empresa_id")
+        .eq("empresa_id", empresa_id)
+        .not_.is_("explicacao", "null")
+        .limit(1)
+        .execute()
+        .data
+    )
+    return bool(resultado)
 
-    _separador(f"Passo: {nome}")
-    modulo.rodar(empresa_id=empresa_id, forcar=forcar)
-    return True
+
+def _rodar_grafo(empresa_id: int) -> dict | None:
+    """Instancia e executa o grafo LangGraph para uma empresa. Retorna output_final."""
+    from agents.extras.graph import criar_grafo
+
+    grafo = criar_grafo()
+    try:
+        resultado = grafo.invoke(
+            {"empresa_id": empresa_id},
+            config={"configurable": {"thread_id": f"empresa-{empresa_id}"}},
+        )
+        return resultado.get("output_final")
+    except Exception as exc:  # noqa: BLE001
+        logger.error("[%s] erro inesperado no grafo: %s", empresa_id, exc)
+        return None
 
 
 def rodar(
     empresa_id: int | None = None,
     forcar: bool = False,
-    apenas_passo: str | None = None,
 ) -> None:
     """
-    Executa o pipeline completo ou um passo específico.
+    Executa o pipeline completo de recomendação via LangGraph.
 
     Args:
-        empresa_id:   processa só essa empresa se informado.
-        forcar:       repassa a flag --forcar para todos os passos.
-        apenas_passo: nome de um passo para executar isoladamente.
+        empresa_id: processa só essa empresa se informado; senão processa todas elegíveis.
+        forcar:     reprocessa mesmo que recomendações já existam no banco.
     """
-    if apenas_passo is not None:
-        if apenas_passo not in _PASSOS_DISPONIVEIS:
-            logger.error(
-                "Passo '%s' inválido. Disponíveis: %s",
-                apenas_passo, ", ".join(_PASSOS_DISPONIVEIS),
-            )
-            sys.exit(1)
-        _rodar_passo(apenas_passo, empresa_id, forcar)
-        return
-
-    logger.info(
-        "Iniciando pipeline completo | empresa_id=%s | forcar=%s",
-        empresa_id, forcar,
-    )
-
     from recomendacao.verifica_situacao_coleta import verificar
 
-    _separador("Verificação de elegibilidade")
     ids_elegiveis = verificar(empresa_id=empresa_id)
 
     if not ids_elegiveis:
         logger.warning("Nenhuma empresa elegível — pipeline encerrado.")
         return
 
-    passos = [p for p in _PASSOS_DISPONIVEIS if p != "verifica_situacao_coleta"]
-    for nome in passos:
-        _rodar_passo(nome, empresa_id, forcar)
+    logger.info(
+        "Iniciando pipeline LangGraph | %d empresa(s) | forcar=%s",
+        len(ids_elegiveis), forcar,
+    )
+
+    processadas = erros = puladas = 0
+
+    for eid in ids_elegiveis:
+        if not forcar and _ja_tem_resultado(eid):
+            logger.info("[%s] já tem resultado — pulando (use --forcar para reprocessar)", eid)
+            puladas += 1
+            continue
+
+        _separador(f"Empresa {eid}")
+        output = _rodar_grafo(eid)
+
+        if output is None:
+            logger.error("[%s] grafo encerrou sem output_final", eid)
+            erros += 1
+        elif "erro" in output:
+            logger.warning("[%s] sem_resultado: %s", eid, output["erro"])
+            erros += 1
+        else:
+            tecnologias = [
+                t.get("tecnologia")
+                for t in output.get("explicacao", {}).get("tecnologias", [])
+            ]
+            print(f"  [{eid}] OK — {tecnologias}")
+            processadas += 1
+
+        if eid != ids_elegiveis[-1]:
+            time.sleep(_PAUSA_ENTRE_EMPRESAS)
 
     _separador("Pipeline concluído")
+    print(f"  processadas: {processadas} | puladas: {puladas} | erros: {erros}")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Orquestrador do pipeline de recomendação NVIDIA.",
+        description="Pipeline de recomendação NVIDIA via LangGraph.",
     )
     parser.add_argument(
         "--empresa-id",
@@ -118,19 +144,11 @@ if __name__ == "__main__":
     parser.add_argument(
         "--forcar",
         action="store_true",
-        help="Reprocessa mesmo que dados já existam no banco.",
-    )
-    parser.add_argument(
-        "--passo",
-        choices=_PASSOS_DISPONIVEIS,
-        default=None,
-        metavar="PASSO",
-        help=f"Executa só um passo. Opções: {', '.join(_PASSOS_DISPONIVEIS)}",
+        help="Reprocessa mesmo que recomendações já existam no banco.",
     )
     args = parser.parse_args()
 
     rodar(
         empresa_id=args.empresa_id,
         forcar=args.forcar,
-        apenas_passo=args.passo,
     )

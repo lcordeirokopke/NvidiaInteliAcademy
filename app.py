@@ -84,9 +84,19 @@ def main() -> None:
     enriquecer()
 
     # 14. Calcula score e nível de maturidade de IA
-    _titulo("14/14 · define_maturidade.py — score de maturidade")
+    _titulo("14/16 · define_maturidade.py — score de maturidade")
     from dados_startups_selecionadas.define_maturidade import classificar
     classificar()
+
+    # 15. Atualiza situação de coleta das empresas no banco
+    _titulo("15/16 · atualiza_situacao_coleta.py — situação de coleta")
+    from interacoes_banco.atualiza_situacao_coleta import atualizar
+    atualizar()
+
+    # 16. Gera recomendações de tecnologias NVIDIA via LangGraph
+    _titulo("16/16 · inicia_recomendacao.py — recomendações NVIDIA")
+    from recomendacao.inicia_recomendacao import rodar
+    rodar()
 
     elapsed = time.time() - inicio
     print(f"\n{'=' * 60}")
