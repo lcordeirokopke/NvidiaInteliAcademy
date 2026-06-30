@@ -1,0 +1,11 @@
+{
+  "url": "https://rapids.ai/",
+  "fonte": "rapids.ai",
+  "titulo": "NVIDIA RAPIDS — Suite de Aceleração GPU para Ciência de Dados",
+  "categoria": "produto",
+  "familia": "dados",
+  "tecnologia": "RAPIDS",
+  "setores": ["geral"],
+  "ia_tipos": ["classificacao", "series temporais", "deteccao de anomalias", "recomendacao", "busca semantica"],
+  "texto": "NVIDIA RAPIDS é uma suite open-source de bibliotecas para ciência de dados e aprendizado de máquina acelerados por GPU. Construída sobre CUDA e Apache Arrow, o RAPIDS oferece APIs familiares que espelham as bibliotecas Python mais populares do ecossistema PyData — pandas, scikit-learn, NetworkX, scikit-image — permitindo que times migrem pipelines existentes para GPU com mudanças mínimas de código e ganhos de performance de ordens de magnitude.\n\nO núcleo da suite é composto por cuDF (processamento de DataFrames com API pandas), cuML (algoritmos de machine learning com API scikit-learn), cuGraph (análise de grafos com API NetworkX), cuVS (busca vetorial de alta performance) e cuOpt (otimização combinatória). Além disso, o RAPIDS inclui aceleração para Apache Spark via Spark RAPIDS, suporte a clusters multi-nó multi-GPU com Dask, e integração com ambientes HPC via Slurm.\n\nPara startups que trabalham com grandes volumes de dados tabulares, o cuDF substitui o pandas com execução paralela em GPU, eliminando gargalos de pré-processamento que em CPU levariam horas. O cuML acelera o treinamento de modelos clássicos de ML — regressão, classificação, clustering, redução de dimensionalidade — usando os mesmos hiperparâmetros e interfaces do scikit-learn, sem necessidade de reescrever pipelines.\n\nO RAPIDS é open source (licença Apache 2.0), roda de um único GPU de desktop até configurações MNMG (multi-node multi-GPU), e integra nativamente com o ecossistema NVIDIA: modelos treinados com cuML podem ser exportados para TensorRT para inferência otimizada, e pipelines RAPIDS rodam em clusters DGX e em nuvem via NGC. Membros do NVIDIA Inception têm acesso a suporte técnico e créditos de nuvem para experimentação.\n\nStartups que mais se beneficiam do RAPIDS são as que processam dados tabulares em escala, treinam modelos de ML clássico frequentemente (ciclos rápidos de experimentação), ou têm pipelines de dados que são o gargalo do produto — independentemente do setor."
+}
