@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import os
+
 from qdrant_client import QdrantClient
 
 _client: QdrantClient | None = None
@@ -8,5 +10,6 @@ _client: QdrantClient | None = None
 def get_client() -> QdrantClient:
     global _client
     if _client is None:
-        _client = QdrantClient(url="http://localhost:6333")
+        url = os.environ.get("QDRANT_URL", "http://localhost:6333")
+        _client = QdrantClient(url=url)
     return _client

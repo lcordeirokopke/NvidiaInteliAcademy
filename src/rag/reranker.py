@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from sentence_transformers import CrossEncoder
 
-_MODEL_NAME = "cross-encoder/ms-marco-MiniLM-L-6-v2"
+_MODEL_NAME = "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1"
 _encoder: CrossEncoder | None = None
 
 

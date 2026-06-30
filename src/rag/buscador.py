@@ -22,6 +22,7 @@ def _montar_filtro(filtros: dict) -> Filter | None:
 
 
 _CATEGORIAS_PADRAO = ["produto", "caso_de_uso", "stack", "inception"]
+_SCORE_THRESHOLD = 0.55
 
 
 def buscar(
@@ -44,6 +45,7 @@ def buscar(
         query_vector=embedding,
         query_filter=_montar_filtro(filtros_efetivos),
         limit=limite,
+        score_threshold=_SCORE_THRESHOLD,
         with_payload=True,
     )
 
