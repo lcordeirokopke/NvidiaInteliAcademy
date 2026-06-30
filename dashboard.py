@@ -361,10 +361,10 @@ def render_pendentes(df: pd.DataFrame, busca: str) -> None:
     )
 
     st.info(
-        "**Nota:** a maioria das empresas pendentes apresenta os campos **Programa de Aceleração** e "
+        "**Nota:** a maioria das empresas apresenta os campos **Programa de Aceleração** e "
         "**Gupy** em branco. Esses campos são complementares e não determinam se uma empresa é "
         "marcada como pendente — a situação é definida por campos obrigatórios como CNPJ, produto, "
-        "setor e tipo de IA."
+        "setor e tipo de IA e outros."
     )
 
 
@@ -553,66 +553,38 @@ PAGINAS = ["Resumo Geral", "Empresas", "Pendentes", "Excluídas", "Uso de IA"]
 def main() -> None:
     st.set_page_config(page_title="NVIDIA Intel Academy", layout="wide")
 
-    # CSS: header fixo + sidebar direita
     st.markdown("""
         <style>
-        /* ── Sidebar esquerda (padrão) ───────────────────────── */
+        /* ── Fundo azul claro no sidebar nativo ─────────────── */
+        [data-testid="stSidebar"],
+        [data-testid="stSidebarContent"] {
+            background-color: #dce8f5 !important;
+        }
 
         /* Esconde o handle de redimensionamento (elemento cinza arrastável) */
         [data-testid="stSidebarResizeHandle"] {
             display: none !important;
         }
 
-        /* Garante largura fixa da sidebar */
-        [data-testid="stSidebar"] {
-            min-width: 18rem !important;
-            max-width: 18rem !important;
-        }
-
-        /* Padding para o header fixo */
-        [data-testid="stAppViewContainer"] > section.main {
-            padding-top: 3.5rem;
-        }
-
-        /* ── Header fixo ─────────────────────────────────────── */
-        .header-bar {
-            position: fixed; top: 0; left: 0; right: 0; z-index: 999;
-            background: #0f0f0f; border-bottom: 1px solid #1e1e1e;
-            padding: 0.55rem 1.5rem;
-            display: flex; align-items: center; justify-content: space-between;
-        }
-        .header-bar .logo { font-size: 1.25rem; font-weight: 700; color: #76b900; }
-        .header-bar .nav  { font-size: 0.8rem; color: #888; }
         </style>
     """, unsafe_allow_html=True)
 
-    st.markdown("""
-        <div class="header-bar">
-            <span class="nav">NVIDIA · Radar de Startups</span>
-            <span class="logo">🚀</span>
-        </div>
-    """, unsafe_allow_html=True)
-
-    # Sidebar
+    # Sidebar nativa
     with st.sidebar:
-        st.markdown("## Navegação")
-        pagina = st.radio("", PAGINAS, label_visibility="collapsed")
-        st.divider()
         busca = st.text_input("Buscar empresa", placeholder="Filtrar por nome...")
+        st.divider()
+        st.markdown("### Navegação")
+        pagina = st.radio("", PAGINAS, label_visibility="collapsed")
 
     # Router
     if pagina == "Resumo Geral":
         render_resumo_geral()
-
     elif pagina == "Empresas":
         render_empresas(fetch_recomendacoes(), busca)
-
     elif pagina == "Pendentes":
         render_pendentes(fetch_pendentes(), busca)
-
     elif pagina == "Excluídas":
         render_excluidas(fetch_excluidas(), busca)
-
     elif pagina == "Uso de IA":
         render_uso_ia(fetch_empresas_uso_ia(), busca)
 
