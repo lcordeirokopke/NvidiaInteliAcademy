@@ -46,7 +46,7 @@ CREATE TABLE empresas_uso_ia (
     produto_ia_lancado   BOOLEAN,     -- produto de IA já em produção (vs. "estamos construindo")
 
     -- Maturidade AI-native: validação externa
-    programa_aceleracao  TEXT,        -- programas detectados, separados por vírgula; ex: 'NVIDIA Inception, Google for Startups'
+    programa_aceleracao  TEXT[],      -- programas detectados; ex: ARRAY['NVIDIA Inception', 'Google for Startups']
 
     -- Classificação final (calculada pelo programa a partir dos campos acima)
     score_maturidade_ia  SMALLINT,    -- 0 a 10

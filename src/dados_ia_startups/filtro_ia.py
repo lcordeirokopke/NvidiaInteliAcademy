@@ -24,7 +24,6 @@ _TETO_CAMADA: dict[str, int] = {
     "neofeed":       3,
     "gupy_vagas":    2,
     "imprensa":      2,
-    "ecossistema":   1,
 }
 
 _PALAVRAS_IA = re.compile(
@@ -115,11 +114,6 @@ def _score_sinal(camada: str, encontrado: bool, evidencia: str, nome_empresa: st
         if tem_ia:
             return 2, "imprensa menciona IA"
         return 0, "encontrado sem menção a IA na imprensa"
-
-    if camada == "ecossistema":
-        if tem_ia:
-            return 1, "ecossistema menciona IA"
-        return 0, "encontrado sem menção a IA no ecossistema"
 
     return 0, ""
 

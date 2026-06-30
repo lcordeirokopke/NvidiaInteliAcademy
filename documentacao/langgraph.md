@@ -97,7 +97,7 @@ carregar_perfil
 montar_query
   Se perfil={}: retorna query="" sem chamar o LLM.
   Caso contrário: chama gerar_query() (OpenRouter) para transformar
-  os campos do perfil (setor, produto, uso_ia_descricao, ia_tipo, maturidade,
+  os campos do perfil (setor, produto, uso_ia_descricao, ia_tipo, nivel_maturidade_ia,
   ia_e_core_product) em uma frase de busca semântica.
   Em falha do LLM: fallback local concatenando setor + uso_ia_descricao + ia_tipo.
         │

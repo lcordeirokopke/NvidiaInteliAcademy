@@ -59,7 +59,7 @@ def main(nome: str) -> None:
     from dados_ia_startups.descobre_imprensa import pesquisar as pesquisar_imprensa
     pesquisar_imprensa(nome=nome)
 
-    _titulo("6/16 · analisa_neofeed.py — tag ecossistema")
+    _titulo("6/16 · analisa_neofeed.py — tag neofeed")
     from dados_ia_startups.analisa_neofeed import classificar as classificar_neofeed
     classificar_neofeed(nome=nome)
 

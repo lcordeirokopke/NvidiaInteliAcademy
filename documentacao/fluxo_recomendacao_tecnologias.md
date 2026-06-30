@@ -14,8 +14,8 @@ PERFIL DA STARTUP (já existe no banco)
 setor: "saude"
 produto: "plataforma de diagnóstico por imagem"
 ia_tipo: "visão computacional"
-maturidade: "MVP"
-ia_core_product: true
+nivel_maturidade_ia: "ai-adjacent"
+ia_e_core_product: true
         │
         ▼
 MONTAGEM DA QUERY SEMÂNTICA
@@ -75,8 +75,8 @@ Campos do banco usados para montar a query:
 | `produto` | ancora a busca semântica no domínio do produto |
 | `uso_ia_descricao` | descrição detalhada de como a IA é usada — campo principal para a query |
 | `ia_tipo` | direciona para tecnologias do mesmo tipo de IA |
-| `maturidade` | pode priorizar soluções de deploy rápido (MVP) ou otimização (escala) |
-| `ia_core_product` | se true, prioriza stack técnica; se false, prioriza casos de uso de negócio |
+| `nivel_maturidade_ia` | pode priorizar soluções de deploy rápido (ai-adjacent) ou otimização (ai-native) |
+| `ia_e_core_product` | se true, prioriza stack técnica; se false, prioriza casos de uso de negócio |
 
 ### 2. Montagem da query semântica
 
@@ -259,7 +259,7 @@ A granularidade por frase foi escolhida para evitar que frases semanticamente de
 BM25 faz matching lexical no conteúdo textual dos chunks — é útil quando a query contém termos técnicos exatos que aparecem literalmente nos documentos. Neste pipeline, isso não ocorre por dois motivos:
 
 **1. A query é semântica, não lexical.**
-Ela é montada a partir dos campos do perfil da startup (`setor`, `produto`, `ia_tipo`, `maturidade`), resultando em frases como `"startup de saúde com visão computacional em MVP"`. Nenhum campo do perfil contém nomes de tecnologias NVIDIA como "TensorRT" ou "NIM" — portanto BM25 não teria termos para fazer matching no texto dos chunks.
+Ela é montada a partir dos campos do perfil da startup (`setor`, `produto`, `ia_tipo`, `nivel_maturidade_ia`), resultando em frases como `"startup de saúde com visão computacional em MVP"`. Nenhum campo do perfil contém nomes de tecnologias NVIDIA como "TensorRT" ou "NIM" — portanto BM25 não teria termos para fazer matching no texto dos chunks.
 
 **2. Os filtros de metadata já fazem o trabalho de segmentação.**
 O que este pipeline precisa de "lexical" é segmentação categórica: só chunks do setor relevante, só chunks de categorias úteis (produto, stack, caso_de_uso). Isso é resolvido pelos filtros estruturados (`setor`, `categoria`) antes mesmo da busca vetorial, sem custo adicional.

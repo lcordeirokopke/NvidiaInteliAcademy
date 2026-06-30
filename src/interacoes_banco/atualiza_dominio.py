@@ -110,7 +110,7 @@ def _reexecutar_pipeline_sinais_ia(nome: str) -> None:
       1. descobre_gupy_vagas   → camada gupy_vagas
       2. descobre_institucional → camada institucional
       3. descobre_imprensa     → camada imprensa
-      4. analisa_neofeed       → tag ecossistema / sinal neofeed
+      4. analisa_neofeed       → camada neofeed
       5. filtro_ia             → consolida sinais e grava em avaliacoes_ia
     """
     _titulo("re-coleta · gupy_vagas")

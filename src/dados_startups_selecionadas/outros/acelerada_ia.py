@@ -258,9 +258,8 @@ def descobrir(atualizar_banco: bool = True, nome: str | None = None) -> list[dic
         programas = _descobrir_aceleradoras(dominio)
 
         if programas:
-            valor = ", ".join(programas)
-            print(f"       [✓] {valor}")
-            atualizacoes.append({"empresa_id": empresa_id, "programa_aceleracao": valor})
+            print(f"       [✓] {', '.join(programas)}")
+            atualizacoes.append({"empresa_id": empresa_id, "programa_aceleracao": programas})
         else:
             print("       [✗] nenhum programa encontrado")
             sem_resultado.append(nome_emp)

@@ -7,13 +7,13 @@ import requests
 
 _BASE_URL = "https://gnews.io/api/v4/search"
 
-# GNews não indexa os mesmos domínios da News API — usa blocklist em vez de allowlist
-# para não descartar resultados válidos de fontes brasileiras que o GNews indexa
 _DOMINIOS_BLOQUEADOS = {
     "nature.com", "arxiv.org", "pubmed.ncbi.nlm.nih.gov", "sciencedirect.com",
     "springer.com", "wiley.com", "researchgate.net", "semanticscholar.org",
     "highsnobiety.com", "naturalnews.com",
 }
+
+_api_indisponivel = False
 
 
 def _dominio_bloqueado(url: str) -> bool:
@@ -22,7 +22,17 @@ def _dominio_bloqueado(url: str) -> bool:
     return any(host == d or host.endswith("." + d) for d in _DOMINIOS_BLOQUEADOS)
 
 
-_api_indisponivel = False
+def _item_valido(item: object) -> bool:
+    """Valida schema mínimo de cada artigo retornado pelo GNews."""
+    if not isinstance(item, dict):
+        return False
+    url = item.get("url")
+    titulo = item.get("title")
+    if not isinstance(url, str) or not url.startswith("http"):
+        return False
+    if not isinstance(titulo, str) or len(titulo.strip()) < 10:
+        return False
+    return True
 
 
 def buscar(nome: str, debug: bool = False) -> list[dict]:
@@ -40,8 +50,7 @@ def buscar(nome: str, debug: bool = False) -> list[dict]:
         print("      [fallback/gnews] GNNEWS_API_KEY não definida, pulando gnews")
         return []
 
-    # parênteses garantem que o nome seja obrigatório em todas as alternativas;
-    # operadores de exclusão (-"...") não são suportados no plano gratuito do GNews
+    # Parênteses garantem que o nome seja obrigatório em todas as alternativas.
     q = (
         f'"{nome}" '
         f'("inteligência artificial" OR "machine learning" OR "IA generativa"'
@@ -61,23 +70,43 @@ def buscar(nome: str, debug: bool = False) -> list[dict]:
 
     try:
         r = requests.get(_BASE_URL, params=params, timeout=10)
+
         if r.status_code in (401, 403, 429):
             print(f"      [fallback/gnews] API indisponível ({r.status_code}) — pulando para o restante da execução")
             _api_indisponivel = True
             return []
+        if r.status_code >= 500:
+            print(f"      [fallback/gnews] erro do servidor ({r.status_code})")
+            return []
+
         r.raise_for_status()
+
+    except requests.Timeout:
+        print("      [fallback/gnews] timeout (10 s)")
+        return []
     except requests.RequestException as e:
         print(f"      [fallback/gnews/erro] {e}")
         return []
 
-    data = r.json()
+    try:
+        data = r.json()
+    except ValueError:
+        print("      [fallback/gnews/erro] resposta não é JSON válido")
+        return []
+
+    articles = data.get("articles")
+    if not isinstance(articles, list):
+        return []
+
     artigos = []
-    for item in data.get("articles") or []:
-        url = item.get("url") or ""
+    for item in articles:
+        if not _item_valido(item):
+            continue
+        url: str = item["url"]
         if _dominio_bloqueado(url):
             continue
         artigos.append({
-            "title": item.get("title"),
+            "title": item["title"],
             "description": item.get("description"),
             "url": url,
             "publishedAt": item.get("publishedAt"),

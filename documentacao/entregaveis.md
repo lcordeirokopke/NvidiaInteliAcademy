@@ -47,7 +47,7 @@ Dispara o pipeline completo de 16 passos (`app.py`) diretamente pelo dashboard, 
 |---|---|
 | `empresas` | Resumo Geral (funil), base de nomes para todas as páginas |
 | `avaliacoes_ia` | Resumo Geral (funil + excluídas), página Excluídas |
-| `sinais_ia` | Página Excluídas (camadas avaliadas por empresa) |
+| `sinais_ia` | Página Excluídas (camadas avaliadas por empresa: `institucional`, `imprensa`, `gupy_vagas`, `neofeed`) |
 | `empresas_uso_ia` | Resumo Geral, Uso de IA, Pendentes, Empresas (perfil enriquecido) |
 | `recomendacoes_nvidia` | Resumo Geral (ranking de tecnologias), Empresas (outputs dos 4 LLMs) |
 

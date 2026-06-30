@@ -141,5 +141,5 @@ O agente pode filtrar em dois níveis de tecnologia:
 | `setor` | `setores` | filtro `$in` |
 | `ia_tipo` | `ia_tipos` | filtro `$in` |
 | `produto` | — | ancora a busca semântica |
-| `maturidade` | — | usado pelo Gemini na argumentação |
-| `ia_core_product` | — | não afeta os filtros do Qdrant; determina qual prompt do LLM 1 é usado (`explicar_tecnico` ou `explicar_negocio`) |
+| `nivel_maturidade_ia` | — | usado pelo Gemini na argumentação |
+| `ia_e_core_product` | — | não afeta os filtros do Qdrant; determina qual prompt do LLM 1 é usado (`explicar_tecnico` ou `explicar_negocio`) |

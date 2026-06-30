@@ -63,8 +63,8 @@ def main() -> None:
     from dados_ia_startups.descobre_imprensa import pesquisar as pesquisar_imprensa
     pesquisar_imprensa()
 
-    # 10. Classifica artigos Neofeed como ecossistema de IA
-    _titulo("10/16 · analisa_neofeed.py — tag ecossistema")
+    # 10. Classifica artigos Neofeed quanto à menção de IA
+    _titulo("10/16 · analisa_neofeed.py — tag neofeed")
     from dados_ia_startups.analisa_neofeed import classificar as classificar_neofeed
     classificar_neofeed()
 

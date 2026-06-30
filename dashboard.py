@@ -33,6 +33,10 @@ def fetch_empresas_uso_ia() -> pd.DataFrame:
     df_nomes = pd.DataFrame(nomes).rename(columns={"id": "empresa_id", "nome": "nome_original"})
     df = df.merge(df_nomes, on="empresa_id", how="left")
     df["nome_display"] = df["nome_fantasia"].where(df["nome_fantasia"].notna(), df["nome_original"])
+    if "programa_aceleracao" in df.columns:
+        df["programa_aceleracao"] = df["programa_aceleracao"].apply(
+            lambda v: ", ".join(v) if isinstance(v, list) else v
+        )
     return df
 
 

@@ -51,7 +51,12 @@ Responda APENAS em JSON válido, sem markdown, sem texto antes ou depois:
 # Audiência: CEO da startup + account manager NVIDIA
 # Traduz a recomendação técnica para linguagem executiva
 PROMPT_SINTESE_EXECUTIVA = """\
-Você é um consultor de negócios especializado em IA para startups.
+Você é um analista de negócios produzindo um executive brief sobre uma startup.
+Escreva em terceira pessoa — refira-se à startup pelo nome ou como "a empresa",
+nunca use primeira pessoa ("eu", "acredito", "recomendo") nem segunda pessoa
+("você", "sua empresa"). O texto deve soar como um relatório analítico objetivo,
+não como uma conversa ou carta endereçada ao leitor.
+
 Traduza a recomendação técnica abaixo para linguagem executiva — sem jargão,
 focando em impacto de negócio, vantagem competitiva e próximos passos de alto nível.
 
@@ -63,11 +68,11 @@ Recomendação técnica (gerada para o CTO):
 
 Responda APENAS em JSON válido, sem markdown, sem texto antes ou depois:
 {{
-  "resumo": "2-3 frases claras para o CEO",
-  "impacto_principal": "resultado mensurável esperado",
-  "diferencial_competitivo": "por que isso coloca a startup à frente dos concorrentes",
+  "resumo": "2-3 frases claras para o CEO, em terceira pessoa",
+  "impacto_principal": "resultado mensurável esperado, em terceira pessoa",
+  "diferencial_competitivo": "por que isso coloca a empresa à frente dos concorrentes, em terceira pessoa",
   "investimento_estimado": "esforço e recursos aproximados para adoção",
-  "proximo_passo": "ação imediata mais importante para começar"
+  "proximo_passo": "ação imediata mais importante para começar, em terceira pessoa"
 }}
 """
 
