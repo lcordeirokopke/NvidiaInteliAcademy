@@ -19,67 +19,67 @@ def main() -> None:
     inicio = time.time()
 
     # 1. Coleta artigos brutos do Neofeed
-    _titulo("1/13 · coleta_neofeed.py — raspagem Neofeed")
+    _titulo("1/16 · coleta_neofeed.py — raspagem Neofeed")
     from coleta_startups.coleta_neofeed import coletar
     coletar()
 
     # 2. Filtra e extrai nomes de startups
-    _titulo("2/13 · filtro.py — extração de nomes")
+    _titulo("2/16 · filtro.py — extração de nomes")
     from coleta_startups.filtro import filtrar
     filtrar()
 
     # 3. Envia nomes brutos para Supabase (tabela nomes_empresas)
-    _titulo("3/13 · upload_nomes_empresas.py — upload para Supabase")
+    _titulo("3/16 · upload_nomes_empresas.py — upload para Supabase")
     from interacoes_banco.upload_nomes_empresas import upload as upload_nomes
     upload_nomes()
 
     # 4. Envia empresas para Supabase (tabela empresas) — deve vir antes das descobertas
-    _titulo("4/13 · upload_empresas.py — upload para Supabase")
+    _titulo("4/16 · upload_empresas.py — upload para Supabase")
     from interacoes_banco.upload_empresas import upload as upload_empresas
     upload_empresas()
 
     # 5. Descobre domínio de cada empresa
-    _titulo("5/13 · descobre_dominio.py — descoberta de domínios")
+    _titulo("5/16 · descobre_dominio.py — descoberta de domínios")
     from dados_startups.descobre_dominio import descobrir as descobrir_dominio
     descobrir_dominio()
 
     # 6. Descobre subdomínio Gupy de cada empresa
-    _titulo("6/13 · descobre_gupy.py — descoberta de subdominios Gupy")
+    _titulo("6/16 · descobre_gupy.py — descoberta de subdominios Gupy")
     from dados_startups.descobre_gupy import descobrir as descobrir_gupy
     descobrir_gupy()
 
     # 7. Pesquisa vagas de IA no Gupy
-    _titulo("7/13 · descobre_gupy_vagas.py — vagas de IA no Gupy")
+    _titulo("7/16 · descobre_gupy_vagas.py — vagas de IA no Gupy")
     from dados_ia_startups.descobre_gupy_vagas import pesquisar
     pesquisar()
 
     # 8. Analisa site institucional de cada empresa
-    _titulo("8/13 · descobre_institucional.py — análise site institucional")
+    _titulo("8/16 · descobre_institucional.py — análise site institucional")
     from dados_ia_startups.descobre_institucional import pesquisar as pesquisar_institucional
     pesquisar_institucional()
 
     # 9. Pesquisa notícias de IA na News API
-    _titulo("9/13 · descobre_imprensa.py — notícias de IA (News API)")
+    _titulo("9/16 · descobre_imprensa.py — notícias de IA (News API)")
     from dados_ia_startups.descobre_imprensa import pesquisar as pesquisar_imprensa
     pesquisar_imprensa()
 
     # 10. Classifica artigos Neofeed como ecossistema de IA
-    _titulo("10/13 · analisa_neofeed.py — tag ecossistema")
+    _titulo("10/16 · analisa_neofeed.py — tag ecossistema")
     from dados_ia_startups.analisa_neofeed import classificar as classificar_neofeed
     classificar_neofeed()
 
     # 11. Avalia sinais e grava veredito em avaliacoes_ia
-    _titulo("11/13 · filtro_ia.py — veredito de uso de IA")
+    _titulo("11/16 · filtro_ia.py — veredito de uso de IA")
     from dados_ia_startups.filtro_ia import filtrar as filtrar_ia
     filtrar_ia()
 
     # 12. Cria linhas em empresas_uso_ia para aprovadas (seed)
-    _titulo("12/14 · inicia_aprofundamento.py — seed de aprovadas")
+    _titulo("12/16 · inicia_aprofundamento.py — seed de aprovadas")
     from dados_startups_selecionadas.inicia_aprofundamento import _seed_aprovadas
     _seed_aprovadas()
 
     # 13. Enriquece identidade: CNPJ, produto, setor (BrasilAPI)
-    _titulo("13/14 · enriquece_identidade.py — CNPJ + BrasilAPI")
+    _titulo("13/16 · enriquece_identidade.py — CNPJ + BrasilAPI")
     from dados_startups_selecionadas.identidade.enriquece_identidade import enriquecer
     enriquecer()
 

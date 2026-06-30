@@ -3,7 +3,6 @@ from __future__ import annotations
 import json
 import os
 import re
-import time
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -22,20 +21,17 @@ supabase = create_client(os.environ["SUPABASE_URL"], os.environ["SUPABASE_KEY"])
 _NEWS_API_KEY = os.environ["NEWS_API_KEY"]
 _NEWS_API_URL = "https://newsapi.org/v2/everything"
 
-_QUERIES = [
-    # 1 — ação + produto com IA: empresa fez algo concreto ou tem produto com IA
-    (
-        '(implementou OR lançou OR integrou OR desenvolveu OR automatizou'
-        ' OR "com IA" OR "assistente virtual" OR chatbot OR copilot)'
-        ' AND ("inteligência artificial" OR "machine learning" OR "IA generativa"'
-        ' OR "modelo de linguagem" OR "GPT" OR "LLM")'
-    ),
-    # 2 — aporte/investimento com foco em IA: veículos BR cobrem rodadas extensamente
-    (
-        '("aporte" OR "rodada" OR "captou" OR "investimento" OR "Series A" OR "seed")'
-        ' AND ("inteligência artificial" OR "IA" OR "machine learning")'
-    ),
-]
+# Query única que combina sinais de ação/produto e de aporte/investimento num só request.
+# Sem o parâmetro `domains` na chamada à API (o filtro de domínio permanece local em
+# `_filtrar`) porque restringir server-side a 18 domínios específicos elimina a maior
+# parte dos artigos válidos antes mesmo de chegarmos ao filtro de qualidade.
+_QUERY_TERMOS = (
+    '(implementou OR lançou OR integrou OR desenvolveu OR automatizou'
+    ' OR "com IA" OR "assistente virtual" OR chatbot OR copilot'
+    ' OR aporte OR rodada OR captou OR investimento OR "Series A" OR seed)'
+    ' AND ("inteligência artificial" OR "machine learning" OR "IA generativa"'
+    ' OR "modelo de linguagem" OR GPT OR LLM OR IA)'
+)
 
 _MAX_ARTIGOS_POR_EMPRESA = 5
 
@@ -63,24 +59,25 @@ _SAIDA = _RAIZ / "data" / "jsons" / "imprensa"
 _news_api_esgotada = False
 
 
-def _buscar(nome: str, termos: str, lang: str = "pt", debug: bool = False) -> list[dict]:
+def _buscar(nome: str, debug: bool = False) -> list[dict]:
     global _news_api_esgotada
 
+    q = f'"{nome}" AND ({_QUERY_TERMOS})'
     if debug:
-        q = f'"{nome}" AND ({termos})'
-        print(f"      [debug] query [{lang}]: {q}")
+        print(f"      [debug] query: {q}")
 
     usar_fallback = False
     if _news_api_esgotada:
         usar_fallback = True
     else:
         params = {
-            "q": f'"{nome}" AND ({termos})',
-            "language": lang,
+            "q": q,
+            "language": "pt",
             "sortBy": "relevancy",
             "pageSize": 10,
             "apiKey": _NEWS_API_KEY,
-            "domains": _DOMINIOS_BR,
+            # `domains` removido intencionalmente: restringir a 18 domínios na API
+            # elimina artigos válidos antes do filtro local de qualidade ser aplicado.
         }
         try:
             r = requests.get(_NEWS_API_URL, params=params, timeout=10)
@@ -101,7 +98,7 @@ def _buscar(nome: str, termos: str, lang: str = "pt", debug: bool = False) -> li
             usar_fallback = True
 
     if usar_fallback:
-        resultado = _fallback.buscar(nome, termos, lang=lang, debug=debug)
+        resultado = _fallback.buscar(nome, debug=debug)
         if resultado:
             return resultado
         return _fallback_gnews.buscar(nome, debug=debug)
@@ -186,16 +183,7 @@ def pesquisar(debug: bool = False, nome: str | None = None) -> None:
             print(f"    [skip] já checado anteriormente")
             continue
 
-        vistos: set[str] = set()
-        todos_artigos: list[dict] = []
-        for termos, lang in zip(_QUERIES, ["pt", "pt"]):
-            for artigo in _buscar(nome, termos, lang=lang, debug=debug):
-                url = artigo.get("url", "")
-                if url and url not in vistos:
-                    vistos.add(url)
-                    todos_artigos.append(artigo)
-            time.sleep(1)
-
+        todos_artigos = _buscar(nome, debug=debug)
         relevantes = _filtrar(todos_artigos, nome)
 
         if relevantes:

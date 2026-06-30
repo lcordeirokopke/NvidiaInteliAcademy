@@ -405,5 +405,86 @@ def main() -> None:
         print(f"\n  [concluído] '{emp['_nome']}' reprocessada.")
 
 
+# ── API pública para integração com Streamlit ─────────────────────────────────
+
+def carregar_empresas_pendentes() -> list[dict]:
+    return _carregar_empresas_com_null()
+
+
+def passos_para_empresa(emp: dict) -> list[dict]:
+    nulos = set(emp["_nulos"])
+    return [p for p in _PASSOS if p["campos"] & nulos]
+
+
+def executar_para_streamlit(passo_inicial: dict, emp: dict) -> tuple[str, list[str]]:
+    """
+    Executa passo_inicial e todos os passos seguintes sem chamar input().
+    Retorna (output_capturado, campos_ainda_null).
+    """
+    import io
+    import contextlib
+
+    nome = emp["_nome"]
+    empresa_id = int(emp["empresa_id"])
+    passos_a_rodar = _passos_a_partir_de(passo_inicial)
+
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf):
+        for passo in passos_a_rodar:
+            campos_alvo = passo["campos"] - {"score_maturidade_ia", "nivel_maturidade_ia"}
+            if campos_alvo and not _campos_null_apos(empresa_id, campos_alvo):
+                print(f"[skip] {passo['label']} — campos já preenchidos")
+                continue
+            print(f"\n{'=' * 55}")
+            print(f"  {passo['label']}")
+            print("=" * 55)
+            passo["fn"](nome)
+
+        ultimo_label = passos_a_rodar[-1]["label"] if passos_a_rodar else ""
+        if ultimo_label not in _IS_DEFINE_MATURIDADE:
+            print(f"\n{'=' * 55}")
+            print("  Score e nível de maturidade + situacao_coleta")
+            print("=" * 55)
+            from dados_startups_selecionadas.define_maturidade import classificar
+            classificar(nome=nome)
+
+    todos_campos = set()
+    for p in passos_a_rodar:
+        todos_campos |= p["campos"]
+    campos_null = _campos_null_apos(
+        empresa_id,
+        todos_campos - {"score_maturidade_ia", "nivel_maturidade_ia"},
+    )
+    return buf.getvalue(), campos_null
+
+
+def gravar_campos_manuais(empresa_id: int, campos: dict) -> str:
+    """
+    Salva campos preenchidos manualmente e recalcula maturidade.
+    Retorna output capturado do recálculo.
+    """
+    import io
+    import contextlib
+
+    if campos:
+        supabase.table("empresas_uso_ia").update(campos).eq("empresa_id", empresa_id).execute()
+
+    rows = supabase.table("empresas").select("nome").eq("id", empresa_id).execute().data
+    if not rows:
+        return ""
+
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf):
+        from dados_startups_selecionadas.define_maturidade import classificar
+        classificar(nome=rows[0]["nome"])
+    return buf.getvalue()
+
+
+# Constantes exportadas
+CAMPOS_BOOL = _CAMPOS_BOOL
+CAMPOS_INT  = _CAMPOS_INT
+CAMPOS_ENUM = _CAMPOS_ENUM
+
+
 if __name__ == "__main__":
     main()

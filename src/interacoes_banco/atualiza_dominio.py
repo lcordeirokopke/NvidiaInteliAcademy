@@ -187,5 +187,27 @@ def atualizar() -> None:
             print("  [info] pipeline não executado.")
 
 
+# ── API pública para integração com Streamlit ─────────────────────────────────
+
+def validar_e_normalizar_dominio(raw: str) -> str | None:
+    """Remove protocolo, normaliza e valida. Retorna None se inválido."""
+    raw = re.sub(r"^https?://", "", raw.strip()).rstrip("/")
+    return raw if _RE_DOMINIO.match(raw) else None
+
+
+def gravar_dominio_publico(empresa_id: int, dominio: str) -> None:
+    _gravar_dominio(empresa_id, dominio)
+
+
+def reexecutar_sinais_ia_publico(nome: str) -> str:
+    """Roda o pipeline de sinais_ia e retorna o output capturado."""
+    import io
+    import contextlib
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf):
+        _reexecutar_pipeline_sinais_ia(nome)
+    return buf.getvalue()
+
+
 if __name__ == "__main__":
     atualizar()

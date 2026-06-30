@@ -122,7 +122,129 @@ def safe_json(val) -> dict | list:
 
 def render_resumo_geral() -> None:
     st.title("Resumo Geral")
-    st.info("construir depois")
+
+    df_emp     = fetch_empresas()
+    df_uso     = fetch_empresas_uso_ia()
+    df_rec     = fetch_recomendacoes()
+    df_excl    = fetch_excluidas()
+
+    total_coletadas  = len(df_emp)
+    total_ia         = len(df_uso)
+    total_completas  = int((df_uso["situacao_coleta"] == "completo").sum()) if not df_uso.empty else 0
+    total_rec        = len(df_rec)
+    total_excluidas  = len(df_excl)
+    pct_ia           = f"{total_ia / total_coletadas * 100:.0f}%" if total_coletadas else "—"
+
+    # ── Funil ──────────────────────────────────────────────────────────────────
+    _sec("Funil de análise")
+    c1, c2, c3, c4, c5 = st.columns(5)
+    c1.metric("Empresas coletadas",      total_coletadas)
+    c2.metric("IA detectada",            total_ia)
+    c3.metric("Excluídas",               total_excluidas)
+    c4.metric("Perfil completo",         total_completas)
+    c5.metric("Recomendação NVIDIA",     total_rec)
+
+    if df_uso.empty:
+        st.info("Nenhuma empresa aprovada ainda.")
+        return
+
+    st.divider()
+
+    # ── Maturidade de IA ───────────────────────────────────────────────────────
+    _sec("Maturidade de IA")
+    niveis = ["ai-native", "ai-first", "ai-enabled", "ai-adjacent"]
+    m1, m2, m3, m4, m5, m6 = st.columns(6)
+    contagens = df_uso["nivel_maturidade_ia"].value_counts()
+    m1.metric("AI-Native",   int(contagens.get("ai-native",   0)))
+    m2.metric("AI-First",    int(contagens.get("ai-first",    0)))
+    m3.metric("AI-Enabled",  int(contagens.get("ai-enabled",  0)))
+    m4.metric("AI-Adjacent", int(contagens.get("ai-adjacent", 0)))
+    score_med = df_uso["score_maturidade_ia"].dropna()
+    m5.metric("Score médio", f"{score_med.mean():.1f}/10" if not score_med.empty else "—")
+    m6.metric("IA como core product", int(df_uso["ia_e_core_product"].sum()))
+
+    st.divider()
+
+    # ── Tipo de IA · Modelo · Mercado · Produto ────────────────────────────────
+    _sec("Perfil tecnológico e comercial")
+
+    row1_a, row1_b = st.columns(2)
+
+    with row1_a:
+        _subsec("Tipo de IA")
+        tipo_counts = df_uso["ia_tipo"].dropna().value_counts().reset_index()
+        tipo_counts.columns = ["Tipo", "Empresas"]
+        st.dataframe(tipo_counts, use_container_width=True, hide_index=True)
+
+    with row1_b:
+        _subsec("Modelo de negócio")
+        mod_counts = df_uso["modelo_negocio"].dropna().value_counts().reset_index()
+        mod_counts.columns = ["Modelo", "Empresas"]
+        st.dataframe(mod_counts, use_container_width=True, hide_index=True)
+
+    row2_a, row2_b = st.columns(2)
+
+    with row2_a:
+        _subsec("Mercado-alvo")
+        merc_counts = df_uso["mercado_alvo"].dropna().value_counts().reset_index()
+        merc_counts.columns = ["Mercado", "Empresas"]
+        st.dataframe(merc_counts, use_container_width=True, hide_index=True)
+
+    with row2_b:
+        _subsec("Produto de IA em produção")
+        em_prod = int(df_uso["produto_ia_lancado"].sum())
+        em_dev  = total_ia - em_prod
+        prod_df = pd.DataFrame({"Status": ["Em produção", "Em desenvolvimento"], "Empresas": [em_prod, em_dev]})
+        st.dataframe(prod_df, use_container_width=True, hide_index=True)
+
+    st.divider()
+
+    # ── Setores ────────────────────────────────────────────────────────────────
+    _sec("Setores com mais startups de IA")
+    setor_counts = (
+        df_uso["setor"].dropna().value_counts().reset_index()
+    )
+    setor_counts.columns = ["Setor", "Empresas"]
+    st.dataframe(
+        setor_counts,
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            "Empresas": st.column_config.ProgressColumn(
+                "Empresas", min_value=0, max_value=int(setor_counts["Empresas"].max()), format="%d"
+            )
+        },
+    )
+
+    if df_rec.empty:
+        return
+
+    st.divider()
+
+    # ── Tecnologias NVIDIA mais recomendadas ───────────────────────────────────
+    _sec("Tecnologias NVIDIA mais recomendadas")
+    explicacoes = df_rec["explicacao"].dropna().apply(safe_json)
+    todas_techs = [
+        t["tecnologia"]
+        for exp in explicacoes
+        for t in exp.get("tecnologias", [])
+        if isinstance(t, dict) and t.get("tecnologia")
+    ]
+    if todas_techs:
+        tech_counts = pd.Series(todas_techs).value_counts().reset_index()
+        tech_counts.columns = ["Tecnologia NVIDIA", "Recomendações"]
+        st.dataframe(
+            tech_counts,
+            use_container_width=True,
+            hide_index=True,
+            column_config={
+                "Recomendações": st.column_config.ProgressColumn(
+                    "Recomendações", min_value=0, max_value=int(tech_counts["Recomendações"].max()), format="%d"
+                )
+            },
+        )
+    else:
+        st.write("Nenhuma tecnologia recomendada ainda.")
 
 
 def _sec(label: str) -> None:
@@ -302,6 +424,213 @@ def render_empresas(df: pd.DataFrame, busca: str) -> None:
         st.write("Sem chunks registrados.")
 
 
+def _importar_reprocessa():
+    import sys
+    from pathlib import Path
+    src = str(Path(__file__).resolve().parent / "src")
+    if src not in sys.path:
+        sys.path.insert(0, src)
+    from dados_startups_selecionadas.manual.reprocessa_empresa import (
+        carregar_empresas_pendentes,
+        passos_para_empresa,
+        executar_para_streamlit,
+        gravar_campos_manuais,
+        CAMPOS_BOOL, CAMPOS_INT, CAMPOS_ENUM,
+    )
+    return (
+        carregar_empresas_pendentes,
+        passos_para_empresa,
+        executar_para_streamlit,
+        gravar_campos_manuais,
+        CAMPOS_BOOL, CAMPOS_INT, CAMPOS_ENUM,
+    )
+
+
+def render_reprocessamento() -> None:
+    (
+        carregar_empresas_pendentes,
+        passos_para_empresa,
+        executar_para_streamlit,
+        gravar_campos_manuais,
+        CAMPOS_BOOL, CAMPOS_INT, CAMPOS_ENUM,
+    ) = _importar_reprocessa()
+
+    st.divider()
+    st.subheader("Reprocessar empresa pendente")
+
+    st.markdown(
+        "Quando o pipeline coleta uma empresa e identifica que ela usa IA, ele tenta preencher "
+        "automaticamente todos os campos necessários para gerar as recomendações NVIDIA — como CNPJ, "
+        "setor, tipo de IA e modelo de negócio. Se algum desses campos não puder ser encontrado "
+        "automaticamente, a empresa fica com situação **'informação pendente'** e não avança para a "
+        "etapa de recomendação.\n\n"
+        "Esta ferramenta permite resolver essas pendências sem precisar abrir um terminal. "
+        "Basta selecionar a empresa, escolher por qual passo reprocessar e clicar em **Executar** — "
+        "o sistema vai tentar preencher os campos ausentes automaticamente, rodando os mesmos módulos "
+        "do pipeline original. Se após a execução algum campo ainda ficar vazio (por exemplo, porque "
+        "o site da empresa não tem a informação ou a API falhou), um formulário aparece para que você "
+        "preencha manualmente. Ao salvar, os dados vão direto para o banco e o score de maturidade "
+        "da empresa é recalculado. Se todos os campos obrigatórios estiverem preenchidos, a empresa "
+        "sai da lista de pendentes e segue automaticamente para a geração de recomendações NVIDIA na "
+        "próxima execução do pipeline."
+    )
+
+    # Estado da máquina
+    for key, val in [
+        ("repr_fase", "inicio"),
+        ("repr_empresa", None),
+        ("repr_passo_idx", 0),
+        ("repr_output", ""),
+        ("repr_campos_null", []),
+    ]:
+        if key not in st.session_state:
+            st.session_state[key] = val
+
+    fase = st.session_state.repr_fase
+
+    # ── Início: escolher empresa e passo ──────────────────────────────────────
+    if fase == "inicio":
+        empresas = carregar_empresas_pendentes()
+        if not empresas:
+            st.success("Nenhuma empresa com campos pendentes.")
+            return
+
+        nomes = [e["_nome"] for e in empresas]
+        idx_emp = st.selectbox(
+            "Empresa",
+            range(len(nomes)),
+            format_func=lambda i: nomes[i],
+            key="repr_sel_empresa",
+        )
+        emp = empresas[idx_emp]
+
+        st.caption(f"Campos pendentes: `{'`, `'.join(emp['_nulos'])}`")
+
+        passos_disp = passos_para_empresa(emp)
+        if not passos_disp:
+            st.info("Nenhum passo mapeado para os campos null desta empresa.")
+            return
+
+        idx_passo = st.selectbox(
+            "Iniciar a partir do passo",
+            range(len(passos_disp)),
+            format_func=lambda i: passos_disp[i]["label"],
+            key="repr_sel_passo",
+        )
+        st.caption("Todos os passos a partir do selecionado também serão executados.")
+
+        if st.button("Avançar", type="primary", use_container_width=True):
+            st.session_state.repr_empresa    = emp
+            st.session_state.repr_passo_idx  = idx_passo
+            st.session_state._repr_passos    = passos_disp
+            st.session_state.repr_fase       = "confirmar"
+            st.rerun()
+
+    # ── Confirmar ─────────────────────────────────────────────────────────────
+    elif fase == "confirmar":
+        emp        = st.session_state.repr_empresa
+        passos_disp = st.session_state._repr_passos
+        passo_ini  = passos_disp[st.session_state.repr_passo_idx]
+
+        st.write(f"**Empresa:** {emp['_nome']}")
+        st.write(f"**A partir do passo:** {passo_ini['label']}")
+        st.write("Todos os passos subsequentes também serão executados automaticamente.")
+
+        c1, c2 = st.columns(2)
+        if c1.button("Executar", type="primary", use_container_width=True):
+            st.session_state.repr_fase = "rodando"
+            st.rerun()
+        if c2.button("Voltar", use_container_width=True):
+            st.session_state.repr_fase = "inicio"
+            st.rerun()
+
+    # ── Rodando ───────────────────────────────────────────────────────────────
+    elif fase == "rodando":
+        emp        = st.session_state.repr_empresa
+        passos_disp = st.session_state._repr_passos
+        passo_ini  = passos_disp[st.session_state.repr_passo_idx]
+
+        st.warning(f"Executando para **{emp['_nome']}**... Não navegue para outra página.")
+
+        with st.spinner("Aguarde..."):
+            output, campos_null = executar_para_streamlit(passo_ini, emp)
+
+        st.session_state.repr_output     = output
+        st.session_state.repr_campos_null = campos_null
+        st.session_state.repr_fase       = "manual" if campos_null else "concluido"
+        st.rerun()
+
+    # ── Preenchimento manual dos campos que o pipeline não conseguiu ──────────
+    elif fase == "manual":
+        emp         = st.session_state.repr_empresa
+        campos_null = st.session_state.repr_campos_null
+
+        st.success("Execução concluída.")
+        with st.expander("Log de execução"):
+            st.code(st.session_state.repr_output, language=None)
+
+        st.warning(f"O pipeline não preencheu: `{'`, `'.join(campos_null)}`")
+        st.write("Preencha os campos abaixo ou deixe em branco para manter vazio.")
+
+        with st.form("form_manual_reprocessa"):
+            valores: dict = {}
+            for campo in campos_null:
+                if campo in CAMPOS_BOOL:
+                    opc = st.radio(campo, ["Sim", "Não", "Deixar em branco"],
+                                   index=2, horizontal=True, key=f"mf_{campo}")
+                    if opc != "Deixar em branco":
+                        valores[campo] = opc == "Sim"
+                elif campo in CAMPOS_INT:
+                    v = st.number_input(campo, value=None, step=1, key=f"mf_{campo}")
+                    if v is not None:
+                        valores[campo] = int(v)
+                elif campo in CAMPOS_ENUM:
+                    opc = st.selectbox(campo, ["— deixar em branco —"] + CAMPOS_ENUM[campo],
+                                       key=f"mf_{campo}")
+                    if opc != "— deixar em branco —":
+                        valores[campo] = opc
+                else:
+                    v = st.text_input(campo, key=f"mf_{campo}")
+                    if v.strip():
+                        valores[campo] = v.strip()
+
+            if valores:
+                st.caption(f"Campos a salvar: {', '.join(f'**{k}** = `{v}`' for k, v in valores.items())}")
+            else:
+                st.caption("Nenhum campo preenchido — clique em Salvar para fechar sem gravar.")
+
+            submitted = st.form_submit_button("Salvar e Concluir", use_container_width=True)
+
+        if submitted:
+            if valores:
+                try:
+                    with st.spinner("Salvando no banco..."):
+                        gravar_campos_manuais(int(emp["empresa_id"]), valores)
+                    fetch_empresas_uso_ia.clear()
+                    fetch_pendentes.clear()
+                    st.session_state.repr_fase = "concluido"
+                    st.rerun()
+                except Exception as e:
+                    st.error(f"Erro ao salvar no banco: {e}")
+            else:
+                st.session_state.repr_fase = "concluido"
+                st.rerun()
+
+    # ── Concluído ─────────────────────────────────────────────────────────────
+    elif fase == "concluido":
+        emp = st.session_state.repr_empresa
+        st.success(f"**{emp['_nome']}** reprocessada com sucesso!")
+
+        with st.expander("Log completo"):
+            st.code(st.session_state.repr_output, language=None)
+
+        if st.button("Reprocessar outra empresa", type="primary", use_container_width=True):
+            for key in ("repr_fase", "repr_empresa", "repr_passo_idx",
+                        "repr_output", "repr_campos_null", "_repr_passos"):
+                st.session_state.pop(key, None)
+            st.rerun()
+
+
 def render_pendentes(df: pd.DataFrame, busca: str) -> None:
     st.title("Pendentes")
     st.warning(
@@ -366,6 +695,92 @@ def render_pendentes(df: pd.DataFrame, busca: str) -> None:
         "marcada como pendente — a situação é definida por campos obrigatórios como CNPJ, produto, "
         "setor e tipo de IA e outros."
     )
+
+    render_reprocessamento()
+
+
+def _importar_atualiza_dominio():
+    import sys
+    from pathlib import Path
+    src = str(Path(__file__).resolve().parent / "src")
+    if src not in sys.path:
+        sys.path.insert(0, src)
+    from interacoes_banco.atualiza_dominio import (
+        validar_e_normalizar_dominio,
+        gravar_dominio_publico,
+        reexecutar_sinais_ia_publico,
+    )
+    return validar_e_normalizar_dominio, gravar_dominio_publico, reexecutar_sinais_ia_publico
+
+
+def render_atualizar_dominio(empresa_id: int, nome: str, dominio_atual: str | None) -> None:
+    validar, gravar, reexecutar = _importar_atualiza_dominio()
+
+    st.divider()
+    st.subheader("Atualizar domínio")
+
+    for key, val in [
+        ("dom_fase", "form"),
+        ("dom_output", ""),
+    ]:
+        if key not in st.session_state:
+            st.session_state[key] = val
+
+    fase = st.session_state.dom_fase
+
+    if fase == "form":
+        st.write(f"**Domínio atual:** `{dominio_atual or '—'}`")
+
+        with st.form("form_atualizar_dominio"):
+            novo = st.text_input(
+                "Novo domínio",
+                placeholder="empresa.com.br",
+                help="Cole a URL completa ou só o domínio — o protocolo será removido automaticamente.",
+            )
+            re_executar = st.checkbox(
+                "Re-executar pipeline de sinais_ia após salvar",
+                value=True,
+                help="Roda gupy_vagas → institucional → imprensa → neofeed → filtro_ia para reclassificar a empresa.",
+            )
+            submitted = st.form_submit_button("Salvar", type="primary", use_container_width=True)
+
+        if submitted:
+            dominio_validado = validar(novo)
+            if not dominio_validado:
+                st.error("Domínio inválido — use o formato `empresa.com.br` (sem `https://`).")
+            else:
+                try:
+                    gravar(empresa_id, dominio_validado)
+                    fetch_excluidas.clear()
+                    st.session_state.dom_re_executar = re_executar
+                    st.session_state.dom_nome = nome
+                    st.session_state.dom_dominio_novo = dominio_validado
+                    st.session_state.dom_fase = "rodando" if re_executar else "concluido"
+                    st.rerun()
+                except Exception as e:
+                    st.error(f"Erro ao salvar no banco: {e}")
+
+    elif fase == "rodando":
+        st.info(f"Domínio atualizado para `{st.session_state.dom_dominio_novo}`. Executando pipeline de sinais_ia...")
+        with st.spinner("Aguarde — isso pode levar alguns minutos..."):
+            try:
+                output = reexecutar(st.session_state.dom_nome)
+                st.session_state.dom_output = output
+            except Exception as e:
+                st.session_state.dom_output = f"[ERRO] {e}"
+        st.session_state.dom_fase = "concluido"
+        st.rerun()
+
+    elif fase == "concluido":
+        st.success(f"Domínio de **{nome}** atualizado para `{st.session_state.dom_dominio_novo}`.")
+        if st.session_state.dom_output:
+            with st.expander("Log do pipeline de sinais_ia"):
+                st.code(st.session_state.dom_output, language=None)
+
+        if st.button("Atualizar outro domínio", use_container_width=True):
+            st.session_state.dom_fase = "form"
+            st.session_state.dom_output = ""
+            st.rerun()
 
 
 def render_excluidas(df: pd.DataFrame, busca: str) -> None:
@@ -442,6 +857,12 @@ def render_excluidas(df: pd.DataFrame, busca: str) -> None:
             elif isinstance(sinais_ativos, list):
                 for item in sinais_ativos:
                     st.write(f"• {item}")
+
+    render_atualizar_dominio(
+        empresa_id=int(row["empresa_id"]),
+        nome=empresa_sel,
+        dominio_atual=row.get("dominio"),
+    )
 
 
 def render_uso_ia(df: pd.DataFrame, busca: str, titulo: str = "Uso de IA") -> None:
@@ -546,6 +967,79 @@ def render_uso_ia(df: pd.DataFrame, busca: str, titulo: str = "Uso de IA") -> No
         st.write(f"**Nível de Maturidade:** `{row.get('nivel_maturidade_ia') or '—'}`")
 
 
+# ── Pipeline ───────────────────────────────────────────────────────────────────
+
+def render_pipeline() -> None:
+    import subprocess, sys
+    from pathlib import Path
+
+    ROOT = Path(__file__).resolve().parent
+
+    if "pipeline_status" not in st.session_state:
+        st.session_state.pipeline_status = "idle"
+    if "pipeline_output" not in st.session_state:
+        st.session_state.pipeline_output = []
+
+    status = st.session_state.pipeline_status
+
+    st.title("Pipeline de Coleta e Recomendação")
+
+    if status == "idle":
+        st.info(
+            "Executa os 16 passos de coleta, triagem de IA e geração de "
+            "recomendações NVIDIA. O processo pode levar vários minutos."
+        )
+        if st.button("Executar Pipeline", type="primary", use_container_width=True):
+            st.session_state.pipeline_status = "running"
+            st.session_state.pipeline_output = []
+            st.rerun()
+
+    if status == "running":
+        st.warning("Pipeline em execução — não feche esta página.")
+        log_area = st.empty()
+        lines: list[str] = []
+
+        process = subprocess.Popen(
+            [sys.executable, str(ROOT / "app.py")],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=1,
+            cwd=str(ROOT),
+        )
+        for line in process.stdout:
+            lines.append(line.rstrip())
+            log_area.code("\n".join(lines[-40:]), language=None)
+
+        process.wait()
+        st.session_state.pipeline_output = lines
+        st.session_state.pipeline_status = "done" if process.returncode == 0 else "error"
+        st.rerun()
+
+    if status == "done":
+        st.success("Pipeline concluído com sucesso!")
+        with st.expander("Log completo"):
+            st.code("\n".join(st.session_state.pipeline_output), language=None)
+        c1, c2 = st.columns(2)
+        if c1.button("Ver Resultados — Empresas", type="primary", use_container_width=True):
+            st.session_state.pipeline_status = "idle"
+            st.session_state.mostrar_pipeline = False
+            st.rerun()
+        if c2.button("Executar Novamente", use_container_width=True):
+            st.session_state.pipeline_status = "idle"
+            st.session_state.pipeline_output = []
+            st.rerun()
+
+    if status == "error":
+        st.error("Pipeline encerrou com erro. Verifique o log abaixo.")
+        with st.expander("Log completo", expanded=True):
+            st.code("\n".join(st.session_state.pipeline_output), language=None)
+        if st.button("Tentar Novamente", use_container_width=True):
+            st.session_state.pipeline_status = "idle"
+            st.session_state.pipeline_output = []
+            st.rerun()
+
+
 # ── Main ───────────────────────────────────────────────────────────────────────
 
 PAGINAS = ["Resumo Geral", "Empresas", "Pendentes", "Excluídas", "Uso de IA"]
@@ -569,15 +1063,24 @@ def main() -> None:
         </style>
     """, unsafe_allow_html=True)
 
+    if "mostrar_pipeline" not in st.session_state:
+        st.session_state.mostrar_pipeline = False
+
     # Sidebar nativa
     with st.sidebar:
         busca = st.text_input("Buscar empresa", placeholder="Filtrar por nome...")
         st.divider()
         st.markdown("### Navegação")
         pagina = st.radio("", PAGINAS, label_visibility="collapsed")
+        st.sidebar.divider()
+        if st.sidebar.button("▶ Executar Pipeline", use_container_width=True):
+            st.session_state.mostrar_pipeline = True
+            st.rerun()
 
     # Router
-    if pagina == "Resumo Geral":
+    if st.session_state.mostrar_pipeline:
+        render_pipeline()
+    elif pagina == "Resumo Geral":
         render_resumo_geral()
     elif pagina == "Empresas":
         render_empresas(fetch_recomendacoes(), busca)

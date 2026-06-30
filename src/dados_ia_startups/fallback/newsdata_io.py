@@ -23,7 +23,7 @@ def _dominio_bloqueado(url: str) -> bool:
 _cota_esgotada = False
 
 
-def buscar(nome: str, termos: str, lang: str = "pt", debug: bool = False) -> list[dict]:
+def buscar(nome: str, debug: bool = False) -> list[dict]:
     """Busca artigos no newsdata.io e normaliza para o mesmo formato do newsapi.org.
 
     Retorna lista de dicts com: title, description, url, publishedAt.
@@ -38,10 +38,9 @@ def buscar(nome: str, termos: str, lang: str = "pt", debug: bool = False) -> lis
         print("      [fallback] NEWS_DATA_KEY não definida, pulando newsdata.io")
         return []
 
-    # plano gratuito do newsdata.io não aceita operadores booleanos explícitos (AND/OR)
-    # nem parênteses — usa dois campos separados: q para o nome, q para termos de IA
-    # O endpoint interpreta múltiplos termos sem operador como AND implícito
-    q = f'"{nome}" "inteligência artificial"'
+    # plano gratuito não suporta OR/parênteses; múltiplos termos sem aspas são AND implícito.
+    # Busca o nome + "inteligência" (sem exigir a frase exata completa) para ampliar recall.
+    q = f'"{nome}" inteligência artificial'
     params: dict = {
         "apikey": api_key,
         "q": q,

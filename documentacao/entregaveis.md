@@ -1,5 +1,58 @@
 # Validação dos Entregáveis
 
+## Entregável 5 — Interface web
+
+**Status: Completo**
+
+Dashboard web desenvolvido em Streamlit (`dashboard.py`) com visualização completa das empresas analisadas, recomendações NVIDIA geradas pelos agentes LangGraph e ferramentas de gestão operacional do pipeline.
+
+---
+
+### O que foi entregue
+
+**Arquivo principal:** `dashboard.py`
+**Inicialização:** `python nvidia.py` ou `.venv\Scripts\streamlit.exe run dashboard.py`
+**Documentação de uso:** `documentacao/dashboard.md`
+
+---
+
+### Páginas implementadas
+
+| Página | Conteúdo |
+|---|---|
+| Resumo Geral | Funil completo do pipeline, distribuição de maturidade de IA, perfil tecnológico e comercial (grade 2×2), setores e ranking de tecnologias NVIDIA mais recomendadas |
+| Empresas | Perfil completo por empresa com os outputs dos 4 agentes LangGraph: síntese executiva, tecnologias recomendadas, roadmap 30/60/90 dias, kit de início e detalhes de retrieval |
+| Uso de IA | Listagem das startups aprovadas com filtros por setor, tipo de IA, maturidade e situação; painel de detalhes por empresa |
+| Pendentes | Empresas com dados incompletos que precisam de revisão antes de receber recomendação; inclui ferramenta de reprocessamento integrada |
+| Excluídas | Empresas descartadas pelo filtro de IA com detalhamento dos sinais avaliados por camada; inclui ferramenta de correção de domínio |
+
+---
+
+### Funcionalidades além da visualização
+
+**Reprocessar empresa pendente** (página Pendentes)
+Permite resolver campos obrigatórios ausentes diretamente pelo dashboard, sem abrir terminal. O sistema tenta preencher automaticamente via pipeline; campos que não forem preenchidos automaticamente aparecem em formulário para preenchimento manual. Os dados são gravados no Supabase e o score de maturidade é recalculado ao final.
+
+**Atualizar domínio** (página Excluídas)
+Permite corrigir o domínio cadastrado de uma empresa excluída e, opcionalmente, re-executar o pipeline de sinais_ia completo (gupy_vagas → institucional → imprensa → neofeed → filtro_ia) para reclassificá-la com o novo domínio.
+
+**Executar Pipeline** (botão na sidebar)
+Dispara o pipeline completo de 16 passos (`app.py`) diretamente pelo dashboard, com log ao vivo linha a linha. Ao concluir, redireciona para a página Empresas com os dados atualizados.
+
+---
+
+### Dados exibidos por fonte
+
+| Tabela Supabase | Onde aparece no dashboard |
+|---|---|
+| `empresas` | Resumo Geral (funil), base de nomes para todas as páginas |
+| `avaliacoes_ia` | Resumo Geral (funil + excluídas), página Excluídas |
+| `sinais_ia` | Página Excluídas (camadas avaliadas por empresa) |
+| `empresas_uso_ia` | Resumo Geral, Uso de IA, Pendentes, Empresas (perfil enriquecido) |
+| `recomendacoes_nvidia` | Resumo Geral (ranking de tecnologias), Empresas (outputs dos 4 LLMs) |
+
+---
+
 ## Entregável 2 — Sistema multiagente com LangGraph
 
 **Status: Completo**
