@@ -6,19 +6,19 @@ Sistema multi-agente capaz de mapear startups brasileiras com potencial AI-nativ
 
 ## 1. Contextualização do problema
 
-O mercado de inteligência artificial está passando por uma mudança estrutural. Grandes laboratórios como OpenAI, Anthropic, Google DeepMind e Meta deixaram de atuar apenas como fornecedores de modelos fundacionais e passaram a subir na cadeia de valor — oferecendo APIs multimodais, agentes, ferramentas de produtividade, busca, voz, código, automação de workflows e produtos finais para empresas.
+A inteligência artificial vive um momento de inflexão. Os grandes laboratórios — OpenAI, Anthropic, Google DeepMind, Meta — deixaram de ser apenas provedores de modelos e passaram a competir diretamente no mercado de aplicações: lançam agentes, ferramentas de produtividade, soluções de voz, código, automação e produtos corporativos completos.
 
-Esse movimento cria uma ameaça direta para startups de IA que se posicionam apenas como wrappers de LLMs. Uma startup que apenas conecta uma API de terceiro a uma interface gráfica, sem dados proprietários, sem workflow profundo e sem otimização técnica, pode ser rapidamente substituída por funcionalidades nativas dos grandes labs.
+Esse avanço coloca em risco startups que construíram seu negócio sobre APIs de terceiros sem camadas de diferenciação. Quando o próprio lab que fornece o modelo lança uma solução equivalente, a startup perde relevância — e não há dado proprietário, workflow especializado nem vantagem técnica que a sustente.
 
-Ao mesmo tempo, surge uma oportunidade: startups podem se diferenciar ao se tornarem **AI-native services**, combinando software, agentes de IA, dados proprietários, automação e serviço especializado para entregar resultados de negócio de ponta a ponta.
+A saída está em construir negócios **AI-native**: empresas que combinam software, agentes, dados exclusivos e automação profunda para entregar resultados operacionais de ponta a ponta, indo além de uma simples interface sobre uma API genérica.
 
-Nesse contexto, a NVIDIA tem posição estratégica. Muitas startups usam IA, mas poucas otimizam toda a stack técnica. A stack NVIDIA pode ajudar essas empresas a evoluir de protótipos baseados em APIs para sistemas de IA escaláveis, eficientes e preparados para produção.
+É nesse cenário que a NVIDIA encontra uma oportunidade estratégica. A maioria das startups usa IA, mas poucas otimizam sua infraestrutura para produção. A stack NVIDIA — de inferência a treinamento, de dados a segurança — existe exatamente para ajudar essas empresas a sair do estágio de protótipo e construir sistemas de IA escaláveis, eficientes e prontos para crescer.
 
 ---
 
 ## 2. Objetivo do projeto
 
-Construir um sistema capaz de:
+Um sistema capaz de:
 
 - Encontrar startups brasileiras com sinais de uso intensivo de IA.
 - Coletar dados públicos sobre empresa, produto, setor, clientes e tecnologias utilizadas.
