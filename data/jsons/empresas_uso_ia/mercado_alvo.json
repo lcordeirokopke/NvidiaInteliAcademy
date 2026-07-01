@@ -1,0 +1,42 @@
+[
+  {
+    "empresa_id": 7,
+    "mercado_alvo": "Brasil",
+    "atualizado_em": "2026-06-30T22:52:07.882770+00:00"
+  },
+  {
+    "empresa_id": 9,
+    "mercado_alvo": "Global",
+    "atualizado_em": "2026-06-30T22:39:10.131999+00:00"
+  },
+  {
+    "empresa_id": 15,
+    "mercado_alvo": "Brasil",
+    "atualizado_em": "2026-06-29T13:54:18.719585+00:00"
+  },
+  {
+    "empresa_id": 18,
+    "mercado_alvo": "Global",
+    "atualizado_em": "2026-06-29T14:47:14.959432+00:00"
+  },
+  {
+    "empresa_id": 28,
+    "mercado_alvo": "Brasil",
+    "atualizado_em": "2026-06-29T13:54:18.719585+00:00"
+  },
+  {
+    "empresa_id": 32,
+    "mercado_alvo": "Global",
+    "atualizado_em": "2026-06-29T13:46:53.366244+00:00"
+  },
+  {
+    "empresa_id": 63,
+    "mercado_alvo": "Global",
+    "atualizado_em": "2026-07-01T00:52:26.034015+00:00"
+  },
+  {
+    "empresa_id": 64,
+    "mercado_alvo": "Global",
+    "atualizado_em": "2026-07-01T00:55:42.504318+00:00"
+  }
+]

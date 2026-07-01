@@ -1,0 +1,47 @@
+[
+  {
+    "empresa_id": 7,
+    "uso_ia_descricao": "A Segura utiliza inteligência artificial para automatizar a análise e a gestão de apólices e riscos em contratos de seguros, otimizando o processo de subscrição e sinistros.",
+    "atualizado_em": "2026-06-30T22:51:42.700333+00:00"
+  },
+  {
+    "empresa_id": 9,
+    "uso_ia_descricao": "A Sinatra AI utiliza inteligência artificial para automatizar a criação de conteúdo em vídeo, convertendo textos e roteiros em produções audiovisuais personalizadas de forma escalável.",
+    "atualizado_em": "2026-06-30T22:38:14.587996+00:00"
+  },
+  {
+    "empresa_id": 15,
+    "uso_ia_descricao": "A Segura utiliza inteligência artificial para otimizar a gestão de carteiras e a segmentação de clientes, potencializando a eficiência operacional e a produtividade no relacionamento entre seguradoras e corretoras.",
+    "atualizado_em": "2026-06-29T01:39:02.332506+00:00"
+  },
+  {
+    "empresa_id": 18,
+    "uso_ia_descricao": "A Sinatra AI utiliza inteligência artificial para automatizar a criação de conteúdo personalizado, como e-mails e materiais de vendas, integrando-se diretamente aos fluxos de trabalho de CRM das empresas.",
+    "atualizado_em": "2026-06-29T01:39:02.332506+00:00"
+  },
+  {
+    "empresa_id": 23,
+    "uso_ia_descricao": "A Vivo integra a inteligência artificial do Google, Gemini, ao seu portfólio de serviços para oferecer aos clientes acesso a ferramentas avançadas de produtividade e tecnologia generativa.",
+    "atualizado_em": "2026-06-29T01:39:02.332506+00:00"
+  },
+  {
+    "empresa_id": 28,
+    "uso_ia_descricao": "A Fintalk utiliza uma IA híbrida, que combina modelos generativos e determinísticos, para automatizar a escala de vendas, atendimento e cobrança, integrando pagamentos diretos na jornada para maximizar a conversão.",
+    "atualizado_em": "2026-06-29T01:39:02.332506+00:00"
+  },
+  {
+    "empresa_id": 32,
+    "uso_ia_descricao": "A Blip utiliza inteligência artificial para orquestrar agentes autônomos e especializados, integrando modelos configuráveis em fluxos conversacionais que automatizam a jornada do cliente em vendas, suporte e pagamentos.",
+    "atualizado_em": "2026-06-29T13:46:07.719158+00:00"
+  },
+  {
+    "empresa_id": 63,
+    "uso_ia_descricao": "A Fintalk utiliza uma IA híbrida, generativa e determinística para automatizar vendas, atendimento e cobrança em uma jornada única de conversão, garantindo precisão sem alucinações.",
+    "atualizado_em": "2026-07-01T00:51:48.646703+00:00"
+  },
+  {
+    "empresa_id": 64,
+    "uso_ia_descricao": "A Fintalk utiliza uma IA híbrida, que combina modelos generativos e determinísticos, para automatizar vendas, atendimento e cobrança com pagamentos integrados, garantindo alta conversão e precisão sem alucinações.",
+    "atualizado_em": "2026-07-01T00:55:05.912041+00:00"
+  }
+]

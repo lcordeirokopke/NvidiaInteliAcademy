@@ -1,0 +1,14 @@
+{
+  "gerado_em": "2026-06-29T17:14:16.891589+00:00",
+  "threshold": 3,
+  "total_avaliadas": 1,
+  "aprovadas": [],
+  "reprovadas": [
+    {
+      "empresa_id": 35,
+      "nome": "Idwall",
+      "pontuacao": 0,
+      "motivo": "nenhum sinal de IA encontrado"
+    }
+  ]
+}

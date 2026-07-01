@@ -2,22 +2,6 @@
 .env
 .streamlit/secrets.toml
 
-# Dados gerados pelo pipeline (recriados pelo botão Atualizar)
-data/jsons/artigos_nomes_empresas/
-data/jsons/nomes_empresas/
-data/jsons/gupy_empresas/
-data/jsons/dominio_empresas/
-data/jsons/gupy_vagas/
-data/jsons/institucional/
-data/jsons/imprensa/
-data/jsons/neofeed/
-data/jsons/vereditos_ia/
-data/jsons/empresas_uso_ia/
-
-# arquivos extras
-zzz/
-documentacao/rever
-
 # Arquivos de ambiente virtual
 .venv
 

@@ -1,0 +1,65 @@
+[
+  {
+    "empresa_id": 59,
+    "nome": "Shopper",
+    "gupy_subdominio": "shopper",
+    "gupy_url": "https://shopper.gupy.io",
+    "descoberto_em": "2026-06-25T11:25:40.872836+00:00"
+  },
+  {
+    "empresa_id": 69,
+    "nome": "Vivo",
+    "gupy_subdominio": "vivo",
+    "gupy_url": "https://vivo.gupy.io",
+    "descoberto_em": "2026-06-25T11:26:14.251947+00:00"
+  },
+  {
+    "empresa_id": 5,
+    "nome": "DNA Capital",
+    "gupy_subdominio": "dna",
+    "gupy_url": "https://dna.gupy.io",
+    "descoberto_em": "2026-06-28T11:44:25.873676+00:00"
+  },
+  {
+    "empresa_id": 7,
+    "nome": "Domo.VC",
+    "gupy_subdominio": "domo",
+    "gupy_url": "https://domo.gupy.io",
+    "descoberto_em": "2026-06-28T11:44:33.759594+00:00"
+  },
+  {
+    "empresa_id": 17,
+    "nome": "Shopper",
+    "gupy_subdominio": "shopper",
+    "gupy_url": "https://shopper.gupy.io",
+    "descoberto_em": "2026-06-28T11:44:59.365472+00:00"
+  },
+  {
+    "empresa_id": 23,
+    "nome": "Vivo",
+    "gupy_subdominio": "vivo",
+    "gupy_url": "https://vivo.gupy.io",
+    "descoberto_em": "2026-06-28T11:45:19.621273+00:00"
+  },
+  {
+    "empresa_id": 1,
+    "nome": "DNA Capital",
+    "gupy_subdominio": "dna",
+    "gupy_url": "https://dna.gupy.io",
+    "descoberto_em": "2026-06-30T21:04:33.121388+00:00"
+  },
+  {
+    "empresa_id": 2,
+    "nome": "Domo.VC",
+    "gupy_subdominio": "domo",
+    "gupy_url": "https://domo.gupy.io",
+    "descoberto_em": "2026-06-30T21:04:37.835769+00:00"
+  },
+  {
+    "empresa_id": 8,
+    "nome": "Shopper",
+    "gupy_subdominio": "shopper",
+    "gupy_url": "https://shopper.gupy.io",
+    "descoberto_em": "2026-06-30T21:04:47.273279+00:00"
+  }
+]

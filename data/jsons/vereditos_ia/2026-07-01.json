@@ -1,0 +1,34 @@
+{
+  "gerado_em": "2026-07-01T00:54:17.516981+00:00",
+  "threshold": 3,
+  "total_avaliadas": 2,
+  "aprovadas": [
+    {
+      "empresa_id": 63,
+      "nome": "fintalk",
+      "pontuacao": 3,
+      "sinais_ativos": [
+        {
+          "camada": "institucional",
+          "score": 3,
+          "razao": "site menciona IA explicitamente",
+          "evidencia": "...ostas certeiras em todos os seus canais e custos reduzidos. E tudo isso com a confiabilidade de uma LLM...."
+        }
+      ]
+    },
+    {
+      "empresa_id": 64,
+      "nome": "Fintalk",
+      "pontuacao": 3,
+      "sinais_ativos": [
+        {
+          "camada": "institucional",
+          "score": 3,
+          "razao": "site menciona IA explicitamente",
+          "evidencia": "...ostas certeiras em todos os seus canais e custos reduzidos. E tudo isso com a confiabilidade de uma LLM...."
+        }
+      ]
+    }
+  ],
+  "reprovadas": []
+}

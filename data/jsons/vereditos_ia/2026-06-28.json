@@ -1,0 +1,212 @@
+{
+  "gerado_em": "2026-06-28T23:56:32.912816+00:00",
+  "threshold": 3,
+  "total_avaliadas": 25,
+  "aprovadas": [
+    {
+      "empresa_id": 23,
+      "nome": "Vivo",
+      "pontuacao": 8,
+      "sinais_ativos": [
+        {
+          "camada": "gupy_vagas",
+          "score": 2,
+          "razao": "vaga de IA/ML: BANCO DE TALENTOS | Planejamento Comercial; Marketing; Cient",
+          "evidencia": "BANCO DE TALENTOS | Planejamento Comercial; Marketing; Cientista de Dados |  Exclusivo para Pessoas com Deficiências e p"
+        },
+        {
+          "camada": "institucional",
+          "score": 3,
+          "razao": "site menciona IA explicitamente",
+          "evidencia": "...s para o seu dia a dia Oferta Recomendada Oferta Exclusiva no site ⚡ Vivo Fibra 600 Mega 6 meses de Gemini, a IA do G"
+        },
+        {
+          "camada": "neofeed",
+          "score": 3,
+          "razao": "artigo sobre IA diretamente relacionado à empresa",
+          "evidencia": "Vivo amplia seu fundo de CVC para R$ 470 milhões e aposta em IA"
+        }
+      ]
+    },
+    {
+      "empresa_id": 15,
+      "nome": "Segura",
+      "pontuacao": 6,
+      "sinais_ativos": [
+        {
+          "camada": "institucional",
+          "score": 3,
+          "razao": "site menciona IA explicitamente",
+          "evidencia": "...Segura Vender seguros dá trabalho, mas não precisa ser só seu Conheça a infraestrutura de IA que fortalece a relação "
+        },
+        {
+          "camada": "neofeed",
+          "score": 3,
+          "razao": "artigo sobre IA diretamente relacionado à empresa",
+          "evidencia": "Andreessen Horowitz e Kaszek investem na Segura, a startup que pretende levar IA para os corretores"
+        }
+      ]
+    },
+    {
+      "empresa_id": 12,
+      "nome": "Nava",
+      "pontuacao": 3,
+      "sinais_ativos": [
+        {
+          "camada": "institucional",
+          "score": 3,
+          "razao": "site menciona IA explicitamente",
+          "evidencia": "...são, acelere o crescimento, conquiste resultados tangíveis com análises inteligentes e com o uso da inteligência arti"
+        }
+      ]
+    },
+    {
+      "empresa_id": 16,
+      "nome": "SenseTime",
+      "pontuacao": 3,
+      "sinais_ativos": [
+        {
+          "camada": "neofeed",
+          "score": 3,
+          "razao": "artigo sobre IA diretamente relacionado à empresa",
+          "evidencia": "“OpenAI chinesa” estreia em Hong Kong e testa o apetite do mercado por apostas em IA"
+        }
+      ]
+    },
+    {
+      "empresa_id": 18,
+      "nome": "Sinatra AI",
+      "pontuacao": 3,
+      "sinais_ativos": [
+        {
+          "camada": "neofeed",
+          "score": 3,
+          "razao": "artigo sobre IA diretamente relacionado à empresa",
+          "evidencia": "O que a BluStone viu na Sinatra AI, startup que caça erros no e‑commerce"
+        }
+      ]
+    }
+  ],
+  "reprovadas": [
+    {
+      "empresa_id": 7,
+      "nome": "Domo.VC",
+      "pontuacao": 2,
+      "motivo": "pontuação abaixo do threshold"
+    },
+    {
+      "empresa_id": 3,
+      "nome": "Boom da IA",
+      "pontuacao": 1,
+      "motivo": "pontuação abaixo do threshold"
+    },
+    {
+      "empresa_id": 22,
+      "nome": "Triaxis",
+      "pontuacao": 1,
+      "motivo": "pontuação abaixo do threshold"
+    },
+    {
+      "empresa_id": 1,
+      "nome": "BPool",
+      "pontuacao": 0,
+      "motivo": "nenhum sinal de IA encontrado"
+    },
+    {
+      "empresa_id": 2,
+      "nome": "BTG Pactual e",
+      "pontuacao": 0,
+      "motivo": "nenhum sinal de IA encontrado"
+    },
+    {
+      "empresa_id": 4,
+      "nome": "Celero",
+      "pontuacao": 0,
+      "motivo": "nenhum sinal de IA encontrado"
+    },
+    {
+      "empresa_id": 5,
+      "nome": "DNA Capital",
+      "pontuacao": 0,
+      "motivo": "nenhum sinal de IA encontrado"
+    },
+    {
+      "empresa_id": 6,
+      "nome": "Daki",
+      "pontuacao": 0,
+      "motivo": "nenhum sinal de IA encontrado"
+    },
+    {
+      "empresa_id": 8,
+      "nome": "Helion",
+      "pontuacao": 0,
+      "motivo": "nenhum sinal de IA encontrado"
+    },
+    {
+      "empresa_id": 9,
+      "nome": "Kalshi",
+      "pontuacao": 0,
+      "motivo": "nenhum sinal de IA encontrado"
+    },
+    {
+      "empresa_id": 10,
+      "nome": "Kavak",
+      "pontuacao": 0,
+      "motivo": "nenhum sinal de IA encontrado"
+    },
+    {
+      "empresa_id": 11,
+      "nome": "Loggi",
+      "pontuacao": 0,
+      "motivo": "nenhum sinal de IA encontrado"
+    },
+    {
+      "empresa_id": 13,
+      "nome": "NeuralMed",
+      "pontuacao": 0,
+      "motivo": "nenhum sinal de IA encontrado"
+    },
+    {
+      "empresa_id": 14,
+      "nome": "SRM Ventures",
+      "pontuacao": 0,
+      "motivo": "nenhum sinal de IA encontrado"
+    },
+    {
+      "empresa_id": 17,
+      "nome": "Shopper",
+      "pontuacao": 0,
+      "motivo": "nenhum sinal de IA encontrado"
+    },
+    {
+      "empresa_id": 19,
+      "nome": "Spectra",
+      "pontuacao": 0,
+      "motivo": "nenhum sinal de IA encontrado"
+    },
+    {
+      "empresa_id": 20,
+      "nome": "Speedbird Aero",
+      "pontuacao": 0,
+      "motivo": "nenhum sinal de IA encontrado"
+    },
+    {
+      "empresa_id": 21,
+      "nome": "Trace Finance",
+      "pontuacao": 0,
+      "motivo": "nenhum sinal de IA encontrado"
+    },
+    {
+      "empresa_id": 24,
+      "nome": "WhatsApp à obra",
+      "pontuacao": 0,
+      "motivo": "nenhum sinal de IA encontrado"
+    },
+    {
+      "empresa_id": 25,
+      "nome": "Z.ro",
+      "pontuacao": 0,
+      "motivo": "nenhum sinal de IA encontrado"
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "gerado_em": "2026-06-30T22:27:11.675952+00:00",
+  "threshold": 3,
+  "total_avaliadas": 13,
+  "aprovadas": [
+    {
+      "empresa_id": 9,
+      "nome": "Sinatra AI",
+      "pontuacao": 6,
+      "sinais_ativos": [
+        {
+          "camada": "institucional",
+          "score": 3,
+          "razao": "site menciona IA explicitamente",
+          "evidencia": "...edado gratuitamente, cortesia da GoDaddy.com. Adquira este domínio Yahoo-RelatedSearchTopics Sinatra Ai Copyright © 1"
+        },
+        {
+          "camada": "neofeed",
+          "score": 3,
+          "razao": "artigo sobre IA diretamente relacionado à empresa",
+          "evidencia": "O que a BluStone viu na Sinatra AI, startup que caça erros no e‑commerce"
+        }
+      ]
+    },
+    {
+      "empresa_id": 6,
+      "nome": "Nava",
+      "pontuacao": 3,
+      "sinais_ativos": [
+        {
+          "camada": "institucional",
+          "score": 3,
+          "razao": "site menciona IA explicitamente",
+          "evidencia": "...são, acelere o crescimento, conquiste resultados tangíveis com análises inteligentes e com o uso da inteligência arti"
+        }
+      ]
+    },
+    {
+      "empresa_id": 7,
+      "nome": "Segura",
+      "pontuacao": 3,
+      "sinais_ativos": [
+        {
+          "camada": "neofeed",
+          "score": 3,
+          "razao": "artigo sobre IA diretamente relacionado à empresa",
+          "evidencia": "Andreessen Horowitz e Kaszek investem na Segura, a startup que pretende levar IA para os corretores"
+        }
+      ]
+    }
+  ],
+  "reprovadas": [
+    {
+      "empresa_id": 2,
+      "nome": "Domo.VC",
+      "pontuacao": 2,
+      "motivo": "pontuação abaixo do threshold"
+    },
+    {
+      "empresa_id": 4,
+      "nome": "Kalshi",
+      "pontuacao": 2,
+      "motivo": "pontuação abaixo do threshold"
+    },
+    {
+      "empresa_id": 11,
+      "nome": "Triaxis",
+      "pontuacao": 1,
+      "motivo": "pontuação abaixo do threshold"
+    },
+    {
+      "empresa_id": 1,
+      "nome": "DNA Capital",
+      "pontuacao": 0,
+      "motivo": "nenhum sinal de IA encontrado"
+    },
+    {
+      "empresa_id": 3,
+      "nome": "Helion",
+      "pontuacao": 0,
+      "motivo": "nenhum sinal de IA encontrado"
+    },
+    {
+      "empresa_id": 5,
+      "nome": "Loggi",
+      "pontuacao": 0,
+      "motivo": "nenhum sinal de IA encontrado"
+    },
+    {
+      "empresa_id": 8,
+      "nome": "Shopper",
+      "pontuacao": 0,
+      "motivo": "nenhum sinal de IA encontrado"
+    },
+    {
+      "empresa_id": 10,
+      "nome": "Trace Finance",
+      "pontuacao": 0,
+      "motivo": "nenhum sinal de IA encontrado"
+    },
+    {
+      "empresa_id": 12,
+      "nome": "UY3",
+      "pontuacao": 0,
+      "motivo": "nenhum sinal de IA encontrado"
+    },
+    {
+      "empresa_id": 13,
+      "nome": "Z.ro",
+      "pontuacao": 0,
+      "motivo": "nenhum sinal de IA encontrado"
+    }
+  ]
+}

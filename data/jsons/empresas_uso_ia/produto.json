@@ -1,0 +1,57 @@
+[
+  {
+    "empresa_id": 7,
+    "produto": "A Segura oferece uma plataforma de gestão e automação de seguros voltada para corretores e seguradoras, centralizando a emissão, o acompanhamento de apólices e o relacionamento com o cliente.",
+    "atualizado_em": "2026-06-30T22:51:30.831033+00:00"
+  },
+  {
+    "empresa_id": 9,
+    "produto": "A Sinatra AI oferece uma plataforma de automação e análise de dados baseada em inteligência artificial voltada para a otimização de processos de vendas e suporte ao cliente em e-commerces.",
+    "atualizado_em": "2026-06-30T22:38:00.911054+00:00"
+  },
+  {
+    "empresa_id": 12,
+    "produto": "Transforme seu negócio com as soluções personalizadas da Nava. Inovação, estratégia e resultados reais para empresas de todos os setores. Junte-se ao futuro!",
+    "atualizado_em": "2026-06-29T01:19:45.258476+00:00"
+  },
+  {
+    "empresa_id": 15,
+    "produto": "Construindo super corretores de seguros com acesso, tecnologia e atendimento exclusivo.",
+    "atualizado_em": "2026-06-29T01:19:45.258476+00:00"
+  },
+  {
+    "empresa_id": 16,
+    "produto": "Agregador visual da internet brasileira para portais, compras, ofertas, viagens, negócios e todos os seus sites favoritos.",
+    "atualizado_em": "2026-06-29T01:19:45.258476+00:00"
+  },
+  {
+    "empresa_id": 18,
+    "produto": "A Sinatra AI oferece uma plataforma de automação e análise de dados baseada em inteligência artificial voltada para otimizar fluxos de trabalho e processos de tomada de decisão em empresas.",
+    "atualizado_em": "2026-06-29T11:02:50.229761+00:00"
+  },
+  {
+    "empresa_id": 23,
+    "produto": "A Vivo tem as melhores ofertas de internet fibra, internet móvel, planos de celular com 5G, TV por assinatura, serviços digitais, celulares e eletrônicos.",
+    "atualizado_em": "2026-06-29T01:19:45.258476+00:00"
+  },
+  {
+    "empresa_id": 28,
+    "produto": "Conversas que geram resultado. IA conversacional feita para escalar vendas, atendimento e cobrança com pagamentos na mesma jornada para maior conversão.",
+    "atualizado_em": "2026-06-29T01:19:45.258476+00:00"
+  },
+  {
+    "empresa_id": 32,
+    "produto": "A Blip é uma plataforma unificada de conversas inteligentes que utiliza inteligência artificial para otimizar a interação entre empresas e clientes.",
+    "atualizado_em": "2026-06-29T13:45:42.628510+00:00"
+  },
+  {
+    "empresa_id": 63,
+    "produto": "A Fintalk é uma plataforma de IA conversacional que automatiza operações de vendas, atendimento e cobrança, integrando fluxos de pagamento diretamente à interface de conversa.",
+    "atualizado_em": "2026-07-01T00:51:39.896264+00:00"
+  },
+  {
+    "empresa_id": 64,
+    "produto": "A Fintalk é uma plataforma de IA conversacional que automatiza fluxos de vendas, atendimento e cobrança, integrando a realização de pagamentos diretamente na jornada de interação do cliente.",
+    "atualizado_em": "2026-07-01T00:54:57.297468+00:00"
+  }
+]

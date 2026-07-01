@@ -1,0 +1,650 @@
+[
+  {
+    "empresa_id": 12,
+    "nome_empresa": "Nava",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-28T19:41:43.741171+00:00"
+  },
+  {
+    "empresa_id": 14,
+    "nome_empresa": "SRM Ventures",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-28T19:41:52.783541+00:00"
+  },
+  {
+    "empresa_id": 16,
+    "nome_empresa": "SenseTime",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-28T19:42:01.863709+00:00"
+  },
+  {
+    "empresa_id": 18,
+    "nome_empresa": "Sinatra AI",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-28T19:42:11.080067+00:00"
+  },
+  {
+    "empresa_id": 19,
+    "nome_empresa": "Spectra",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-28T19:42:20.444144+00:00"
+  },
+  {
+    "empresa_id": 20,
+    "nome_empresa": "Speedbird Aero",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-28T19:42:29.500674+00:00"
+  },
+  {
+    "empresa_id": 21,
+    "nome_empresa": "Trace Finance",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-28T19:42:38.470917+00:00"
+  },
+  {
+    "empresa_id": 22,
+    "nome_empresa": "Triaxis",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-28T19:42:47.407652+00:00"
+  },
+  {
+    "empresa_id": 24,
+    "nome_empresa": "WhatsApp à obra",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-28T19:42:56.363170+00:00"
+  },
+  {
+    "empresa_id": 25,
+    "nome_empresa": "Z.ro",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-28T19:43:05.196668+00:00"
+  },
+  {
+    "empresa_id": 5,
+    "nome_empresa": "DNA Capital",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-28T19:43:13.984802+00:00"
+  },
+  {
+    "empresa_id": 7,
+    "nome_empresa": "Domo.VC",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-28T19:43:22.731440+00:00"
+  },
+  {
+    "empresa_id": 17,
+    "nome_empresa": "Shopper",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-28T19:43:31.539233+00:00"
+  },
+  {
+    "empresa_id": 23,
+    "nome_empresa": "Vivo",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-28T19:43:40.464525+00:00"
+  },
+  {
+    "empresa_id": 2,
+    "nome_empresa": "BTG Pactual e",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-28T19:43:49.785595+00:00"
+  },
+  {
+    "empresa_id": 15,
+    "nome_empresa": "Segura",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-28T19:43:58.833888+00:00"
+  },
+  {
+    "empresa_id": 28,
+    "nome_empresa": "Fintalk",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-29T00:17:33.143634+00:00"
+  },
+  {
+    "empresa_id": 28,
+    "nome_empresa": "Fintalk",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-29T00:29:27.585103+00:00"
+  },
+  {
+    "empresa_id": 32,
+    "nome_empresa": "Blip",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-29T13:42:15.227738+00:00"
+  },
+  {
+    "empresa_id": 34,
+    "nome_empresa": "Enter",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-29T17:11:16.650412+00:00"
+  },
+  {
+    "empresa_id": 35,
+    "nome_empresa": "Idwall",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-29T17:14:11.298423+00:00"
+  },
+  {
+    "empresa_id": 4,
+    "nome_empresa": "Celero",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T19:18:20.542883+00:00"
+  },
+  {
+    "empresa_id": 13,
+    "nome_empresa": "NeuralMed",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T19:40:28.295174+00:00"
+  },
+  {
+    "empresa_id": 1,
+    "nome_empresa": "BPool",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T19:40:30.005268+00:00"
+  },
+  {
+    "empresa_id": 3,
+    "nome_empresa": "Boom da IA",
+    "evidencia": "Como o ‘boom da IA’ já está afetando o bolso dos consumidores — Corrida global pelo desenvolvimento de IA está causando aumento no preço de dispositivos eletrônicos como celulares, tabelts e notebooks\nO post Como o ‘boom da IA’ já está afetando o bolso dos consumidores apareceu primeiro em Olhar Digital.",
+    "fonte_url": "https://olhardigital.com.br/2026/06/28/reviews/como-o-boom-da-ia-ja-esta-afetando-o-bolso-dos-consumidores/",
+    "publicado_em": "2026-06-28T19:22:00Z",
+    "encontrado": true,
+    "coletado_em": "2026-06-30T19:40:31.369785+00:00"
+  },
+  {
+    "empresa_id": 3,
+    "nome_empresa": "Boom da IA",
+    "evidencia": "BIS aponta que dívida pública, boom da IA e fragilidades financeiras elevam riscos globais — As pressões globais decorrentes do aumento da dívida pública, das fragilidades financeiras e das dúvidas sobre a sustentabilidade do “boom” da inteligência artificial (IA) estão elevando os riscos para a economia, e ressaltando a necessidade de uma formulação…",
+    "fonte_url": "https://valor.globo.com/mundo/noticia/2026/06/28/bis-aponta-que-dvida-pblica-boom-da-ia-e-fragilidades-financeiras-elevam-riscos-globais.ghtml",
+    "publicado_em": "2026-06-28T14:02:05Z",
+    "encontrado": true,
+    "coletado_em": "2026-06-30T19:40:31.564263+00:00"
+  },
+  {
+    "empresa_id": 6,
+    "nome_empresa": "Daki",
+    "evidencia": "Executivo de Valor: Rafael Vasto, da Daki, transformação com energia e tecnologia — Para CEO, a atitude mais disruptiva da Daki foi criar um modelo com controle integral da cadeia",
+    "fonte_url": "https://valor.globo.com/executivo-de-valor/noticia/2026/06/15/executivo-de-valor-rafael-vasto-da-daki-transformacao-com-energia-e-tecnologia.ghtml",
+    "publicado_em": "2026-06-16T02:14:27Z",
+    "encontrado": true,
+    "coletado_em": "2026-06-30T19:40:32.684312+00:00"
+  },
+  {
+    "empresa_id": 23,
+    "nome_empresa": "Vivo",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T19:40:36.250914+00:00"
+  },
+  {
+    "empresa_id": 2,
+    "nome_empresa": "BTG Pactual e",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T19:40:37.339450+00:00"
+  },
+  {
+    "empresa_id": 15,
+    "nome_empresa": "Segura",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T19:40:38.362785+00:00"
+  },
+  {
+    "empresa_id": 13,
+    "nome_empresa": "NeuralMed",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T20:00:18.556846+00:00"
+  },
+  {
+    "empresa_id": 1,
+    "nome_empresa": "BPool",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T20:00:19.675977+00:00"
+  },
+  {
+    "empresa_id": 6,
+    "nome_empresa": "Daki",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T20:00:22.319540+00:00"
+  },
+  {
+    "empresa_id": 8,
+    "nome_empresa": "Helion",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T20:00:23.492701+00:00"
+  },
+  {
+    "empresa_id": 9,
+    "nome_empresa": "Kalshi",
+    "evidencia": "Kalshi, cofundada por jovem brasileira, cria agente de IA para testar apostas em mercados — Setor já enfrentou controvérsias no passado quando a linguagem usada no mercado não correspondia à complexidade dos eventos do mundo real",
+    "fonte_url": "https://valor.globo.com/financas/noticia/2026/06/15/kalshi-cofundada-por-jovem-brasileira-cria-agente-de-ia-para-testar-apostas-em-mercados.ghtml",
+    "publicado_em": "2026-06-15T17:33:14Z",
+    "encontrado": true,
+    "coletado_em": "2026-06-30T20:00:24.387131+00:00"
+  },
+  {
+    "empresa_id": 10,
+    "nome_empresa": "Kavak",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T20:00:25.371749+00:00"
+  },
+  {
+    "empresa_id": 11,
+    "nome_empresa": "Loggi",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T20:00:26.799494+00:00"
+  },
+  {
+    "empresa_id": 12,
+    "nome_empresa": "Nava",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T20:00:28.115345+00:00"
+  },
+  {
+    "empresa_id": 14,
+    "nome_empresa": "SRM Ventures",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T20:00:29.658612+00:00"
+  },
+  {
+    "empresa_id": 16,
+    "nome_empresa": "SenseTime",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T20:00:30.882357+00:00"
+  },
+  {
+    "empresa_id": 18,
+    "nome_empresa": "Sinatra AI",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T20:00:32.053945+00:00"
+  },
+  {
+    "empresa_id": 19,
+    "nome_empresa": "Spectra",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T20:00:33.080874+00:00"
+  },
+  {
+    "empresa_id": 20,
+    "nome_empresa": "Speedbird Aero",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T20:00:34.133824+00:00"
+  },
+  {
+    "empresa_id": 21,
+    "nome_empresa": "Trace Finance",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T20:00:35.325481+00:00"
+  },
+  {
+    "empresa_id": 22,
+    "nome_empresa": "Triaxis",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T20:00:36.264610+00:00"
+  },
+  {
+    "empresa_id": 24,
+    "nome_empresa": "WhatsApp à obra",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T20:00:37.240476+00:00"
+  },
+  {
+    "empresa_id": 25,
+    "nome_empresa": "Z.ro",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T20:00:38.224893+00:00"
+  },
+  {
+    "empresa_id": 5,
+    "nome_empresa": "DNA Capital",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T20:00:39.244842+00:00"
+  },
+  {
+    "empresa_id": 7,
+    "nome_empresa": "Domo.VC",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T20:00:40.282380+00:00"
+  },
+  {
+    "empresa_id": 17,
+    "nome_empresa": "Shopper",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T20:00:41.188128+00:00"
+  },
+  {
+    "empresa_id": 23,
+    "nome_empresa": "Vivo",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T20:00:42.117745+00:00"
+  },
+  {
+    "empresa_id": 2,
+    "nome_empresa": "BTG Pactual e",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T20:00:43.037604+00:00"
+  },
+  {
+    "empresa_id": 15,
+    "nome_empresa": "Segura",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T20:00:44.218112+00:00"
+  },
+  {
+    "empresa_id": 28,
+    "nome_empresa": "Fintalk",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T20:00:45.252786+00:00"
+  },
+  {
+    "empresa_id": 32,
+    "nome_empresa": "Blip",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T20:00:46.216727+00:00"
+  },
+  {
+    "empresa_id": 34,
+    "nome_empresa": "Enter",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T20:00:47.256635+00:00"
+  },
+  {
+    "empresa_id": 35,
+    "nome_empresa": "Idwall",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T20:00:48.486592+00:00"
+  },
+  {
+    "empresa_id": 4,
+    "nome_empresa": "Celero",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T20:00:49.613974+00:00"
+  },
+  {
+    "empresa_id": 12,
+    "nome_empresa": "UY3",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T21:31:36.512074+00:00"
+  },
+  {
+    "empresa_id": 1,
+    "nome_empresa": "DNA Capital",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T21:31:38.092869+00:00"
+  },
+  {
+    "empresa_id": 2,
+    "nome_empresa": "Domo.VC",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T21:31:39.404590+00:00"
+  },
+  {
+    "empresa_id": 3,
+    "nome_empresa": "Helion",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T21:31:40.785818+00:00"
+  },
+  {
+    "empresa_id": 5,
+    "nome_empresa": "Loggi",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T21:31:43.268077+00:00"
+  },
+  {
+    "empresa_id": 6,
+    "nome_empresa": "Nava",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T21:31:44.775349+00:00"
+  },
+  {
+    "empresa_id": 7,
+    "nome_empresa": "Segura",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T21:31:46.024365+00:00"
+  },
+  {
+    "empresa_id": 8,
+    "nome_empresa": "Shopper",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T21:31:47.345081+00:00"
+  },
+  {
+    "empresa_id": 9,
+    "nome_empresa": "Sinatra AI",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T21:31:48.550516+00:00"
+  },
+  {
+    "empresa_id": 10,
+    "nome_empresa": "Trace Finance",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T21:31:50.406051+00:00"
+  },
+  {
+    "empresa_id": 11,
+    "nome_empresa": "Triaxis",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T21:31:51.721685+00:00"
+  },
+  {
+    "empresa_id": 13,
+    "nome_empresa": "Z.ro",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-06-30T21:31:52.781958+00:00"
+  },
+  {
+    "empresa_id": 63,
+    "nome_empresa": "fintalk",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-07-01T00:49:59.034298+00:00"
+  },
+  {
+    "empresa_id": 64,
+    "nome_empresa": "Fintalk",
+    "evidencia": null,
+    "fonte_url": null,
+    "publicado_em": null,
+    "encontrado": false,
+    "coletado_em": "2026-07-01T00:54:12.488373+00:00"
+  }
+]

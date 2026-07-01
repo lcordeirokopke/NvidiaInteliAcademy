@@ -1,0 +1,47 @@
+[
+  {
+    "empresa_id": 7,
+    "ia_tipo": "Automação Inteligente",
+    "atualizado_em": "2026-06-30T22:51:45.418355+00:00"
+  },
+  {
+    "empresa_id": 9,
+    "ia_tipo": "IA Generativa",
+    "atualizado_em": "2026-06-30T22:38:21.139329+00:00"
+  },
+  {
+    "empresa_id": 15,
+    "ia_tipo": "Automação Inteligente",
+    "atualizado_em": "2026-06-29T15:29:01.780531+00:00"
+  },
+  {
+    "empresa_id": 18,
+    "ia_tipo": "IA Generativa",
+    "atualizado_em": "2026-06-29T15:29:01.780531+00:00"
+  },
+  {
+    "empresa_id": 23,
+    "ia_tipo": "IA Generativa",
+    "atualizado_em": "2026-06-29T15:10:52.125752+00:00"
+  },
+  {
+    "empresa_id": 28,
+    "ia_tipo": "Automação Inteligente",
+    "atualizado_em": "2026-06-29T15:29:01.780531+00:00"
+  },
+  {
+    "empresa_id": 32,
+    "ia_tipo": "Automação Inteligente",
+    "atualizado_em": "2026-06-29T15:29:01.780531+00:00"
+  },
+  {
+    "empresa_id": 63,
+    "ia_tipo": "Automação Inteligente",
+    "atualizado_em": "2026-07-01T00:51:57.391618+00:00"
+  },
+  {
+    "empresa_id": 64,
+    "ia_tipo": "Automação Inteligente",
+    "atualizado_em": "2026-07-01T00:55:13.931407+00:00"
+  }
+]

@@ -2,7 +2,7 @@
 
 ## Decisão
 
-A estrutura adotada é a **Opção D — Hierárquica com família tecnológica**.
+A estrutura adotada é a **Hierárquica com família tecnológica**.
 
 ---
 

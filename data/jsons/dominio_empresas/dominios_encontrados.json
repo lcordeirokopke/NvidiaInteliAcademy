@@ -1,0 +1,398 @@
+[
+  {
+    "empresa_id": 35,
+    "nome": "Asaas",
+    "dominio": "asaas.com.br",
+    "descoberto_em": "2026-06-25T11:19:24.629326+00:00"
+  },
+  {
+    "empresa_id": 36,
+    "nome": "BPool",
+    "dominio": "bpool.co",
+    "descoberto_em": "2026-06-25T11:19:49.391631+00:00"
+  },
+  {
+    "empresa_id": 37,
+    "nome": "BTG Pactual e",
+    "dominio": "btg.com",
+    "descoberto_em": "2026-06-25T11:20:08.331018+00:00"
+  },
+  {
+    "empresa_id": 38,
+    "nome": "Boom da IA",
+    "dominio": "boom.com.br",
+    "descoberto_em": "2026-06-25T11:20:18.268592+00:00"
+  },
+  {
+    "empresa_id": 39,
+    "nome": "Celero",
+    "dominio": "celero.com.br",
+    "descoberto_em": "2026-06-25T11:20:19.852154+00:00"
+  },
+  {
+    "empresa_id": 40,
+    "nome": "CredAluga",
+    "dominio": "credaluga.com.br",
+    "descoberto_em": "2026-06-25T11:20:23.313835+00:00"
+  },
+  {
+    "empresa_id": 41,
+    "nome": "DNA Capital",
+    "dominio": "dnacapital.com.br",
+    "descoberto_em": "2026-06-25T11:20:30.878546+00:00"
+  },
+  {
+    "empresa_id": 42,
+    "nome": "Daki",
+    "dominio": "daki.com",
+    "descoberto_em": "2026-06-25T11:20:39.791896+00:00"
+  },
+  {
+    "empresa_id": 43,
+    "nome": "Dane-se",
+    "dominio": "dane-se.com",
+    "descoberto_em": "2026-06-25T11:20:44.409385+00:00"
+  },
+  {
+    "empresa_id": 44,
+    "nome": "Digibee",
+    "dominio": "digibee.com.br",
+    "descoberto_em": "2026-06-25T11:20:48.842221+00:00"
+  },
+  {
+    "empresa_id": 45,
+    "nome": "Domo.VC",
+    "dominio": "domovc.com",
+    "descoberto_em": "2026-06-25T11:20:54.697017+00:00"
+  },
+  {
+    "empresa_id": 46,
+    "nome": "Headline e XP",
+    "dominio": "headline.com",
+    "descoberto_em": "2026-06-25T11:21:04.715870+00:00"
+  },
+  {
+    "empresa_id": 47,
+    "nome": "Helion",
+    "dominio": "helion.com.br",
+    "descoberto_em": "2026-06-25T11:21:07.659213+00:00"
+  },
+  {
+    "empresa_id": 48,
+    "nome": "Kavak",
+    "dominio": "kavak.com.br",
+    "descoberto_em": "2026-06-25T11:21:11.108684+00:00"
+  },
+  {
+    "empresa_id": 49,
+    "nome": "Loggi",
+    "dominio": "loggi.com.br",
+    "descoberto_em": "2026-06-25T11:21:15.575326+00:00"
+  },
+  {
+    "empresa_id": 50,
+    "nome": "Loomy",
+    "dominio": "loomy.com.br",
+    "descoberto_em": "2026-06-25T11:21:17.031172+00:00"
+  },
+  {
+    "empresa_id": 52,
+    "nome": "Netspaces",
+    "dominio": "netspaces.com.br",
+    "descoberto_em": "2026-06-25T11:21:18.854897+00:00"
+  },
+  {
+    "empresa_id": 53,
+    "nome": "NeuralMed",
+    "dominio": "neuralmed.com",
+    "descoberto_em": "2026-06-25T11:21:30.564703+00:00"
+  },
+  {
+    "empresa_id": 54,
+    "nome": "Omie",
+    "dominio": "omie.com.br",
+    "descoberto_em": "2026-06-25T11:21:31.921964+00:00"
+  },
+  {
+    "empresa_id": 55,
+    "nome": "PrecPago",
+    "dominio": "precpago.com.br",
+    "descoberto_em": "2026-06-25T11:21:33.292039+00:00"
+  },
+  {
+    "empresa_id": 56,
+    "nome": "SRM Ventures",
+    "dominio": "srmventures.com.br",
+    "descoberto_em": "2026-06-25T11:21:39.724715+00:00"
+  },
+  {
+    "empresa_id": 57,
+    "nome": "Segura",
+    "dominio": "segura.com.br",
+    "descoberto_em": "2026-06-25T11:21:41.106053+00:00"
+  },
+  {
+    "empresa_id": 58,
+    "nome": "SenseTime",
+    "dominio": "sensetime.com.br",
+    "descoberto_em": "2026-06-25T11:21:43.281485+00:00"
+  },
+  {
+    "empresa_id": 59,
+    "nome": "Shopper",
+    "dominio": "shopper.com.br",
+    "descoberto_em": "2026-06-25T11:21:44.948511+00:00"
+  },
+  {
+    "empresa_id": 60,
+    "nome": "Sinatra AI",
+    "dominio": "sinatraai.com",
+    "descoberto_em": "2026-06-25T11:21:56.431325+00:00"
+  },
+  {
+    "empresa_id": 61,
+    "nome": "Skyone",
+    "dominio": "skyone.io",
+    "descoberto_em": "2026-06-25T11:22:09.039355+00:00"
+  },
+  {
+    "empresa_id": 62,
+    "nome": "Spectra",
+    "dominio": "spectra.com.br",
+    "descoberto_em": "2026-06-25T11:22:11.089499+00:00"
+  },
+  {
+    "empresa_id": 63,
+    "nome": "Speedbird Aero",
+    "dominio": "speedbirdaero.com",
+    "descoberto_em": "2026-06-25T11:22:15.898402+00:00"
+  },
+  {
+    "empresa_id": 64,
+    "nome": "StartSe",
+    "dominio": "startse.com",
+    "descoberto_em": "2026-06-25T11:22:19.311374+00:00"
+  },
+  {
+    "empresa_id": 65,
+    "nome": "Trace Finance",
+    "dominio": "tracefinance.com",
+    "descoberto_em": "2026-06-25T11:22:31.364002+00:00"
+  },
+  {
+    "empresa_id": 66,
+    "nome": "Triaxis",
+    "dominio": "triaxis.com.br",
+    "descoberto_em": "2026-06-25T11:22:33.133411+00:00"
+  },
+  {
+    "empresa_id": 67,
+    "nome": "UY3",
+    "dominio": "uy3.com.br",
+    "descoberto_em": "2026-06-25T11:22:36.663757+00:00"
+  },
+  {
+    "empresa_id": 68,
+    "nome": "Valetec Capital",
+    "dominio": "valetec.com.br",
+    "descoberto_em": "2026-06-25T11:22:45.958854+00:00"
+  },
+  {
+    "empresa_id": 69,
+    "nome": "Vivo",
+    "dominio": "vivo.com.br",
+    "descoberto_em": "2026-06-25T11:22:47.498234+00:00"
+  },
+  {
+    "empresa_id": 70,
+    "nome": "Wildlife",
+    "dominio": "wildlife.co",
+    "descoberto_em": "2026-06-25T11:22:58.303630+00:00"
+  },
+  {
+    "empresa_id": 71,
+    "nome": "Z.ro",
+    "dominio": "z-ro.com",
+    "descoberto_em": "2026-06-25T11:23:00.513210+00:00"
+  },
+  {
+    "empresa_id": 51,
+    "nome": "Nava",
+    "dominio": "nava.com.br",
+    "descoberto_em": "2026-06-25T11:23:02.277162+00:00"
+  },
+  {
+    "empresa_id": 1,
+    "nome": "BPool",
+    "dominio": "bpool.co",
+    "descoberto_em": "2026-06-28T11:41:29.923974+00:00"
+  },
+  {
+    "empresa_id": 2,
+    "nome": "BTG Pactual e",
+    "dominio": "btg.io",
+    "descoberto_em": "2026-06-28T11:41:47.648201+00:00"
+  },
+  {
+    "empresa_id": 3,
+    "nome": "Boom da IA",
+    "dominio": "boom.com.br",
+    "descoberto_em": "2026-06-28T11:41:57.047498+00:00"
+  },
+  {
+    "empresa_id": 4,
+    "nome": "Celero",
+    "dominio": "celero.com.br",
+    "descoberto_em": "2026-06-28T11:41:59.077332+00:00"
+  },
+  {
+    "empresa_id": 5,
+    "nome": "DNA Capital",
+    "dominio": "dnacapital.com.br",
+    "descoberto_em": "2026-06-28T11:42:05.445775+00:00"
+  },
+  {
+    "empresa_id": 6,
+    "nome": "Daki",
+    "dominio": "daki.io",
+    "descoberto_em": "2026-06-28T11:42:11.219070+00:00"
+  },
+  {
+    "empresa_id": 7,
+    "nome": "Domo.VC",
+    "dominio": "domovc.com",
+    "descoberto_em": "2026-06-28T11:42:17.916778+00:00"
+  },
+  {
+    "empresa_id": 8,
+    "nome": "Helion",
+    "dominio": "helion.com.br",
+    "descoberto_em": "2026-06-28T11:42:22.417444+00:00"
+  },
+  {
+    "empresa_id": 9,
+    "nome": "Kalshi",
+    "dominio": "kalshi.io",
+    "descoberto_em": "2026-06-28T11:42:28.499490+00:00"
+  },
+  {
+    "empresa_id": 10,
+    "nome": "Kavak",
+    "dominio": "kavak.com.br",
+    "descoberto_em": "2026-06-28T11:42:32.550123+00:00"
+  },
+  {
+    "empresa_id": 11,
+    "nome": "Loggi",
+    "dominio": "loggi.com",
+    "descoberto_em": "2026-06-28T11:42:36.104337+00:00"
+  },
+  {
+    "empresa_id": 12,
+    "nome": "Nava",
+    "dominio": "nava.com.br",
+    "descoberto_em": "2026-06-28T11:42:38.764055+00:00"
+  },
+  {
+    "empresa_id": 14,
+    "nome": "SRM Ventures",
+    "dominio": "srmventures.com.br",
+    "descoberto_em": "2026-06-28T11:42:56.475912+00:00"
+  },
+  {
+    "empresa_id": 15,
+    "nome": "Segura",
+    "dominio": "segura.com",
+    "descoberto_em": "2026-06-28T11:42:59.853946+00:00"
+  },
+  {
+    "empresa_id": 16,
+    "nome": "SenseTime",
+    "dominio": "sensetime.com.br",
+    "descoberto_em": "2026-06-28T11:43:03.854014+00:00"
+  },
+  {
+    "empresa_id": 17,
+    "nome": "Shopper",
+    "dominio": "shopper.com.br",
+    "descoberto_em": "2026-06-28T11:43:07.536180+00:00"
+  },
+  {
+    "empresa_id": 18,
+    "nome": "Sinatra AI",
+    "dominio": "sinatraai.com",
+    "descoberto_em": "2026-06-28T11:43:13.198239+00:00"
+  },
+  {
+    "empresa_id": 19,
+    "nome": "Spectra",
+    "dominio": "spectra.com.br",
+    "descoberto_em": "2026-06-28T11:43:14.607018+00:00"
+  },
+  {
+    "empresa_id": 20,
+    "nome": "Speedbird Aero",
+    "dominio": "speedbirdaero.com",
+    "descoberto_em": "2026-06-28T11:43:22.911429+00:00"
+  },
+  {
+    "empresa_id": 21,
+    "nome": "Trace Finance",
+    "dominio": "tracefinance.com",
+    "descoberto_em": "2026-06-28T11:43:41.367355+00:00"
+  },
+  {
+    "empresa_id": 22,
+    "nome": "Triaxis",
+    "dominio": "triaxis.com.br",
+    "descoberto_em": "2026-06-28T11:43:42.880702+00:00"
+  },
+  {
+    "empresa_id": 23,
+    "nome": "Vivo",
+    "dominio": "vivo.com.br",
+    "descoberto_em": "2026-06-28T11:43:44.514049+00:00"
+  },
+  {
+    "empresa_id": 24,
+    "nome": "WhatsApp à obra",
+    "dominio": "whatsapp.com",
+    "descoberto_em": "2026-06-28T11:43:53.858980+00:00"
+  },
+  {
+    "empresa_id": 25,
+    "nome": "Z.ro",
+    "dominio": "z-ro.com",
+    "descoberto_em": "2026-06-28T11:43:56.511826+00:00"
+  },
+  {
+    "empresa_id": 26,
+    "nome": "Fintalk",
+    "dominio": "fintalk.com.br",
+    "descoberto_em": "2026-06-29T00:08:11.980489+00:00"
+  },
+  {
+    "empresa_id": 28,
+    "nome": "Fintalk",
+    "dominio": "fintalk.com",
+    "descoberto_em": "2026-06-29T00:16:32.900788+00:00"
+  },
+  {
+    "empresa_id": 32,
+    "nome": "Blip",
+    "dominio": "blip.ai",
+    "descoberto_em": "2026-06-29T13:41:29.328553+00:00"
+  },
+  {
+    "empresa_id": 34,
+    "nome": "Enter",
+    "dominio": "enter.io",
+    "descoberto_em": "2026-06-29T17:10:01.473200+00:00"
+  },
+  {
+    "empresa_id": 13,
+    "nome": "Z.ro",
+    "dominio": "z-ro.com",
+    "descoberto_em": "2026-06-30T21:04:27.637986+00:00"
+  }
+]
