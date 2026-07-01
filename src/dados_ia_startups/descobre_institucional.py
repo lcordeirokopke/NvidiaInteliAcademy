@@ -13,6 +13,25 @@ from supabase import create_client
 
 _PLAYWRIGHT_MIN_CHARS = 200
 _CLOUDFLARE_MARKERS = ["ray id:", "performing security verification", "just a moment", "cloudflare"]
+_TEMPO_MAX_POR_DOMINIO = 90  # segundos — limite total de análise por domínio
+
+
+def _chromium_executable() -> str | None:
+    """Retorna o caminho do executável Chromium disponível.
+
+    Preferência: chrome-headless-shell.exe (mais leve).
+    Fallback: chrome.exe (Chromium completo) — usado quando o headless shell
+    é removido por antivírus.
+    """
+    import os
+    base = Path(os.environ.get("LOCALAPPDATA", "")) / "ms-playwright"
+    headless = next(base.glob("chromium_headless_shell-*/chrome-headless-shell-win64/chrome-headless-shell.exe"), None)
+    if headless and headless.exists():
+        return str(headless)
+    full = next(base.glob("chromium-*/chrome-win64/chrome.exe"), None)
+    if full and full.exists():
+        return str(full)
+    return None
 
 _RAIZ = Path(__file__).resolve().parent.parent.parent
 load_dotenv(_RAIZ / ".env")
@@ -165,7 +184,7 @@ def _trecho(texto: str, termo: str, janela: int = 200) -> str:
 
 def _buscar_pagina_playwright(url: str, pw_page, debug: bool = False) -> str | None:
     try:
-        pw_page.goto(url, timeout=20000, wait_until="domcontentloaded")
+        pw_page.goto(url, timeout=12000, wait_until="domcontentloaded")
         time.sleep(1.5)
         html = pw_page.content()
         if debug:
@@ -281,8 +300,15 @@ def _analisar_loop(dominio: str, debug: bool, max_falhas_consecutivas: int, pw_p
     pontuacao_total = 0
     melhor: tuple[str, str, str, str] = ("", "", "", "")
     falhas_consecutivas = 0
+    inicio = time.time()
 
     for path in _PATHS:
+        elapsed = time.time() - inicio
+        if elapsed >= _TEMPO_MAX_POR_DOMINIO:
+            if debug:
+                print(f"      [timeout] {dominio} — limite de {_TEMPO_MAX_POR_DOMINIO}s atingido ({elapsed:.0f}s)")
+            break
+
         url = f"https://{dominio}{path}"
         html = _buscar_pagina(url, debug=debug, pw_page=pw_page)
         if not html:
@@ -345,7 +371,7 @@ def _analisar(dominio: str, debug: bool = False, max_falhas_consecutivas: int = 
         print(f"      [playwright] site JS detectado, abrindo browser para {dominio}")
     from playwright.sync_api import sync_playwright
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
+        browser = p.chromium.launch(headless=True, executable_path=_chromium_executable())
         pw_page = browser.new_page()
 
         # Verifica Cloudflare na homepage renderizada

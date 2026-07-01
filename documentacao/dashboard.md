@@ -15,20 +15,57 @@ python nvidia.py
 A interface é dividida em duas áreas:
 
 **Sidebar (esquerda)**
+- Logo NVIDIA no topo
 - Campo de busca global por nome de empresa — filtra a página ativa em tempo real
+- Botão **🔍 Buscar empresas** — executa o `app.py` completo (coleta → filtro → enriquecimento → recomendações). Ao clicar, a tela principal exibe o log ao vivo do processo.
 - Menu de navegação com rádio entre as páginas
-- Botão **▶ Executar Pipeline** no rodapé — abre a tela de execução do pipeline
 
 **Área principal (direita)**
 - Conteúdo da página selecionada
+- Cada página tem um botão **Atualizar dados** (azul claro, canto superior direito do título) que limpa o cache daquela aba e recarrega os dados do Supabase sem precisar rodar o pipeline completo
 
 ---
 
 ## Páginas
 
-### Empresas
+### Resumo Geral
+
+Painel de visão agregada — primeira página exibida ao abrir o dashboard. Todas as métricas são gerais; nenhuma informação é específica por empresa.
+
+**Funil de análise** — 5 métricas em linha que contam cada etapa do pipeline:
+- Empresas coletadas
+- IA detectada
+- Excluídas (não atingiram pontuação mínima de sinais de IA)
+- Perfil completo (situação de coleta = `completo`)
+- Recomendação NVIDIA gerada
+
+**Maturidade de IA** — 6 métricas agregadas das empresas aprovadas:
+- Contagem por nível: ai-native, ai-first, ai-enabled, ai-adjacent
+- Score médio geral (0–10)
+- Quantidade com IA como core product
+
+**Perfil tecnológico e comercial** — grade 2×2 com tabelas de distribuição:
+
+| Posição | Conteúdo |
+|---|---|
+| Linha 1, coluna 1 | Tipo de IA (NLP/LLM, Visão Computacional, IA Generativa, etc.) |
+| Linha 1, coluna 2 | Modelo de negócio (B2B, B2C, B2B2C) |
+| Linha 2, coluna 1 | Mercado-alvo (Brasil, LATAM, Global) |
+| Linha 2, coluna 2 | Produto de IA em produção vs em desenvolvimento |
+
+**Setores com mais startups de IA** — tabela com barra de progresso proporcional, ordenada do setor com mais para o com menos empresas.
+
+**Tecnologias NVIDIA mais recomendadas** — ranking das tecnologias que mais aparecem nas recomendações geradas pelos agentes LangGraph, com barra de progresso. Só aparece quando há recomendações no banco.
+
+---
+
+### Análise completa
 
 Página principal do dashboard. Exibe as startups que já receberam recomendações de tecnologia NVIDIA geradas pelo LangGraph.
+
+**Botões no cabeçalho**
+- **gerar recomendações de novas empresas** — roda o `inicia_recomendacao.py` via subprocess, processando todas as empresas elegíveis que ainda não têm recomendação gerada. A tag *(caso elegível)* em vermelho acima do botão indica que só empresas com `situacao_coleta = 'completo'` são processadas. Exibe log ao vivo e limpa o cache ao concluir.
+- **Atualizar dados** — limpa o cache da aba e recarrega do Supabase.
 
 **Métricas de topo**
 - Total de empresas com recomendação
@@ -81,7 +118,11 @@ Dropdown abaixo da tabela. Ao selecionar uma empresa, abre um expander com três
 
 Lista as empresas aprovadas pelo filtro de IA que estão com `situacao_coleta = 'informação pendente'` — ou seja, algum campo obrigatório (CNPJ, produto, setor, tipo de IA, etc.) ainda não foi preenchido, impedindo que o pipeline de recomendação as processe.
 
-A página exibe uma tabela completa com todos os campos disponíveis, incluindo checkboxes para `ia_e_core_product` e `produto_ia_lancado`, e barra de progresso para o score de maturidade.
+A página exibe dois avisos no topo:
+1. **Aviso amarelo** — lembra que essas empresas precisam de revisão manual antes de seguir para a etapa de recomendação.
+2. **Dica azul** — na maioria dos casos, basta preencher o CNPJ manualmente; o pipeline usa a BrasilAPI para buscar automaticamente razão social, CNAE, porte, município, UF e outros dados cadastrais restantes.
+
+A tabela exibe todos os campos disponíveis. O **nome da empresa** é sempre a primeira coluna. Inclui checkboxes para `ia_e_core_product` e `produto_ia_lancado`, e barra de progresso para o score de maturidade.
 
 > Campos como Programa de Aceleração e Gupy costumam aparecer em branco — isso é esperado e não é o que determina a pendência.
 
@@ -95,7 +136,10 @@ Ferramenta integrada na parte inferior da página que permite resolver pendênci
 3. Clique em **Avançar**, confirme e clique em **Executar**
 4. O sistema roda os mesmos módulos do pipeline original e tenta preencher os campos ausentes automaticamente
 5. Se após a execução algum campo ainda ficar vazio, um formulário aparece para preenchimento manual
-6. Ao salvar, os dados vão diretamente para o banco e o score de maturidade é recalculado
+6. **Ao salvar os dados manuais, o pipeline roda novamente automaticamente** a partir do início (pulando campos já preenchidos) para aproveitar as novas informações e preencher o que restar
+7. Se todos os campos obrigatórios forem preenchidos, a empresa sai da lista de pendentes e fica elegível para geração de recomendações NVIDIA
+
+> **Atenção — CNPJ:** ao salvar o CNPJ manualmente, o campo `cnpj_pendente` é limpo automaticamente, garantindo que o `enriquece_identidade` preencha razão social, CNAE, porte e demais dados via BrasilAPI no reprocessamento seguinte.
 
 **Passos disponíveis**
 
@@ -114,13 +158,11 @@ Ferramenta integrada na parte inferior da página que permite resolver pendênci
 
 **Formulário de preenchimento manual**
 
-Quando o pipeline não consegue preencher um campo automaticamente (site sem informação, API indisponível, etc.), o formulário exibe cada campo com o widget adequado ao seu tipo:
+Quando o pipeline não consegue preencher um campo automaticamente, o formulário exibe cada campo com o widget adequado ao seu tipo:
 - Campos booleanos (`ia_e_core_product`, `produto_ia_lancado`): radio Sim / Não / Deixar em branco
 - Campos numéricos (`ano_fundacao`, `capital_social`): número inteiro
 - Campos com lista fechada de valores (`ia_tipo`, `setor`, `modelo_negocio`, etc.): selectbox com as opções válidas
 - Campos de texto livre: campo de texto
-
-Um preview dos campos e valores a salvar é exibido antes do botão "Salvar e Concluir". Ao salvar, o banco é atualizado e `define_maturidade` roda automaticamente para recalcular `score_maturidade_ia`, `nivel_maturidade_ia` e `situacao_coleta`. Se todos os campos obrigatórios forem preenchidos, a empresa sai da lista de pendentes e fica elegível para geração de recomendações NVIDIA na próxima execução do pipeline.
 
 **Estados da tela**
 
@@ -174,55 +216,87 @@ Ferramenta exibida abaixo do expander de detalhes ao selecionar uma empresa. Per
 | Rodando | Spinner enquanto o pipeline de sinais_ia executa |
 | Concluído | Mensagem de sucesso + log colapsado + botão para atualizar outro domínio |
 
----
+#### Essa empresa faz uso extensivo de IA
 
-### Resumo Geral
+Ferramenta exibida abaixo do "Atualizar domínio". Permite promover manualmente uma empresa excluída para o pipeline de enriquecimento completo, sem precisar que ela passe novamente pelo filtro de sinais de IA.
 
-Painel de visão agregada — primeira página exibida ao abrir o dashboard. Todas as métricas são gerais; nenhuma informação é específica por empresa.
-
-**Funil de análise** — 5 métricas em linha que contam cada etapa do pipeline:
-- Empresas coletadas
-- IA detectada
-- Excluídas (não atingiram pontuação mínima de sinais de IA)
-- Perfil completo (situação de coleta = `completo`)
-- Recomendação NVIDIA gerada
-
-**Maturidade de IA** — 6 métricas agregadas das empresas aprovadas:
-- Contagem por nível: ai-native, ai-first, ai-enabled, ai-adjacent
-- Score médio geral (0–10)
-- Quantidade com IA como core product
-
-**Perfil tecnológico e comercial** — grade 2×2 com tabelas de distribuição:
-
-| Posição | Conteúdo |
-|---|---|
-| Linha 1, coluna 1 | Tipo de IA (NLP/LLM, Visão Computacional, IA Generativa, etc.) |
-| Linha 1, coluna 2 | Modelo de negócio (B2B, B2C, B2B2C) |
-| Linha 2, coluna 1 | Mercado-alvo (Brasil, LATAM, Global) |
-| Linha 2, coluna 2 | Produto de IA em produção vs em desenvolvimento |
-
-**Setores com mais startups de IA** — tabela com barra de progresso proporcional, ordenada do setor com mais para o com menos empresas.
-
-**Tecnologias NVIDIA mais recomendadas** — ranking das tecnologias que mais aparecem nas recomendações geradas pelos agentes LangGraph, com barra de progresso. Só aparece quando há recomendações no banco.
-
----
-
-## Executar Pipeline
-
-Acessível pelo botão **▶ Executar Pipeline** no rodapé da sidebar. Toma conta da área principal enquanto está ativo.
+**Como usar:**
+1. Selecione a empresa no dropdown "Ver detalhes de:"
+2. Clique no botão **Essa empresa faz uso extensivo de IA**
+3. O sistema insere a empresa em `empresas_uso_ia` e roda todo o pipeline de enriquecimento: identidade (CNPJ + BrasilAPI) → produto → uso de IA → tipo de IA → modelo de negócio → produto lançado → setor → mercado-alvo → aceleradoras → maturidade
+4. Se algum campo não puder ser preenchido automaticamente, um formulário manual aparece
+5. Ao salvar, os dados vão para o banco e o score de maturidade é recalculado
 
 **Estados da tela**
 
 | Estado | O que aparece |
 |---|---|
-| Idle | Descrição do pipeline + botão "Executar Pipeline" |
+| Formulário | Descrição + botão "Essa empresa faz uso extensivo de IA" |
+| Rodando | Spinner enquanto o pipeline executa |
+| Manual | Log colapsado + formulário de campos não preenchidos |
+| Concluído | Mensagem de sucesso + log completo + botão para promover outra empresa |
+
+---
+
+### Todas as Empresas
+
+Visão consolidada de **todas** as empresas coletadas, independentemente do estágio no pipeline — desde as sem avaliação até as com recomendação gerada.
+
+**Adicionar nova empresa**
+Campo de texto e botão **Adicionar e processar** no cabeçalho da página. Ao inserir o nome da empresa e confirmar, o `nova_empresa.py` é executado via subprocess com log ao vivo. O pipeline completo roda em 10 passos: domínio → Gupy → vagas → institucional → imprensa → Neofeed → filtro de IA → enriquecimento completo (seed + identidade + produto + IA + maturidade) → situação de coleta → recomendações NVIDIA. Ao concluir, o cache de todas as abas é limpo automaticamente.
+
+**Estados da tela (Adicionar empresa)**
+
+| Estado | O que aparece |
+|---|---|
+| Rodando | Aviso + log ao vivo (últimas 40 linhas) |
+| Concluído | Mensagem de sucesso + log colapsado + botão Voltar |
+| Erro | Mensagem de erro + log expandido + botões Tentar Novamente / Voltar |
+
+**Métricas de topo** — 5 contadores em linha:
+- Total
+- Sem avaliação
+- Excluídas
+- Pendentes
+- Completas
+
+**Filtros**
+- Etapa (multiselect): Sem avaliação / Excluída / Aprovada (sem enriquecimento) / Pendente / Completa
+- Setor (multiselect — valores dinâmicos do banco)
+
+**Tabela principal**
+Exibe: empresa, site (clicável), etapa, setor, tipo de IA, nível de maturidade, score (barra de progresso), IA detectada (checkbox), pontuação de sinais e situação de coleta.
+
+**Painel de dados completos**
+Dropdown "Ver todos os dados de:" que abre um expander com todos os campos preenchidos agrupados em seções: Identificação, Produto e Mercado, Uso de IA, Avaliação de sinais e Pipeline.
+
+**Ferramentas por empresa (aparecem abaixo do expander)**
+
+Disponibilidade varia conforme a etapa da empresa:
+
+| Ferramenta | Quando aparece |
+|---|---|
+| **Atualizar domínio** | Sempre |
+| **Essa empresa faz uso extensivo de IA** | Excluída, Aprovada (sem enriquecimento) ou Sem avaliação |
+| **Reprocessar empresa** | Pendente ou Completa |
+
+A ferramenta **Reprocessar empresa** permite escolher o passo inicial e roda todo o pipeline a partir dele, pulando etapas já preenchidas. Se campos ainda ficarem vazios, exibe formulário manual de fallback com posterior reprocessamento automático.
+
+---
+
+## Buscar empresas (pipeline completo)
+
+Acessível pelo botão **🔍 Buscar empresas** na sidebar. Executa o `app.py` completo e toma conta da área principal enquanto está ativo.
+
+**Estados da tela**
+
+| Estado | O que aparece |
+|---|---|
 | Running | Aviso de execução em andamento + log ao vivo (últimas 40 linhas do stdout do `app.py`) |
-| Done | Mensagem de sucesso + log completo colapsado + botões "Ver Resultados" e "Executar Novamente" |
+| Done | Mensagem de sucesso + log completo colapsado + botão "Voltar" |
 | Error | Mensagem de erro + log completo expandido + botão "Tentar Novamente" |
 
-O pipeline executa os 16 passos do `app.py` em sequência (coleta Neofeed → filtro → uploads → domínio → Gupy → vagas → institucional → imprensa → Neofeed tag → filtro IA → seed → identidade → maturidade → situação → recomendações NVIDIA). O log é atualizado linha a linha em tempo real.
-
-Ao clicar em "Ver Resultados", a tela volta automaticamente para a página **Empresas** com os dados atualizados.
+O pipeline executa os passos do `app.py` em sequência (coleta Neofeed → filtro → uploads → domínio → Gupy → vagas → institucional → imprensa → Neofeed tag → filtro IA → seed → identidade → maturidade → situação → recomendações NVIDIA). O log é atualizado linha a linha em tempo real. O encoding é forçado para UTF-8 para evitar erros de caracteres especiais no Windows.
 
 > A execução não pode ser interrompida pela interface — para parar, encerre o processo no terminal.
 
@@ -230,10 +304,10 @@ Ao clicar em "Ver Resultados", a tela volta automaticamente para a página **Emp
 
 ## Cache de dados
 
-Todas as consultas ao Supabase têm cache de 2 minutos (`ttl=120`). Isso significa que após o pipeline terminar, os novos dados podem levar até 2 minutos para aparecer no dashboard. Recarregar a página manualmente força a renovação do cache.
+Todas as consultas ao Supabase têm cache de 2 minutos (`ttl=120`). Isso significa que após o pipeline terminar, os novos dados podem levar até 2 minutos para aparecer no dashboard. O botão **Atualizar dados** presente no canto superior direito de cada aba limpa o cache daquela aba imediatamente, sem precisar aguardar o TTL ou recarregar a página manualmente.
 
 ---
 
 ## Busca global
 
-O campo "Filtrar por nome..." no topo da sidebar aplica um filtro de texto (case-insensitive) na página ativa. Funciona nas páginas Empresas, Pendentes, Excluídas e Uso de IA. Não tem efeito na tela do Pipeline.
+O campo "Buscar empresa" no topo da sidebar aplica um filtro de texto (case-insensitive) na página ativa. Funciona nas páginas Análise completa, Pendentes, Excluídas, Uso de IA e Todas as Empresas. Não tem efeito durante a execução do pipeline.

@@ -1,10 +1,16 @@
 from __future__ import annotations
 import json
+import os
 import re
 import sys
 import time
 from pathlib import Path
 import spacy
+from dotenv import load_dotenv
+from supabase import create_client
+
+_RAIZ = Path(__file__).resolve().parent.parent.parent
+load_dotenv(_RAIZ / ".env")
 
 try:
     from agents.extrato_nomes_startups_gemini import extrair_nome_gemini
@@ -14,9 +20,6 @@ except ImportError:
     _sys.path.insert(0, str(_pl.Path(__file__).resolve().parent.parent / 'agents'))
     from extrato_nomes_startups_gemini import extrair_nome_gemini  # type: ignore[no-redef]
 
-# Caminhos absolutos resolvidos a partir do próprio script, portanto funcionam
-# independentemente do diretório de onde o script é executado.
-_RAIZ = Path(__file__).resolve().parent.parent.parent
 CAMINHO_BRUTOS = str(_RAIZ / 'data/jsons/artigos_nomes_empresas/artigos_brutos.json')
 CAMINHO_SAIDA  = str(_RAIZ / 'data/jsons/nomes_empresas/nomes_empresas.json')
 
@@ -149,6 +152,17 @@ def _extrair_nome(titulo: str, nlp: object) -> str | None:
     return _extrair_via_regex(titulo)
 
 
+def _urls_ja_no_banco() -> set[str]:
+    """Retorna o conjunto de URLs já presentes em nomes_empresas no Supabase."""
+    try:
+        supabase = create_client(os.environ["SUPABASE_URL"], os.environ["SUPABASE_KEY"])
+        rows = supabase.table("nomes_empresas").select("url").execute().data
+        return {r["url"] for r in rows if r.get("url")}
+    except Exception as exc:
+        print(f"[aviso] não foi possível consultar URLs do banco: {exc} — processando tudo")
+        return set()
+
+
 def filtrar(
     caminho_json: str = CAMINHO_BRUTOS,
     caminho_saida: str | None = CAMINHO_SAIDA,
@@ -168,6 +182,10 @@ def filtrar(
     with open(caminho_json, encoding='utf-8') as f:
         artigos = json.load(f)
 
+    urls_existentes = _urls_ja_no_banco()
+    if urls_existentes:
+        print(f"[info] {len(urls_existentes)} URL(s) já no banco — serão puladas\n")
+
     total = len(artigos)
     resultado: list[dict] = []
     vistos: set[str] = set()
@@ -180,6 +198,9 @@ def filtrar(
             continue
         if '/startups/' not in url:
             print(f"[{i}/{total}] descartado (seção incorreta): {url[:80]}")
+            continue
+        if url in urls_existentes:
+            print(f"[{i}/{total}] já no banco — pulado: {url[:80]}")
             continue
 
         print(f"[{i}/{total}] {titulo[:80]}", end=' ... ', flush=True)

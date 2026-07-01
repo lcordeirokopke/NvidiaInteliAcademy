@@ -35,6 +35,8 @@ src/rag/
 
 ## Como executar
 
+> **Primeira execução:** o Qdrant precisa estar rodando e a base de conhecimento indexada antes de rodar o pipeline. Siga o setup completo em [README.md](../README.md).
+
 ```bash
 # Todas as empresas elegíveis
 python src/recomendacao/inicia_recomendacao.py

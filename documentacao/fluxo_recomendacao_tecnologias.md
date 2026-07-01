@@ -1,5 +1,27 @@
 # Fluxo de Recomendação de Tecnologias NVIDIA
 
+## Pré-requisitos para execução
+
+Antes de rodar o pipeline, a base de conhecimento vetorial precisa estar populada. Setup completo em [README.md](../README.md).
+
+Resumo dos passos:
+
+```bash
+# 1. Subir o Qdrant
+docker run -d --name qdrant -p 6333:6333 qdrant/qdrant
+
+# 2. Criar a collection
+python -m src.rag.setup_qdrant
+
+# 3. Indexar os JSONs
+python -m src.rag.indexador
+
+# 4. Rodar o pipeline
+python src/recomendacao/inicia_recomendacao.py
+```
+
+---
+
 ## Visão geral
 
 O sistema recebe o perfil de uma startup já coletado e explica quais tecnologias NVIDIA são mais adequadas ao seu contexto. A seleção das tecnologias é feita implicitamente pelo pipeline RAG com reranking — não há um agente de recomendação separado. Um agente de explicação recebe os chunks já selecionados e articula o porquê de cada tecnologia para aquela startup específica.

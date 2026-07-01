@@ -1,5 +1,6 @@
 from __future__ import annotations
 import json
+import os
 import sys
 from pathlib import Path
 from playwright.sync_api import sync_playwright
@@ -8,6 +9,18 @@ URL_BASE = 'https://neofeed.com.br/startups/'
 
 _RAIZ = Path(__file__).resolve().parent.parent.parent
 _SAIDA_PADRAO = str(_RAIZ / 'data/jsons/artigos_nomes_empresas/artigos_brutos.json')
+
+
+def _chromium_executable() -> str | None:
+    """Retorna o executável Chromium disponível (headless shell ou full chrome como fallback)."""
+    base = Path(os.environ.get("LOCALAPPDATA", "")) / "ms-playwright"
+    headless = next(base.glob("chromium_headless_shell-*/chrome-headless-shell-win64/chrome-headless-shell.exe"), None)
+    if headless and headless.exists():
+        return str(headless)
+    full = next(base.glob("chromium-*/chrome-win64/chrome.exe"), None)
+    if full and full.exists():
+        return str(full)
+    return None
 
 
 def contar_artigos(page) -> int:
@@ -45,7 +58,7 @@ def coletar(cliques_max: int = 3, caminho_saida: str = _SAIDA_PADRAO) -> list[di
     só precisa rodar de novo quando quiser dados mais recentes, não a
     cada ajuste de filtro."""
     with sync_playwright() as p:
-        browser = p.chromium.launch()
+        browser = p.chromium.launch(executable_path=_chromium_executable())
         page = browser.new_page()
         page.goto(URL_BASE, wait_until='domcontentloaded', timeout=60000)
         page.wait_for_selector('article', timeout=30000)

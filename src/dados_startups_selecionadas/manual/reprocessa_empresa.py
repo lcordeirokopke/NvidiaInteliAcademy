@@ -467,7 +467,10 @@ def gravar_campos_manuais(empresa_id: int, campos: dict) -> str:
     import contextlib
 
     if campos:
-        supabase.table("empresas_uso_ia").update(campos).eq("empresa_id", empresa_id).execute()
+        payload = dict(campos)
+        if "cnpj" in payload and payload["cnpj"]:
+            payload["cnpj_pendente"] = False
+        supabase.table("empresas_uso_ia").update(payload).eq("empresa_id", empresa_id).execute()
 
     rows = supabase.table("empresas").select("nome").eq("id", empresa_id).execute().data
     if not rows:

@@ -78,7 +78,7 @@ def _seed_aprovadas(nome: str | None = None) -> int:
     return len(registros)
 
 
-def atualizar(atualizar_banco: bool = True) -> None:
+def atualizar(atualizar_banco: bool = True, nome: str | None = None) -> None:
     """
     Pipeline completo de atualização de empresas_uso_ia:
       1. Seed — cria linhas para aprovadas ainda ausentes
@@ -86,77 +86,79 @@ def atualizar(atualizar_banco: bool = True) -> None:
       3. Descoberta de produto — scraping + Playwright + Claude
       4. Descoberta de uso de IA — scraping + Playwright + Gemini
       5. Maturidade — calcula score e nível AI-native
+
+    Se `nome` for fornecido, todos os passos operam apenas sobre essa empresa.
     """
     print("=" * 55)
     print("  PASSO 1 — seed de aprovadas")
     print("=" * 55)
-    _seed_aprovadas()
+    _seed_aprovadas(nome=nome)
 
     print()
     print("=" * 55)
     print("  PASSO 2 — enriquecimento de identidade")
     print("=" * 55)
-    enriquece_identidade.enriquecer(atualizar_banco=atualizar_banco)
+    enriquece_identidade.enriquecer(atualizar_banco=atualizar_banco, nome=nome)
 
     print()
     print("=" * 55)
     print("  PASSO 3 — descoberta de produto")
     print("=" * 55)
-    produto.descobrir(atualizar_banco=atualizar_banco)
+    produto.descobrir(atualizar_banco=atualizar_banco, nome=nome)
 
     print()
     print("=" * 55)
     print("  PASSO 4 — descoberta de uso de IA")
     print("=" * 55)
-    uso_ia.descobrir(atualizar_banco=atualizar_banco)
+    uso_ia.descobrir(atualizar_banco=atualizar_banco, nome=nome)
 
     print()
     print("=" * 55)
     print("  PASSO 5 — classificação ia_e_core_product")
     print("=" * 55)
-    ia_core_product.descobrir(atualizar_banco=atualizar_banco)
+    ia_core_product.descobrir(atualizar_banco=atualizar_banco, nome=nome)
 
     print()
     print("=" * 55)
     print("  PASSO 6 — classificação ia_tipo")
     print("=" * 55)
-    ia_tipo.descobrir(atualizar_banco=atualizar_banco)
+    ia_tipo.descobrir(atualizar_banco=atualizar_banco, nome=nome)
 
     print()
     print("=" * 55)
     print("  PASSO 7 — classificação modelo_negocio")
     print("=" * 55)
-    modelo_negocio.descobrir(atualizar_banco=atualizar_banco)
+    modelo_negocio.descobrir(atualizar_banco=atualizar_banco, nome=nome)
 
     print()
     print("=" * 55)
     print("  PASSO 8 — verificação de produto_ia_lancado")
     print("=" * 55)
-    produto_ia_lancado.descobrir(atualizar_banco=atualizar_banco)
+    produto_ia_lancado.descobrir(atualizar_banco=atualizar_banco, nome=nome)
 
     print()
     print("=" * 55)
     print("  PASSO 9 — classificação de setor")
     print("=" * 55)
-    define_setor.descobrir(atualizar_banco=atualizar_banco)
+    define_setor.descobrir(atualizar_banco=atualizar_banco, nome=nome)
 
     print()
     print("=" * 55)
     print("  PASSO 10 — classificação de mercado_alvo")
     print("=" * 55)
-    mercado_alvo.descobrir(atualizar_banco=atualizar_banco)
+    mercado_alvo.descobrir(atualizar_banco=atualizar_banco, nome=nome)
 
     print()
     print("=" * 55)
     print("  PASSO 11 — detecção de aceleradoras")
     print("=" * 55)
-    acelerada_ia.descobrir(atualizar_banco=atualizar_banco)
+    acelerada_ia.descobrir(atualizar_banco=atualizar_banco, nome=nome)
 
     print()
     print("=" * 55)
     print("  PASSO 12 — classificação de maturidade")
     print("=" * 55)
-    define_maturidade.classificar(atualizar_banco=atualizar_banco)
+    define_maturidade.classificar(atualizar_banco=atualizar_banco, nome=nome)
 
     print()
     print("[concluído] empresas_uso_ia atualizada")

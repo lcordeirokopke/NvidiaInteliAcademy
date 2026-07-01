@@ -1,6 +1,7 @@
 # ── Web scraping ──────────────────────────────────────────────────────────────
 beautifulsoup4==4.14.3
 playwright==1.60.0
+# Após instalar: NODE_OPTIONS=--use-system-ca playwright install chromium
 requests==2.34.2
 httpx==0.28.1
 urllib3==2.7.0

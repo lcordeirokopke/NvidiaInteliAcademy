@@ -44,19 +44,22 @@ def _separador(titulo: str) -> None:
 
 
 def _ja_tem_resultado(empresa_id: int) -> bool:
-    """Retorna True se a empresa já tem explicacao gerada pelo grafo no banco."""
+    """Retorna True se a empresa já tem chunks_reranqueados salvos (recomendação já gerada)."""
     from supabase import create_client
     supabase = create_client(os.environ["SUPABASE_URL"], os.environ["SUPABASE_KEY"])
     resultado = (
         supabase.table("recomendacoes_nvidia")
-        .select("empresa_id")
+        .select("chunks_reranqueados")
         .eq("empresa_id", empresa_id)
-        .not_.is_("explicacao", "null")
+        .not_.is_("chunks_reranqueados", "null")
         .limit(1)
         .execute()
         .data
     )
-    return bool(resultado)
+    if not resultado:
+        return False
+    chunks = resultado[0].get("chunks_reranqueados")
+    return bool(chunks)
 
 
 def _rodar_grafo(empresa_id: int) -> dict | None:

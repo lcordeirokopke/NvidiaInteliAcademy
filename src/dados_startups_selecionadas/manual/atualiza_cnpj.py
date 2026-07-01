@@ -23,7 +23,7 @@ _RAIZ = Path(__file__).resolve().parent.parent.parent.parent
 load_dotenv(_RAIZ / ".env")
 
 sys.path.insert(0, str(_RAIZ / "src"))
-from dados_startups_selecionadas.identidade import brasil_api, cnae_setor
+from dados_startups_selecionadas.identidade import brasil_api
 from dados_startups_selecionadas.identidade import cnpj as cnpj_mod
 
 supabase = create_client(os.environ["SUPABASE_URL"], os.environ["SUPABASE_KEY"])
@@ -101,15 +101,13 @@ def _gravar(empresa_id: int, cnpj: str, dados_receita: dict | None) -> None:
     }
 
     if dados_receita:
-        atividades    = brasil_api.atividades_principais(dados_receita)
-        data_inicio   = dados_receita.get("data_inicio_atividade")
+        data_inicio = dados_receita.get("data_inicio_atividade")
         registro.update({
             "razao_social":  dados_receita.get("razao_social", "").title() or None,
             "nome_fantasia": dados_receita.get("nome_fantasia", "").title() or None,
             "situacao_rf":   brasil_api.situacao(dados_receita) or None,
             "municipio":     dados_receita.get("municipio", "").title() or None,
             "uf":            dados_receita.get("uf", "") or None,
-            "setor":         cnae_setor.inferir(atividades) or None,
             "ano_fundacao":  int(data_inicio[:4]) if data_inicio else None,
         })
 
@@ -168,6 +166,46 @@ def atualizar() -> None:
         _gravar(emp["empresa_id"], cnpj, dados)
         print(f"  [banco] CNPJ gravado para {emp['nome']}\n")
         time.sleep(0.3)
+
+
+def atualizar_pendentes_com_cnpj() -> list[str]:
+    """
+    Para cada empresa com cnpj preenchido mas cnpj_pendente=True,
+    consulta a Receita Federal e atualiza os dados no banco.
+    Retorna lista com nomes das empresas atualizadas.
+    """
+    rows = (
+        supabase.table("empresas_uso_ia")
+        .select("empresa_id, cnpj")
+        .eq("cnpj_pendente", True)
+        .not_.is_("cnpj", "null")
+        .execute()
+        .data
+    )
+    if not rows:
+        return []
+
+    ids = [r["empresa_id"] for r in rows]
+    nomes_rows = (
+        supabase.table("empresas")
+        .select("id, nome")
+        .in_("id", ids)
+        .execute()
+        .data
+    )
+    mapa_nomes = {int(r["id"]): r["nome"] for r in nomes_rows}
+
+    atualizadas = []
+    for row in rows:
+        empresa_id = int(row["empresa_id"])
+        cnpj = row["cnpj"]
+        digits = "".join(_RE_CNPJ.findall(cnpj))
+        dados = brasil_api.consultar_cnpj(digits)
+        _gravar(empresa_id, digits, dados)
+        atualizadas.append(mapa_nomes.get(empresa_id, f"id={empresa_id}"))
+        time.sleep(0.3)
+
+    return atualizadas
 
 
 if __name__ == "__main__":

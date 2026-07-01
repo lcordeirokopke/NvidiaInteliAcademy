@@ -24,43 +24,62 @@ CAMPOS_COMPLETO: frozenset[str] = frozenset({
 
 def atualizar(atualizar_banco: bool = True) -> None:
     """
-    Verifica empresas com situacao_coleta = 'informação pendente' e seta
-    'completo' para aquelas cujos campos obrigatórios estão todos preenchidos.
+    Sincroniza situacao_coleta com o estado real dos campos obrigatórios.
 
-    Nunca sobrescreve valores definidos manualmente pelo humano
-    ('empresa deve ser ignorada' ou 'seguir para próxima fase apesar de incompleto').
+    - 'informação pendente' / null → 'completo'  quando todos os campos estão preenchidos
+    - 'completo'                   → 'informação pendente'  quando algum campo obrigatório está nulo
     """
     supabase = create_client(os.environ["SUPABASE_URL"], os.environ["SUPABASE_KEY"])
 
     campos_select = ", ".join(CAMPOS_COMPLETO | {"empresa_id", "situacao_coleta"})
-    pendentes = (
+    todas = (
         supabase.table("empresas_uso_ia")
         .select(campos_select)
-        .eq("situacao_coleta", "informação pendente")
         .execute()
         .data
     )
 
-    if not pendentes:
-        print("[info] nenhuma empresa pendente para verificação de situacao_coleta")
+    if not todas:
+        print("[info] nenhuma empresa em empresas_uso_ia")
         return
 
-    completas: list[int] = []
-    for emp in pendentes:
+    promover: list[int] = []    # pendente → completo
+    regredir: list[int] = []    # completo → pendente (inconsistência detectada)
+
+    for emp in todas:
+        situacao = emp.get("situacao_coleta")
         faltando = [c for c in CAMPOS_COMPLETO if emp.get(c) is None]
+
         if not faltando:
-            completas.append(int(emp["empresa_id"]))
+            if situacao != "completo":
+                promover.append(int(emp["empresa_id"]))
         else:
-            print(f"  [pendente] id={emp['empresa_id']} — faltando: {', '.join(sorted(faltando))}")
+            if situacao == "completo":
+                print(f"  [inconsistente] id={emp['empresa_id']} marcado 'completo' mas faltando: {', '.join(sorted(faltando))}")
+                regredir.append(int(emp["empresa_id"]))
+            elif situacao in ("informação pendente", None):
+                print(f"  [pendente] id={emp['empresa_id']} — faltando: {', '.join(sorted(faltando))}")
 
-    print(f"\n[situacao_coleta] {len(completas)} completa(s) | {len(pendentes) - len(completas)} pendente(s)")
+    print(
+        f"\n[situacao_coleta] {len(promover)} promovida(s) para 'completo' | "
+        f"{len(regredir)} revertida(s) para 'informação pendente' | "
+        f"{len(todas) - len(promover) - len(regredir)} sem alteração"
+    )
 
-    if atualizar_banco and completas:
-        for eid in completas:
+    if atualizar_banco:
+        for eid in promover:
             supabase.table("empresas_uso_ia").update(
                 {"situacao_coleta": "completo"}
             ).eq("empresa_id", eid).execute()
-        print(f"[banco] {len(completas)} empresa(s) marcada(s) como 'completo'")
+        if promover:
+            print(f"[banco] {len(promover)} empresa(s) marcada(s) como 'completo'")
+
+        for eid in regredir:
+            supabase.table("empresas_uso_ia").update(
+                {"situacao_coleta": "informação pendente"}
+            ).eq("empresa_id", eid).execute()
+        if regredir:
+            print(f"[banco] {len(regredir)} empresa(s) revertida(s) para 'informação pendente'")
 
 
 if __name__ == "__main__":
