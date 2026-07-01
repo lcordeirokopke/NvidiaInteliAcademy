@@ -34,13 +34,13 @@ Um sistema capaz de:
 A solução é composta por três camadas:
 
 **Pipeline de coleta e qualificação** (`app.py` — 16 etapas sequenciais)
-Raspa artigos do Neofeed, extrai nomes de startups via LLM, envia para o Supabase, descobre domínios e perfis Gupy, pesquisa sinais de uso de IA (site institucional, vagas, notícias, artigos), emite veredito de qualificação, enriquece o perfil das aprovadas com dados do CNPJ via BrasilAPI, calcula score de maturidade AI-native e gera recomendações NVIDIA via LangGraph.
+Raspa artigos do Neofeed, extrai nomes de startups via LLM, envia para o Supabase, descobre domínios e perfis Gupy, pesquisa sinais de uso de IA (site institucional, vagas, notícias, artigos), emite veredito de qualificação, enriquece o perfil das aprovadas com dados do CNPJ via BrasilAPI, calcula score de maturidade AI-native e gera recomendações NVIDIA via LangGraph (esse último se mescla a próxima camada).
 
 **Pipeline de recomendação** (`src/recomendacao/` + `src/agents/extras/`)
 Grafo LangGraph com 9 nós sequenciais e condicionais que carrega o perfil da startup, monta uma query semântica, busca e reranqueia chunks da base de conhecimento NVIDIA no Qdrant e aciona 4 LLMs em sequência para gerar: tecnologias recomendadas, síntese executiva, roadmap de adoção 30/60/90 dias e kit de início com containers NGC e créditos Inception.
 
 **Dashboard web** (`dashboard.py` — Streamlit)
-Interface com 6 abas: Resumo Geral, Análise Completa, Pendentes, Excluídas, Uso de IA e Todas as Empresas. Permite visualizar o funil completo, disparar o pipeline, reprocessar empresas pendentes, corrigir domínios e promover empresas excluídas manualmente.
+Interface com 6 abas: Resumo Geral, Análise Completa, Pendentes, Excluídas, Uso de IA e Todas as Empresas. Permite visualizar o funil completo, disparar o pipeline, reprocessar empresas pendentes, corrigir domínios, adicionar empresas para análise e promover empresas excluídas manualmente.
 
 ---
 
@@ -84,7 +84,6 @@ Interface com 6 abas: Resumo Geral, Análise Completa, Pendentes, Excluídas, Us
 | Tecnologia | Uso |
 |---|---|
 | **BrasilAPI** | Enriquecimento de CNPJ (razão social, CNAE, porte, município, UF) |
-| **Gupy** | Descoberta de subdomínios e vagas de IA |
 | **News API / GNews / NewsData.io** | Pesquisa de notícias sobre uso de IA |
 
 ### Frontend e utilitários
@@ -139,20 +138,31 @@ explicar_tecnico | explicar_negocio → validar_json (com retry)
 
 A base de conhecimento indexada no Qdrant contém **23 tecnologias NVIDIA**:
 
-| Tecnologia | Tecnologia |
-|---|---|
-| NVIDIA Inception | NVIDIA NIM |
-| NVIDIA API Catalog | NVIDIA NeMo |
-| NVIDIA NeMo Guardrails | NVIDIA Triton Inference Server |
-| NVIDIA TensorRT-LLM | NVIDIA RAPIDS |
-| NVIDIA cuDF | NVIDIA cuML |
-| NVIDIA cuGraph | NVIDIA cuOpt |
-| NVIDIA cuVS | NVIDIA CUDA Toolkit |
-| NVIDIA Riva | NVIDIA Omniverse |
-| NVIDIA Isaac | NVIDIA Clara |
-| NVIDIA Morpheus | NVIDIA AI Enterprise |
-| NVIDIA Nemotron | NVIDIA Parakeet | 
-| NVIDIA NV EmbedQA | |
+Aqui estão as tecnologias organizadas em formato de lista:
+
+* NVIDIA Inception
+* NVIDIA NIM
+* NVIDIA API Catalog
+* NVIDIA NeMo
+* NVIDIA NeMo Guardrails
+* NVIDIA Triton Inference Server
+* NVIDIA TensorRT-LLM
+* NVIDIA RAPIDS
+* NVIDIA cuDF
+* NVIDIA cuML
+* NVIDIA cuGraph
+* NVIDIA cuOpt
+* NVIDIA cuVS
+* NVIDIA CUDA Toolkit
+* NVIDIA Riva
+* NVIDIA Omniverse
+* NVIDIA Isaac
+* NVIDIA Clara
+* NVIDIA Morpheus
+* NVIDIA AI Enterprise
+* NVIDIA Nemotron
+* NVIDIA Parakeet
+* NVIDIA NV EmbedQA
 
 ---
 
@@ -179,7 +189,7 @@ A base de conhecimento indexada no Qdrant contém **23 tecnologias NVIDIA**:
 | 3 | **RAG NVIDIA com reranking** | ✅ Concluído | Base de 23 tecnologias indexadas no Qdrant com embeddings `gemini-embedding-001` (3072 dim), reranking semântico com CrossEncoder multilingual |
 | 4 | **Motor de recomendação** | ✅ Concluído | Pipeline de 4 LLMs em sequência: tecnologias recomendadas com justificativa técnica e de negócio, síntese executiva, roadmap 30/60/90 dias e kit de início com containers NGC e créditos Inception |
 | 5 | **Interface web** | ✅ Concluído | Dashboard Streamlit com 6 abas, funil de qualificação, reprocessamento manual de pendentes, atualização de domínios e promoção de empresas excluídas |
-| 6 | **Diferencial do projeto** | ✅ Concluído | Funil de qualificação AI-native com score de maturidade (0–10) e classificação em 4 níveis (ai-native, ai-first, ai-enabled, ai-adjacent); pipeline totalmente automatizado de ponta a ponta acionável pelo próprio dashboard |
+| 6 | **Diferencial do projeto** | ✅ Concluído | Funil de qualificação AI-native com score de maturidade (0–10), possibilidade de correção ou adição de dados de forma manual e pipeline totalmente automatizado de ponta a ponta acionável pelo próprio dashboard |
 
 ---
 
@@ -289,3 +299,5 @@ streamlit run dashboard.py
 | `documentacao/fluxo_recomendacao_tecnologias.md` | Como funciona o pipeline RAG + agentes |
 | `documentacao/langgraph.md` | Grafo LangGraph: nós, arestas, estado e retries |
 | `documentacao/dashboard.md` | Guia de uso do dashboard Streamlit |
+| `documentacao/tabelas.md` | Tabelas do banco PostgreSQL (Supabase) e estrutura do pipeline |
+| `documentacao/estrutura metadados.md` | Estrutura de metadados da base de conhecimento NVIDIA |
