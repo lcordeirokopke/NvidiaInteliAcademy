@@ -1,16 +1,27 @@
-# Documentação Técnica — upload_empresas.py
+# Documentação Técnica — upload_empresas.py e upload_nomes_empresas.py
 
-**Localização:** [`src/interacoes_banco/upload_empresas.py`](../src/interacoes_banco/upload_empresas.py)
+**Localizações:**
+- [`src/interacoes_banco/upload_empresas.py`](../../src/interacoes_banco/upload_empresas.py)
+- [`src/interacoes_banco/upload_nomes_empresas.py`](../../src/interacoes_banco/upload_nomes_empresas.py)
 
 ---
 
 ## Visão Geral
 
-Script de carga inicial responsável por popular a tabela `empresas` no Supabase. Lê o arquivo `nomes_empresas.json` produzido pela etapa de coleta, extrai os nomes únicos de startups e os insere (ou confirma) no banco via operação de upsert. É executado uma vez por ciclo de coleta, antes das etapas de enriquecimento, e serve como ponto de entrada para todo o pipeline — todas as tabelas subsequentes referenciam os registros criados aqui.
+Esses dois scripts formam a **etapa de carga inicial do pipeline**. Ambos leem o mesmo arquivo de entrada — `nomes_empresas.json`, produzido pela etapa de coleta — e o persistem no banco de dados Supabase, cada um em uma tabela diferente e com propósitos distintos:
+
+| Script | Tabela destino | O que envia | Chave de conflito |
+|---|---|---|---|
+| `upload_empresas.py` | `empresas` | Apenas os **nomes únicos** de startups | `nome` |
+| `upload_nomes_empresas.py` | `nomes_empresas` | **Todos os artigos completos** (startup + titulo + url + tags) | `url` |
+
+Os dois são executados uma vez por ciclo de coleta, antes das etapas de enriquecimento. A tabela `empresas` resultante serve como **catálogo mestre** do pipeline — todos os módulos subsequentes referenciam seus registros via chave estrangeira (`empresa_id`). A tabela `nomes_empresas` guarda o histórico completo de artigos coletados.
 
 ---
 
 ## Tecnologias Utilizadas
+
+As duas tecnologias são idênticas nos dois scripts.
 
 ### `json` — Biblioteca Padrão Python
 Módulo nativo responsável pela leitura e desserialização de arquivos no formato JSON. Converte o conteúdo do arquivo em estruturas de dados nativas do Python (listas e dicionários), permitindo iteração e filtragem dos registros.
@@ -31,9 +42,32 @@ Cliente Python oficial para o Supabase. Abstrai as chamadas à API REST (PostgRE
 
 ---
 
+## Arquivo de Entrada (compartilhado)
+
+Ambos os scripts leem o mesmo arquivo:
+
+```
+data/jsons/nomes_empresas/nomes_empresas.json
+```
+
+Cada elemento da lista segue a estrutura:
+
+```json
+{
+  "startup": "Nome da Empresa",
+  "titulo": "Título do artigo",
+  "url": "https://neofeed.com.br/startups/...",
+  "tags": []
+}
+```
+
+---
+
 ## Funcionamento do Código
 
-### 1. Inicialização do módulo
+Os dois scripts compartilham os mesmos três primeiros passos de inicialização. A diferença está no que cada um faz com os dados antes de enviá-los ao banco.
+
+### Passo 1 — Inicialização do módulo (idêntico nos dois)
 
 ```python
 _RAIZ = Path(__file__).resolve().parent.parent.parent
@@ -42,7 +76,7 @@ load_dotenv(_RAIZ / ".env")
 
 Ao ser importado, o módulo resolve o caminho absoluto da raiz do projeto e carrega as variáveis de ambiente do arquivo `.env`. Esse bloco é executado antes de qualquer chamada à função `upload()`.
 
-### 2. Conexão com o banco
+### Passo 2 — Conexão com o banco (idêntico nos dois)
 
 ```python
 supabase = create_client(os.environ["SUPABASE_URL"], os.environ["SUPABASE_KEY"])
@@ -50,7 +84,7 @@ supabase = create_client(os.environ["SUPABASE_URL"], os.environ["SUPABASE_KEY"])
 
 Instancia o cliente Supabase com a URL do projeto e a chave de API. A chave utilizada pode ser a `anon key` (sujeita às políticas de Row-Level Security) ou a `service_role key` (acesso administrativo irrestrito), conforme configurado no `.env`.
 
-### 3. Leitura do arquivo de entrada
+### Passo 3 — Leitura do arquivo de entrada (idêntico nos dois)
 
 ```python
 json_path = _RAIZ / "data" / "jsons" / "nomes_empresas" / "nomes_empresas.json"
@@ -58,18 +92,13 @@ with open(json_path, encoding="utf-8") as f:
     dados = json.load(f)
 ```
 
-Abre e desserializa o JSON gerado pela etapa de coleta. O `encoding="utf-8"` garante a leitura correta de nomes com caracteres especiais. Cada elemento de `dados` segue a estrutura:
+Abre e desserializa o JSON gerado pela etapa de coleta. O `encoding="utf-8"` garante a leitura correta de nomes com caracteres especiais.
 
-```json
-{
-  "startup": "Nome da Empresa",
-  "titulo": "Título do artigo",
-  "url": "https://...",
-  "tags": []
-}
-```
+---
 
-### 4. Extração e deduplicação de nomes
+### `upload_empresas.py` — Extração de nomes únicos e carga na tabela `empresas`
+
+#### Passo 4 — Extração e deduplicação de nomes
 
 ```python
 nomes_unicos = list({item["startup"] for item in dados if item.get("startup")})
@@ -78,7 +107,7 @@ registros = [{"nome": nome} for nome in sorted(nomes_unicos)]
 
 Utiliza uma *set comprehension* para eliminar automaticamente nomes duplicados — situação comum quando uma mesma startup é mencionada em múltiplos artigos. O filtro `item.get("startup")` descarta entradas com o campo ausente ou nulo. Os registros são ordenados alfabeticamente antes do envio.
 
-### 5. Upsert na tabela `empresas`
+#### Passo 5 — Upsert na tabela `empresas`
 
 ```python
 response = (
@@ -96,32 +125,63 @@ VALUES ('Empresa A'), ('Empresa B'), ...
 ON CONFLICT (nome) DO UPDATE SET nome = EXCLUDED.nome;
 ```
 
-O atributo `response.data` contém os registros afetados (inseridos e atualizados) retornados pelo Supabase após a execução.
-
----
-
-## Dados Processados
-
 | Aspecto | Detalhe |
 |---|---|
-| **Arquivo de entrada** | `data/jsons/nomes_empresas/nomes_empresas.json` |
-| **Campo consumido** | `startup` (nome da empresa) |
+| **Campo consumido** | `startup` |
 | **Campos ignorados** | `titulo`, `url`, `tags` |
 | **Tabela de destino** | `empresas` |
 | **Campo gravado** | `nome` (text UNIQUE NOT NULL) |
 
 ---
 
+### `upload_nomes_empresas.py` — Carga completa dos artigos na tabela `nomes_empresas`
+
+#### Passo 4 — Upsert na tabela `nomes_empresas`
+
+```python
+response = (
+    supabase.table("nomes_empresas")
+    .upsert(dados, on_conflict="url")
+    .execute()
+)
+```
+
+Envia a lista completa de artigos diretamente, sem filtragem ou deduplicação prévia. O parâmetro `on_conflict="url"` instrui o PostgreSQL a usar a coluna `url` como critério de unicidade — se o mesmo artigo for enviado em execuções futuras, ele não será duplicado no banco, apenas atualizado. Isso equivale à seguinte instrução SQL:
+
+```sql
+INSERT INTO nomes_empresas (startup, titulo, url, tags)
+VALUES ('Kalshi', 'Kalshi pode dobrar...', 'https://...', '[]'),
+       ...
+ON CONFLICT (url) DO UPDATE
+  SET startup = EXCLUDED.startup,
+      titulo  = EXCLUDED.titulo,
+      tags    = EXCLUDED.tags;
+```
+
+| Aspecto | Detalhe |
+|---|---|
+| **Campos consumidos** | `startup`, `titulo`, `url`, `tags` |
+| **Tabela de destino** | `nomes_empresas` |
+| **Campos gravados** | `startup`, `titulo`, `url`, `tags` |
+
+---
+
 ## Relação com Outros Arquivos
 
-Este script é um dos dois responsáveis pela carga inicial a partir do mesmo JSON de coleta:
+Este par de scripts é a porta de entrada do pipeline a partir do JSON de coleta:
 
-| Script | Tabela destino | Conteúdo enviado |
-|---|---|---|
-| [`upload_empresas.py`](../src/interacoes_banco/upload_empresas.py) | `empresas` | Nome único de cada startup |
-| [`upload_nomes_empresas.py`](../src/interacoes_banco/upload_nomes_empresas.py) | `nomes_empresas` | Todos os artigos completos (startup + titulo + url + tags) |
+```
+[Coleta Neofeed]
+      ↓
+  nomes_empresas.json
+      ↓
+  upload_nomes_empresas.py → tabela nomes_empresas (artigos completos)
+  upload_empresas.py       → tabela empresas       (catálogo de nomes únicos)
+      ↓
+  [Módulos de enriquecimento e recomendação — referenciam tabela empresas]
+```
 
-A tabela `empresas` resultante serve como catálogo mestre do pipeline: todos os módulos de coleta, enriquecimento e recomendação referenciam seus registros via chave estrangeira (`empresa_id`). O script [`nova_empresa.py`](../src/nova_empresa.py) utiliza o mesmo mecanismo de upsert para inserir manualmente uma empresa e disparar as 10 etapas de processamento subsequentes.
+O script [`nova_empresa.py`](../../src/nova_empresa.py) utiliza o mesmo mecanismo de upsert para inserir manualmente uma empresa e disparar as etapas de processamento subsequentes.
 
 ---
 
