@@ -8,3 +8,7 @@
 # Bytecode gerado pelo Python
 __pycache__/
 *.pyc
+
+zzz/
+
+data/jsons/

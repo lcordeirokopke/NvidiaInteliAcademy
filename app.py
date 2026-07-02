@@ -28,7 +28,7 @@ def main() -> None:
     from coleta_startups.filtro import filtrar
     filtrar()
 
-    # 3. Envia nomes brutos para Supabase (tabela nomes_empresas)
+    # 3. Envia nomes brutos para Supabase 
     _titulo("3/16 · upload_nomes_empresas.py — upload para Supabase")
     from interacoes_banco.upload_nomes_empresas import upload as upload_nomes
     upload_nomes()
