@@ -1,4 +1,4 @@
-# Documentação: `coleta_neofeed.py`
+# Documentação Técnica — `coleta_neofeed.py`
 
 ## 1. Visão Geral
 
