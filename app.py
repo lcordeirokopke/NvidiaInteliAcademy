@@ -33,7 +33,7 @@ def main() -> None:
     from interacoes_banco.upload_nomes_empresas import upload as upload_nomes
     upload_nomes()
 
-    # 4. Envia empresas para Supabase (tabela empresas) — deve vir antes das descobertas
+    # 4. Envia empresas para Supabase (tabela empresas)
     _titulo("4/14 · upload_empresas.py — upload para Supabase")
     from interacoes_banco.upload_empresas import upload as upload_empresas
     upload_empresas()

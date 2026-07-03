@@ -10,8 +10,6 @@ A inteligência artificial vive um momento de inflexão. Os grandes laboratório
 
 Esse avanço coloca em risco startups que construíram seu negócio sobre APIs de terceiros sem camadas de diferenciação. Quando o próprio lab que fornece o modelo lança uma solução equivalente, a startup perde relevância — e não há dado proprietário, workflow especializado nem vantagem técnica que a sustente.
 
-A saída está em construir negócios **AI-native**: empresas que combinam software, agentes, dados exclusivos e automação profunda para entregar resultados operacionais de ponta a ponta, indo além de uma simples interface sobre uma API genérica.
-
 É nesse cenário que a NVIDIA encontra uma oportunidade estratégica. A maioria das startups usa IA, mas poucas otimizam sua infraestrutura para produção. A stack NVIDIA — de inferência a treinamento, de dados a segurança — existe exatamente para ajudar essas empresas a sair do estágio de protótipo e construir sistemas de IA escaláveis, eficientes e prontos para crescer.
 
 ---
@@ -31,15 +29,18 @@ Um sistema capaz de:
 
 ## 3. Escopo da solução
 
-A solução é composta por três camadas:
+A solução é composta por quatro camadas:
 
-**Pipeline de coleta e qualificação** (`app.py` — 16 etapas sequenciais)
-Raspa artigos do Neofeed, extrai nomes de startups via LLM, envia para o Supabase, descobre domínios e perfis Gupy, pesquisa sinais de uso de IA (site institucional, vagas, notícias, artigos), emite veredito de qualificação, enriquece o perfil das aprovadas com dados do CNPJ via BrasilAPI, calcula score de maturidade AI-native e gera recomendações NVIDIA via LangGraph (esse último se mescla a próxima camada).
+**1. Descobrimento das startups** (`src/coleta_startups/`, `src/dados_startups/`, `src/dados_ia_startups/`, `src/interacoes_banco/`)
+Primeiro olhar sobre as startups. Raspa artigos do Neofeed, extrai nomes de startups via LLM, envia para o Supabase, descobre domínios e perfis Gupy, pesquisa sinais de uso de IA (site institucional, vagas, notícias, artigos) e emite veredito de qualificação — identificando se há uso extensivo de IA.
 
-**Pipeline de recomendação** (`src/recomendacao/` + `src/agents/extras/`)
-Grafo LangGraph com 9 nós sequenciais e condicionais que carrega o perfil da startup, monta uma query semântica, busca e reranqueia chunks da base de conhecimento NVIDIA no Qdrant e aciona 4 LLMs em sequência para gerar: tecnologias recomendadas, síntese executiva, roadmap de adoção 30/60/90 dias e kit de início com containers NGC e créditos Inception.
+**2. Aprofundamento dos dados** (`src/dados_startups_selecionadas/`, `src/interacoes_banco/`)
+Aprofunda a identidade da empresa e o papel da IA nela. Enriquece o perfil das startups qualificadas com dados do CNPJ via BrasilAPI, extrai produto, stack tecnológica, modelo de negócio, mercado-alvo e tipo de IA, calcula score de maturidade AI-native e identifica gaps na stack — gerando as recomendações de tecnologias NVIDIA mais adequadas ao perfil de cada empresa.
 
-**Dashboard web** (`dashboard.py` — Streamlit)
+**3. Tecnologias NVIDIA** (`src/recomendacao/` + `src/agents/extras/`)
+Grafo LangGraph com 9 nós sequenciais e condicionais que busca e reranqueia chunks da base de conhecimento NVIDIA no Qdrant e aciona 4 LLMs em sequência para gerar: explicação contextualizada das tecnologias recomendadas, síntese executiva para o CEO, roadmap de adoção 30/60/90 dias e kit de início prático com containers NGC e créditos Inception.
+
+**4. Dashboard** (`dashboard.py` — Streamlit)
 Interface com 6 abas: Resumo Geral, Análise Completa, Pendentes, Excluídas, Uso de IA e Todas as Empresas. Permite visualizar o funil completo, disparar o pipeline, reprocessar empresas pendentes, corrigir domínios, adicionar empresas para análise e promover empresas excluídas manualmente.
 
 ---
