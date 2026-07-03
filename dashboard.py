@@ -316,11 +316,11 @@ def render_empresas(df: pd.DataFrame, busca: str) -> None:
     c1, c2, c3 = st.columns([7, 2, 1])
     c1.title("Análise completa")
 
-    c2.markdown("<div style='text-align:center; font-size:0.8rem; color:red;'>(caso elegível)</div>", unsafe_allow_html=True)
     if c2.button("gerar recomendações de novas empresas", key="rec_iniciar", use_container_width=True):
         st.session_state.rec_fase = "rodando"
         st.session_state.rec_output = []
         st.rerun()
+    c2.markdown("<div style='text-align:center; font-size:0.8rem; color:red;'>(caso elegível)</div>", unsafe_allow_html=True)
 
     if c3.button("Atualizar dados", key="refresh_empresas", use_container_width=True):
         atualizar_situacao, rodar_recomendacao = _importar_pipeline_recomendacao()
@@ -368,7 +368,7 @@ def render_empresas(df: pd.DataFrame, busca: str) -> None:
     explicacao = safe_json(row.get("explicacao"))
     roadmap    = safe_json(row.get("roadmap"))
     kit_raw    = safe_json(row.get("kit_inicio"))
-    kit        = kit_raw.get("kit", []) if isinstance(kit_raw, dict) else []
+    kit        = kit_raw if isinstance(kit_raw, list) else kit_raw.get("kit", [])
 
     if row.get("gerado_em"):
         st.caption(f"Recomendação gerada em {pd.to_datetime(row['gerado_em']).strftime('%d/%m/%Y %H:%M')}")
@@ -416,18 +416,6 @@ def render_empresas(df: pd.DataFrame, busca: str) -> None:
 
     st.divider()
 
-    # ── Síntese Executiva ────────────────────────────────────────────────────
-    _sec("Síntese Executiva")
-    if sintese.get("resumo"):
-        st.info(sintese["resumo"])
-    s1, s2 = st.columns(2)
-    s1.write(f"**Impacto Principal:** {sintese.get('impacto_principal') or '—'}")
-    s1.write(f"**Diferencial Competitivo:** {sintese.get('diferencial_competitivo') or '—'}")
-    s2.write(f"**Investimento Estimado:** {sintese.get('investimento_estimado') or '—'}")
-    s2.write(f"**Próximo Passo:** {sintese.get('proximo_passo') or '—'}")
-
-    st.divider()
-
     # ── Tecnologias Recomendadas ─────────────────────────────────────────────
     _sec("Tecnologias Recomendadas")
     tecnologias = explicacao.get("tecnologias", [])
@@ -441,6 +429,18 @@ def render_empresas(df: pd.DataFrame, busca: str) -> None:
     fontes = explicacao.get("fontes", [])
     if fontes:
         st.write("**Fontes:** " + " · ".join(fontes))
+
+    st.divider()
+
+    # ── Síntese Executiva ────────────────────────────────────────────────────
+    _sec("Síntese Executiva")
+    if sintese.get("resumo"):
+        st.info(sintese["resumo"])
+    s1, s2 = st.columns(2)
+    s1.write(f"**Impacto Principal:** {sintese.get('impacto_principal') or '—'}")
+    s1.write(f"**Diferencial Competitivo:** {sintese.get('diferencial_competitivo') or '—'}")
+    s2.write(f"**Investimento Estimado:** {sintese.get('investimento_estimado') or '—'}")
+    s2.write(f"**Próximo Passo:** {sintese.get('proximo_passo') or '—'}")
 
     st.divider()
 
@@ -1440,6 +1440,7 @@ def render_reprocessar_empresa(empresa_id: int, nome: str, *, kp: str = "repr_te
         executar_para_streamlit,
         gravar_campos_manuais,
         CAMPOS_BOOL, CAMPOS_INT, CAMPOS_ENUM,
+        _,
     ) = _importar_reprocessa()
 
     st.divider()

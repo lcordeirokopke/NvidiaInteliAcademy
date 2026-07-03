@@ -24,7 +24,7 @@ def reset(nome: str) -> None:
     empresa_id = row[0]["id"]
     print(f"[info] empresa: '{nome}'  id={empresa_id}\n")
 
-    tabelas = ["sinais_ia", "avaliacoes_ia", "empresas_uso_ia", "recomendacoes_nvidia", "empresas"]
+    tabelas = ["sinais_ia", "empresas_uso_ia", "avaliacoes_ia", "recomendacoes_nvidia"]
     for tabela in tabelas:
         res = supabase.table(tabela).delete().eq("empresa_id", empresa_id).execute()
         deletados = len(res.data) if res.data else 0

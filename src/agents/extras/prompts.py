@@ -7,11 +7,18 @@ PROMPT_TECNICO = """\
 Você é especialista em tecnologias NVIDIA para startups de IA de alto crescimento.
 A startup usa IA como produto central — o foco é na stack técnica.
 
-Analise os chunks abaixo e selecione no máximo 3 tecnologias NVIDIA realmente
-relevantes para esta startup. Descarte tecnologias que não se encaixem no setor,
+Analise os chunks abaixo e selecione no máximo 3 itens NVIDIA realmente
+relevantes para esta startup. Descarte itens que não se encaixem no setor,
 no tipo de IA ou no produto da startup — mesmo que apareçam nos chunks.
 Consolide múltiplos chunks da mesma tecnologia em uma única justificativa.
 Mantenha a ordem de relevância dos chunks (o primeiro é o mais relevante pelo reranking).
+
+Classifique cada item em "tipo":
+- "tecnologia": produto técnico que resolve o problema diretamente (SDK, biblioteca,
+  plataforma, modelo, container) — ex: RAPIDS, NIM, TensorRT, Clara, Morpheus.
+- "programa_suporte": programa de apoio a startups (ex: NVIDIA Inception) — oferece
+  créditos, treinamento e desconto, mas não processa dado nem resolve o problema técnico
+  por si só. NUNCA é um substituto de uma tecnologia.
 
 Perfil da startup:
 {perfil}
@@ -20,7 +27,7 @@ Chunks selecionados pelo reranking:
 {chunks}
 
 Responda APENAS em JSON válido, sem markdown, sem texto antes ou depois:
-{{"tecnologias": [{{"tecnologia": "...", "justificativa": "..."}}], "fontes": ["url1", "url2"]}}
+{{"tecnologias": [{{"tecnologia": "...", "tipo": "tecnologia|programa_suporte", "justificativa": "..."}}], "fontes": ["url1", "url2"]}}
 """
 
 # ── LLM 1b — Agente de Explicação de Negócio ─────────────────────────────────
@@ -31,11 +38,18 @@ Você é especialista em aplicações de IA para negócios em startups.
 A startup usa IA como ferramenta interna, não como produto central — o foco é
 em casos de uso concretos, impacto operacional e facilidade de adoção.
 
-Analise os chunks abaixo e selecione no máximo 3 tecnologias NVIDIA realmente
-relevantes para esta startup. Descarte tecnologias que não se encaixem no setor,
+Analise os chunks abaixo e selecione no máximo 3 itens NVIDIA realmente
+relevantes para esta startup. Descarte itens que não se encaixem no setor,
 no tipo de IA ou no produto da startup — mesmo que apareçam nos chunks.
 Consolide múltiplos chunks da mesma tecnologia em uma única justificativa.
 Mantenha a ordem de relevância dos chunks.
+
+Classifique cada item em "tipo":
+- "tecnologia": produto técnico que resolve o problema diretamente (SDK, biblioteca,
+  plataforma, modelo, container) — ex: RAPIDS, NIM, TensorRT, Clara, Morpheus.
+- "programa_suporte": programa de apoio a startups (ex: NVIDIA Inception) — oferece
+  créditos, treinamento e desconto, mas não processa dado nem resolve o problema técnico
+  por si só. NUNCA é um substituto de uma tecnologia.
 
 Perfil da startup:
 {perfil}
@@ -44,7 +58,7 @@ Chunks selecionados pelo reranking:
 {chunks}
 
 Responda APENAS em JSON válido, sem markdown, sem texto antes ou depois:
-{{"tecnologias": [{{"tecnologia": "...", "justificativa": "..."}}], "fontes": ["url1", "url2"]}}
+{{"tecnologias": [{{"tecnologia": "...", "tipo": "tecnologia|programa_suporte", "justificativa": "..."}}], "fontes": ["url1", "url2"]}}
 """
 
 # ── LLM 2 — Agente de Síntese Executiva ──────────────────────────────────────
@@ -83,6 +97,13 @@ PROMPT_ROADMAP = """\
 Com base nas recomendações e no perfil abaixo, crie um roadmap de adoção realista
 para a tecnologia prioritária. Calibre o plano pelo nível de maturidade de IA
 e pelos recursos típicos de uma startup nesse estágio.
+
+"tecnologia_prioritaria" pode ser um item "tipo": "tecnologia" ou "tipo": "programa_suporte"
+(ex: NVIDIA Inception) — escolha com base no que é mais urgente agora para esta startup,
+não apenas pela ordem da lista. Só eleja um programa_suporte como prioridade se ele for
+realmente o passo mais crítico no momento (ex: startup ainda não tem acesso a créditos/GPU
+para nem começar a testar a tecnologia). Se a prioridade for uma tecnologia, mencione
+programas de suporte relevantes como ação paralela no plano ou em "dependencias".
 
 Recomendação técnica:
 {explicacao}
