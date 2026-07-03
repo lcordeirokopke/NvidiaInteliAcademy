@@ -194,7 +194,7 @@ Aqui estão as tecnologias organizadas em formato de lista:
 | 3 | **RAG NVIDIA com reranking** | ✅ Concluído | Base de 23 tecnologias indexadas no Qdrant com embeddings `gemini-embedding-001` (3072 dim), reranking semântico com CrossEncoder multilingual |
 | 4 | **Motor de recomendação** | ✅ Concluído | Pipeline de 4 LLMs em sequência: tecnologias recomendadas com justificativa técnica e de negócio, síntese executiva, roadmap 30/60/90 dias e kit de início com containers NGC e créditos Inception |
 | 5 | **Interface web** | ✅ Concluído | Dashboard Streamlit com 6 abas, funil de qualificação, reprocessamento manual de pendentes, atualização de domínios e promoção de empresas excluídas |
-| 6 | **Diferencial do projeto** | ✅ Concluído | Funil de qualificação AI-native com score de maturidade (0–10), possibilidade de correção ou adição de dados de forma manual e pipeline totalmente automatizado de ponta a ponta acionável pelo próprio dashboard |
+| 6 | **Diferencial do projeto** | ✅ Concluído | Funil de qualificação com score de maturidade (0–10) que classifica cada startup em quatro perfis: `ai-native`, `ai-first`, `ai-enabled` e `ai-adjacent`. As recomendações de tecnologias NVIDIA são calibradas para todos esses perfis, não apenas para empresas AI-native. Inclui possibilidade de correção ou adição de dados de forma manual e pipeline totalmente automatizado de ponta a ponta acionável pelo próprio dashboard. |
 
 ---
 
