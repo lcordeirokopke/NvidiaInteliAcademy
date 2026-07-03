@@ -176,12 +176,14 @@ O grafo roteia para dois nós com prompts distintos baseado em `ia_e_core_produc
 
 Ambos recebem o perfil da startup e os chunks selecionados pelo reranking. A seleção de quais tecnologias recomendar já aconteceu no reranking — o LLM 1 articula o porquê.
 
+Cada item também recebe `tipo`: `"tecnologia"` (produto técnico — SDK, biblioteca, plataforma, modelo) ou `"programa_suporte"` (programa de apoio a startups, como o NVIDIA Inception, que não resolve o problema técnico por si só). O LLM 3 usa esse campo para não confundir um programa de suporte com a prioridade técnica ao montar o roadmap (ver seção abaixo).
+
 Saída esperada:
 ```json
 {
   "tecnologias": [
-    {"tecnologia": "NIM", "justificativa": "..."},
-    {"tecnologia": "TensorRT", "justificativa": "..."}
+    {"tecnologia": "NIM", "tipo": "tecnologia", "justificativa": "..."},
+    {"tecnologia": "TensorRT", "tipo": "tecnologia", "justificativa": "..."}
   ],
   "fontes": ["https://developer.nvidia.com/nim", "..."]
 }
@@ -214,6 +216,8 @@ Recebe o output do LLM 1 e o perfil. Não acessa os chunks — traduz a recomend
 **Audiência:** tech lead / CTO.
 
 Usa `nivel_maturidade_ia` e `score_maturidade_ia` para calibrar o plano — uma startup `ai-adjacent` (score 2) recebe ações diferentes de uma `ai-native` (score 9).
+
+`tecnologia_prioritaria` pode ser um item `tipo: "tecnologia"` ou `tipo: "programa_suporte"` — a escolha é livre, mas o prompt orienta o LLM a só eleger um programa de suporte (ex: NVIDIA Inception) como prioridade quando ele for de fato o passo mais urgente (ex: startup sem acesso a GPU/créditos para começar a testar a tecnologia). Não há guard-rail em código forçando essa regra — é orientação de prompt, então vale conferir o campo `justificativa_prioridade` para entender o raciocínio do modelo.
 
 ```json
 {

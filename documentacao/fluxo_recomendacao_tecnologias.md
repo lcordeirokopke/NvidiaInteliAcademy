@@ -162,6 +162,8 @@ O pipeline RAG com reranking foi evoluído para uma plataforma multi-agente orqu
 
 O LLM 1 tem dois prompts distintos roteados pelo campo `ia_e_core_product`: `explicar_tecnico` (foco em stack, benchmarks e arquitetura) e `explicar_negocio` (foco em casos de uso e impacto operacional). A escolha entre eles é feita pelo grafo, não pelo agente.
 
+Cada item retornado pelo LLM 1 é classificado em `tipo`: `"tecnologia"` (produto técnico que resolve o problema diretamente — SDK, biblioteca, plataforma, modelo) ou `"programa_suporte"` (programa de apoio a startups, como o NVIDIA Inception, que oferece créditos/treinamento mas não processa dado nem resolve o problema técnico por si só). Essa distinção existe porque o LLM 3 (Roadmap) usa os dois tipos para decidir a `tecnologia_prioritaria` com mais contexto — evitando que um programa de suporte seja escolhido só por aparecer primeiro na lista, quando na verdade uma tecnologia técnica é o passo mais urgente. Um programa_suporte ainda pode ser eleito prioritário legitimamente (ex: startup sem acesso a GPU/créditos para nem começar a testar a tecnologia) — a classificação só dá ao modelo o contexto para decidir com intenção, não impede a escolha.
+
 O grafo inclui dois ciclos de retry automático: um para qualidade dos chunks (até 3 buscas com parâmetros progressivamente relaxados) e um para JSON inválido na resposta do LLM 1 (até 3 tentativas com o erro de parse injetado no prompt). O estado completo é persistido por um checkpointer a cada nó — se o processo cair após o LLM 2, o run retoma do LLM 3 sem refazer chamadas já concluídas.
 
 Documentação completa do grafo: `documentacao/langgraph.md`
@@ -174,10 +176,12 @@ Documentação completa do grafo: `documentacao/langgraph.md`
     "tecnologias": [
       {
         "tecnologia": "NIM",
+        "tipo": "tecnologia",
         "justificativa": "Permite deploy rápido de modelos de visão em produção via API, adequado ao estágio MVP da startup"
       },
       {
         "tecnologia": "TensorRT",
+        "tipo": "tecnologia",
         "justificativa": "Otimiza latência de inferência em CNNs para diagnóstico por imagem, crítico para uso clínico em tempo real"
       }
     ],

@@ -11,7 +11,7 @@ load_dotenv(_RAIZ / ".env")
 
 # Campos obrigatórios para situacao_coleta = 'completo'.
 # Excluídos: fonte_dados, programa_aceleracao, gupy_subdominio, nome_fantasia,
-#            acelerada_ia (coluna removida), empresa_id, enriquecido_em, situacao_coleta.
+#            empresa_id, enriquecido_em, situacao_coleta.
 CAMPOS_COMPLETO: frozenset[str] = frozenset({
     "cnpj", "cnpj_pendente", "dominio", "razao_social", "situacao_rf",
     "municipio", "uf", "cnae_principal", "porte", "capital_social",

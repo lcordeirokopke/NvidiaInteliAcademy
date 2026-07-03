@@ -2,7 +2,7 @@
 
 ## Decisão
 
-A estrutura adotada é a **Opção D — Hierárquica com família tecnológica**.
+A estrutura adotada é a **Hierárquica com família tecnológica**.
 
 ---
 
@@ -99,7 +99,7 @@ A estrutura adotada é a **Opção D — Hierárquica com família tecnológica*
 
 ## Como os filtros funcionam no Qdrant
 
-O pipeline monta os filtros a partir do perfil da startup e executa busca vetorial com filtros de metadata (não é busca híbrida — BM25 foi descartado, ver `zzz/sugestao/fluxo de recomendacao de tecnologias.md`):
+O pipeline monta os filtros a partir do perfil da startup e executa busca vetorial com filtros de metadata (não é busca híbrida — BM25 foi descartado):
 
 ```python
 buscador.buscar(
