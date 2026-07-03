@@ -9,8 +9,9 @@
 __pycache__/
 *.pyc
 
+# Pasta extra 
 zzz/
 
-
+# Dados gerados pelo pipeline
 data/jsons/
 
