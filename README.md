@@ -71,7 +71,6 @@ Interface com 6 abas: Resumo Geral, Análise Completa, Pendentes, Excluídas, Us
 | **gemini-embedding-001** | Geração de embeddings para o RAG |
 | **LangGraph** | Orquestração do grafo de agentes de recomendação |
 | **LangChain Core** | Abstrações base |
-| **Langchain Groq** | Interface alternativa de LLM |
 
 ### RAG e reranking
 | Tecnologia | Uso |
